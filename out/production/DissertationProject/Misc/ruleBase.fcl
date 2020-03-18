@@ -24,6 +24,7 @@ VAR_INPUT				// Define input variables
 	brand : REAL;
 	channel : REAL;
 	priceDetermination : REAL;
+	priceElasticity : REAL;
 END_VAR
 
 // probs gotta add suggested strategy at some point and add it as an output variable
@@ -32,7 +33,7 @@ VAR_OUTPUT				// Define output variable
 END_VAR
 
 FUZZIFY commodity			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM vLow := (0, 1) (1, 0);
+	TERM very Low := (0, 1) (1, 0);
 	TERM low := (0, 0) (1,1) (2,0);
 	TERM medium := (1, 0) (2, 1) (3,0);
 	TERM high := (2,0) (3,1) (4,0);
@@ -55,19 +56,81 @@ END_FUZZIFY
 
 FUZZIFY customerExpectations			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM easyReplication := (0, 1) (1, 0);
-	TERM mediumReplication := (0, 1) (1,1) (2,0);
+	TERM mediumReplication := (0, 0) (1,1) (2,0);
 	TERM difficultReplication := (1, 0) (2, 1) (3,0);
 END_FUZZIFY
 
-FUZZIFY food			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM rancid := (0, 1) (1, 1) (3,0) ;
-	TERM delicious := (7,0) (9,1);
+FUZZIFY marketCharacteristics			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM saturated := (0, 0) (1, 1) (2, 0);
+	TERM mediumSaturation := (1, 0) (2, 1) (3, 0);
+	TERM growing := (2, 0) (3, 1) (4, 0);
 END_FUZZIFY
 
-DEFUZZIFY tip			// Defzzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM cheap := (0,0) (5,1) (10,0);
-	TERM average := (10,0) (15,1) (20,0);
-	TERM generous := (20,0) (25,1) (30,0);
+// This should be an output variable at some point as well
+// Also this needs heavy rework
+FUZZIFY pricingStrategy			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM shareMax := (0, 0) (1, 1) (2, 0);
+	TERM none := (1, 0) (2, 1) (3, 0);
+	TERM skimming := (2, 0) (3, 1) (4, 0);
+	TERM revenueMax := (3, 0) (4, 1) (5, 0);
+END_FUZZIFY
+
+//needs potential rework, this is one of the few where you can actually use real numbers,
+//i.e. one client, or even 100,000+ clients
+//also, differentiate between commodity and non commodity?
+FUZZIFY marketSize			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM vSmall := (0, 1) (1, 1) (2,0);
+    TERM small := (1, 0) (3, 1) (5,0);
+    TERM medium := (3, 0) (10, 1) (17,0);
+    TERM large := (10,0) (100,1) (1000,0);
+    Term vLarge := (500,0) (1000,1);
+END_FUZZIFY
+
+FUZZIFY priceDiscrimination			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM vLow := (0, 1) (1, 0);
+    TERM low := (0, 0) (1, 1) (2,0);
+    TERM medium := (1, 0) (2, 1) (3,0);
+    TERM high := (2,0) (3,1) (4,0);
+    Term vHigh := (4,0) (4,1) (5,0);
+END_FUZZIFY
+
+FUZZIFY brand			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM significant := (0, 1) (1, 0);
+	TERM unimportant := (0,0) (1,1);
+END_FUZZIFY
+
+//This is very unscientific and so, probs also doesn't make much sense...
+FUZZIFY channel			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM online := (0, 1) (1,0) ;
+	//TERM phyisicalDistribution := (1,0) (2,1);
+	TERM other := (0,0) (1,1);
+END_FUZZIFY
+
+//how to implement
+FUZZIFY priceDetermination			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM costBased := (0, 1) (1, 1) (2,0);
+	//TERM valueDriven := (1,0) (2,1);
+	//TERM competitorDriven := (1,0) (2,1);
+	//TERM targetDriven := ();
+END_FUZZIFY
+
+//how to implement
+FUZZIFY priceElasticity			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM low := (0, 1) (1, 1) (2,0);
+	TERM medium := (1,0) (2,1);
+	TERM high := (1,0) (2,1);
+END_FUZZIFY
+
+//Still missing
+    // product line and bundling
+    // competition(?)
+
+// how to import the price from the actual program?
+// more importantly, once imported, how to actually change it?
+DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0,0) (5,1) (10,0);
+	TERM medium := (10,0) (15,1) (20,0);
+	TERM high := (20,0) (25,1) (30,0);
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -77,10 +140,141 @@ RULEBLOCK No1
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
 
-	RULE 1 : IF service IS poor OR food IS rancid THEN tip IS cheap;
-	RULE 2 : IF service IS good THEN tip IS average;
-	RULE 3 : IF service IS excellent AND food IS delicious THEN tip IS generous;
+	// pricing strategy rules ignored for now
+
+	RULE 1 : IF commodity IS low THEN price IS low;
+	RULE 2 : IF commodity IS medium THEN price IS medium;
+	RULE 3 : IF commodity IS high THEN price IS high;
+	RULE 4 : IF quality IS low THEN price IS low;
+	RULE 5 : IF quality IS low THEN price IS medium;
+	RULE 6 : IF quality IS low THEN price IS high;
+	RULE 7 : IF imitability IS easyReplication THEN price IS low;
+	RULE 8 : IF imitability IS mediumReplication THEN price IS medium;
+	RULE 9 : IF imitability IS difficultReplication THEN price IS high;
+	RULE 10 : IF imitability IS easyReplication THEN price IS low;
+	RULE 11 : IF imitability IS mediumReplication THEN price IS medium;
+	RULE 12 : IF imitability IS difficultReplication THEN price IS high;
+	RULE 13 : IF marketCharacteristics IS saturated THEN price IS low;
+	RULE 14 : IF marketCharacteristics IS mediumSaturation THEN price IS medium;
+	RULE 15 : IF marketCharacteristics IS growing THEN price IS high;
+	RULE 16 : IF marketSize IS small THEN price IS low;
+	RULE 17 : IF marketSize IS medium THEN price IS medium;
+	RULE 18 : IF marketSize IS large THEN price IS high;
+	RULE 19 : IF brand IS significant THEN price IS high;
+	RULE 20 : IF brand IS unimportant THEN price IS medium;
+   	RULE 21 : IF priceElasticity IS low THEN price IS high;
+    RULE 22 : IF priceElasticity IS medium THEN price IS medium;
+    RULE 23 : IF priceElasticity IS high THEN price IS low;
+    RULE 24 : IF channel IS online THEN price IS low;
+    RULE 25 : IF channel IS other THEN price IS low;
+    //RULE 26 : IF
+    //RULE 27 : IF
+    //RULE 28 : IF
+    //RULE 29 : IF
+	//RULE 30 : IF
+    //RULE 31 : IF
+    //RULE 32 : IF
+    //RULE 33 : IF
+    //RULE 34 : IF
+    //RULE 35 : IF
+    //RULE 36 : IF
+    //RULE 37 : IF
+    //RULE 38 : IF
+    //RULE 39 : IF
+
+
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
 
+// -------------------- NEW FUNCTION BLOCK ------------------
+
+FUNCTION_BLOCK commoditization
+
+AR_INPUT				// Define input variables
+	commodity : REAL;
+	quality : REAL;
+	imitability : REAL;
+	customerExpectations : REAL;
+	marketCharacteristics : REAL;
+	pricingStrategy : REAL;
+	marketSize : REAL;
+	priceDiscrimination : REAL;
+	brand : REAL;
+	channel : REAL;
+	priceDetermination : REAL;
+	priceElasticity : REAL;
+END_VAR
+
+// probs gotta add suggested strategy at some point and add it as an output variable
+VAR_OUTPUT				// Define output variable
+	price : REAL;
+END_VAR
+
+FUZZIFY commodity			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM very Low := (0, 1) (1, 0);
+	TERM low := (0, 0) (1,1) (2,0);
+	TERM medium := (1, 0) (2, 1) (3,0);
+	TERM high := (2,0) (3,1) (4,0);
+	Term vHigh := (3,0) (4,1) (5,0);
+END_FUZZIFY
+
+DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0,0) (5,1) (10,0);
+	TERM medium := (10,0) (15,1) (20,0);
+	TERM high := (20,0) (25,1) (30,0);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	// pricing strategy rules ignored for now
+
+	RULE 1 : IF commodity IS low THEN price IS low;
+	RULE 2 : IF commodity IS medium THEN price IS medium;
+	RULE 3 : IF commodity IS high THEN price IS high;
+	RULE 4 : IF quality IS low THEN price IS low;
+	RULE 5 : IF quality IS low THEN price IS medium;
+	RULE 6 : IF quality IS low THEN price IS high;
+	RULE 7 : IF imitability IS easyReplication THEN price IS low;
+	RULE 8 : IF imitability IS mediumReplication THEN price IS medium;
+	RULE 9 : IF imitability IS difficultReplication THEN price IS high;
+	RULE 10 : IF imitability IS easyReplication THEN price IS low;
+	RULE 11 : IF imitability IS mediumReplication THEN price IS medium;
+	RULE 12 : IF imitability IS difficultReplication THEN price IS high;
+	RULE 13 : IF marketCharacteristics IS saturated THEN price IS low;
+	RULE 14 : IF marketCharacteristics IS mediumSaturation THEN price IS medium;
+	RULE 15 : IF marketCharacteristics IS growing THEN price IS high;
+	RULE 16 : IF marketSize IS small THEN price IS low;
+	RULE 17 : IF marketSize IS medium THEN price IS medium;
+	RULE 18 : IF marketSize IS large THEN price IS high;
+	RULE 19 : IF brand IS significant THEN price IS high;
+	RULE 20 : IF brand IS unimportant THEN price IS medium;
+   	RULE 21 : IF priceElasticity IS low THEN price IS high;
+    RULE 22 : IF priceElasticity IS medium THEN price IS medium;
+    RULE 23 : IF priceElasticity IS high THEN price IS low;
+    RULE 24 : IF channel IS online THEN price IS low;
+    RULE 25 : IF channel IS other THEN price IS low;
+    //RULE 26 : IF
+    //RULE 27 : IF
+    //RULE 28 : IF
+    //RULE 29 : IF
+	//RULE 30 : IF
+    //RULE 31 : IF
+    //RULE 32 : IF
+    //RULE 33 : IF
+    //RULE 34 : IF
+    //RULE 35 : IF
+    //RULE 36 : IF
+    //RULE 37 : IF
+    //RULE 38 : IF
+    //RULE 39 : IF
+
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

@@ -1,0 +1,130 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.control.skin.SplitPaneSkin.Content?>
+<?import javafx.scene.text.Text?>
+<BorderPane fx:id="borderPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.CostingController"
+            prefHeight="900.0" prefWidth="1920.0">
+    <top>
+        <MenuBar prefWidth="1920">
+            <Menu text="Menu 1">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+            <Menu text="Menu 2">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+        </MenuBar>
+    </top>
+
+    <left>
+            <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
+            <padding><Insets left="40" top="40"/></padding>
+
+            <!-- row 1 -->
+            <Button GridPane.columnIndex="0" GridPane.rowIndex="0">
+                Add Task
+            </Button>
+            <Button GridPane.columnIndex="1" GridPane.rowIndex="0">
+                Add Iteration
+            </Button>
+            <Button GridPane.columnIndex="2" GridPane.rowIndex="0">
+                Edit Name:
+            </Button>
+            <Label GridPane.columnIndex="3" GridPane.rowIndex="0">
+                Lorem Ipsum
+            </Label>
+
+            <!-- row 2 -->
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                Add Task:
+            </Label>
+            <TextField fx:id="iterationTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Iteration">
+            </TextField>
+            <TextField fx:id="userStoryNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" promptText="User Story Name">
+            </TextField>
+            <TextField fx:id="storyPointsTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Story Points">
+            </TextField>
+            <Button GridPane.columnIndex="4" GridPane.rowIndex="1" onAction="#addUserStoryBtnClick">
+                Add User Story
+            </Button>
+                <ScrollPane GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"
+                            prefHeight="400.0" prefWidth="200.0"
+                            pannable="true" fitToWidth="true" fitToHeight="true" vbarPolicy="ALWAYS" hbarPolicy="ALWAYS">
+                    <content>
+                        <GridPane hgap="10" vgap="10" fx:id="gridPaneUserStories">
+                            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">User Story</Label>
+                            <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Story Points</Label>
+
+                            <Label fx:id="storyPointsTotalLabel" GridPane.columnIndex="0" GridPane.rowIndex="1">Total</Label>
+                            <Label fx:id="storyPointsTotalPoints" GridPane.columnIndex="1" GridPane.rowIndex="1">0</Label>
+                        </GridPane>
+                    </content>
+                </ScrollPane>
+                <GridPane hgap="10" vgap="10" fx:id="gridPaneIterations" GridPane.columnIndex="2" GridPane.rowIndex="2" GridPane.columnSpan="3">
+                    <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Iterations</Label>
+                    <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Stories</Label>
+                    <Label GridPane.columnIndex="2" GridPane.rowIndex="0">Total</Label>
+                    <ScrollPane fx:id="scrollPaneIterations" GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                prefWidth="250.0"
+                                pannable="true" fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER">
+                        <content>
+                            <Text fx:id="iterationsListLabel"></Text>
+                        </content>
+                    </ScrollPane>
+                    <Label fx:id="iterationsTotalPoints" GridPane.columnIndex="2" GridPane.rowIndex="1">0</Label>
+                </GridPane>
+
+                <GridPane hgap="10" vgap="10" fx:id="gridPaneMisc" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="5">
+                    <Label GridPane.columnIndex="0" GridPane.rowIndex="0">FTE Equivalent for Story Point:</Label>
+                    <TextField GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="Equivalent"></TextField>
+
+                    <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Labour costs for one working hour:</Label>
+                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Labour costs"></TextField>
+
+                    <Label GridPane.columnIndex="2" GridPane.rowIndex="0">Projected Employee cost:</Label>
+                    <Label GridPane.columnIndex="2" GridPane.rowIndex="1" ></Label>
+
+                </GridPane>
+
+        </GridPane>
+    </left>
+
+    <right>
+        <GridPane hgap="10" vgap="10">
+            <padding><Insets right="40" top="40"/></padding>
+            <Button GridPane.columnIndex="0" GridPane.rowIndex="0">
+                Lorem
+            </Button>
+            <Button GridPane.columnIndex="1" GridPane.rowIndex="0">
+                Ipsum
+            </Button>
+        </GridPane>
+    </right>
+
+    <bottom>
+        <GridPane hgap="10" vgap="10" BorderPane.alignment="BASELINE_CENTER">
+            <GridPane.margin>
+                <Insets bottom="40"/>
+            </GridPane.margin>
+            <Button GridPane.columnIndex="0" GridPane.rowIndex="0" alignment="BASELINE_CENTER">
+                Save
+            </Button>
+        </GridPane>
+    </bottom>
+
+</BorderPane>

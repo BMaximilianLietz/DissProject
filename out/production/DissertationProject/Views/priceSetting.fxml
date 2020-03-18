@@ -1,0 +1,313 @@
+<?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.GridPane?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+
+<?import javafx.scene.layout.BorderPane?>
+
+
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuItem?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.collections.FXCollections?>
+<?import java.lang.String?>
+<?import javafx.scene.control.TextField?>
+<BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.PriceSettingController" >
+    <top>
+        <MenuBar GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" prefWidth="1920">
+            <Menu text="Menu 1">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+            <Menu text="Menu 2">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+        </MenuBar>
+    </top>
+    <left>
+        <GridPane fx:id="gridPane" alignment="TOP_LEFT" hgap="10" vgap="10" >
+            <!--    -->
+
+
+            <!--  COLUMNS 1 & 2  -->
+
+            <Label text="Commoditization" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2"
+                   alignment="BASELINE_CENTER" style="-fx-font-weight: bold">
+                <padding><Insets left="40"/></padding>
+            </Label>
+
+            <!-- Row 1
+                Also, how to make input field numerical
+            -->
+
+            <Label text="Number of customers:" GridPane.columnIndex="0" GridPane.rowIndex="1">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <TextField fx:id="numberCustomersTF" GridPane.columnIndex="1" GridPane.rowIndex="1">
+            </TextField>
+
+            <!-- Row 2  -->
+
+            <Label text="Does the product require&#10;pre-processing" GridPane.columnIndex="0" GridPane.rowIndex="2">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="prePocessingCB" GridPane.columnIndex="1" GridPane.rowIndex="2" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Yes"/>
+                        <String fx:value="No"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 3  -->
+
+            <Label text="Item imitability:" GridPane.columnIndex="0" GridPane.rowIndex="3">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="itemImitabilityCB" GridPane.columnIndex="1" GridPane.rowIndex="3" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Easy replication"/>
+                        <String fx:value="Medium replication effort"/>
+                        <String fx:value="Difficult replication"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 1
+
+            <Label text="Commoditization:" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="comboBox1" GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Very Low"/>
+                        <String fx:value="Low"/>
+                        <String fx:value="Medium"/>
+                        <String fx:value="High"/>
+                        <String fx:value="Very High"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+            -->
+
+            <!-- COLUMNS 2 & 3 -->
+
+            <!-- Row 1  -->
+
+            <Label text="Preferred pricing strategy:" GridPane.columnIndex="2" GridPane.rowIndex="1">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="pricingStrategyCB" GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Cost-based pricing"/>
+                        <String fx:value="Value-driven pricing"/>
+                        <String fx:value="Target-driven pricing"/>
+                        <String fx:value="Competition-based pricing"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 2  -->
+
+            <Label text="Desired margin:" GridPane.columnIndex="2" GridPane.rowIndex="2">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <TextField fx:id="desiredMarginTF" GridPane.columnIndex="3" GridPane.rowIndex="2"  promptText="Margin in %">
+            </TextField>
+
+            <!-- Row 3  -->
+
+            <Label text="Value added to the user" GridPane.columnIndex="2" GridPane.rowIndex="3">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <TextField fx:id="valueAddedTF" GridPane.columnIndex="3" GridPane.rowIndex="3" promptText="Value added">
+            </TextField>
+
+            <!-- Row 4  -->
+
+            <Label text="Target:" GridPane.columnIndex="2" GridPane.rowIndex="4">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="targetCB" GridPane.columnIndex="3" GridPane.rowIndex="4" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Revenue"/>
+                        <String fx:value="Sales"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- /* ADD A TEXTFIELD BASED ON RESULT OF ABOVE DROPDOWN FOR USER TO TYPE IN SALES OR REVENUE*/ -->
+
+            <!-- Row 5  -->
+
+            <Label text="Competitors :" GridPane.columnIndex="2" GridPane.rowIndex="5">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <Label GridPane.columnIndex="3" GridPane.rowIndex="5">
+                    To-Do
+            </Label>
+
+            <!-- /* How to implement competitors */ -->
+
+            <!-- Row 6 -->
+
+            <Label text="Industry price clustering:" GridPane.columnIndex="2" GridPane.rowIndex="6">
+                <!-- <padding><Insets left="40" top="40"/></padding> -->
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="priceClusteringCB" GridPane.columnIndex="3" GridPane.rowIndex="6" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Yes"/>
+                        <String fx:value="No"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- /* ADD A TEXTFIELD BASED ON RESULT OF ABOVE DROPDOWN FOR CLUSTERS AS INPUT */ -->
+
+            <!-- Row 7
+                Also, rephrase, no one's gonna say they have a low quality item
+            -->
+
+            <Label text="Item quality importance:" GridPane.columnIndex="2" GridPane.rowIndex="7">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="itemQualityCB" GridPane.columnIndex="3" GridPane.rowIndex="7" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Insignificant"/>
+                        <String fx:value="Medium"/>
+                        <String fx:value="Significant"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 8  -->
+            <Label text="Market saturation:" GridPane.columnIndex="2" GridPane.rowIndex="8">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="marketSaturationCB" GridPane.columnIndex="3" GridPane.rowIndex="8" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Saturated"/>
+                        <String fx:value="Medium"/>
+                        <String fx:value="Growing"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 9  -->
+
+            <Label text="Market segmentation:" GridPane.columnIndex="2" GridPane.rowIndex="9">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="isMarketSegmentedCB" GridPane.columnIndex="3" GridPane.rowIndex="9" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Yes"/>
+                        <String fx:value="No"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- /* ADD A TEXTFIELD BASED ON RESULT OF ABOVE DROPDOWN FOR DISCOUNT AS INPUT */ -->
+
+            <!-- Row 10  -->
+
+            <Label text="Brand value:" GridPane.columnIndex="2" GridPane.rowIndex="10">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="brandValueCB" GridPane.columnIndex="3" GridPane.rowIndex="10" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Low importance"/>
+                        <String fx:value="Renowned brand"/>
+                        <String fx:value="Unique Selling Proposition"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 11  -->
+
+            <Label text="Distribution Channel:" GridPane.columnIndex="2" GridPane.rowIndex="11">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="distributionChannelCB" GridPane.columnIndex="3" GridPane.rowIndex="11" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Online"/>
+                        <String fx:value="Via own physical distribution"/>
+                        <String fx:value="Via retailers"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- COLUMNS 4 & 5 -->
+
+            <!-- Row 1
+                    How to calculate revenue maximization and what to do with it?
+            -->
+
+            <Label text="Pricing Goal" GridPane.columnIndex="4" GridPane.rowIndex="1">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="pricingGoalCB" GridPane.columnIndex="5" GridPane.rowIndex="1" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList" >
+                        <String fx:value="Market share maximization"/>
+                        <String fx:value="Market skimming"/>
+                        <String fx:value="Revenue maximization"/>
+                        <String fx:value="None"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 2  -->
+
+            <Label text="Time Period:" GridPane.columnIndex="4" GridPane.rowIndex="2">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <ComboBox fx:id="timePeriodCB" GridPane.columnIndex="5" GridPane.rowIndex="2" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="One-time"/>
+                        <String fx:value="6 Months"/>
+                        <String fx:value="1 Year"/>
+                        <String fx:value="3 Years"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <!-- Row 3
+                Find a better word than depreciation?
+            -->
+            <Label text="Depreciation per year in %" GridPane.columnIndex="4" GridPane.rowIndex="3">
+                <padding><Insets left="40"/></padding>
+            </Label>
+            <TextField fx:id="depreciationTF" GridPane.columnIndex="5" GridPane.rowIndex="3" >
+            </TextField>
+
+            <!--
+                To-Do
+                    Since costs should be implemented in the graph, look at how costs of the product develop over time,
+                    i.e. if for example product support is offered, then how does having more customers affect the
+                    product costs? However, also implement a growth function
+            -->
+
+        </GridPane>
+    </left>
+</BorderPane>
