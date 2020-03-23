@@ -1,4 +1,4 @@
-package Data;
+package Models;
 
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
@@ -9,16 +9,16 @@ import net.sourceforge.jFuzzyLogic.rule.Variable;
 
 public class FuzzyLogic {
 
-    private FunctionBlock functionBlock;
+    public FunctionBlock functionBlock;
 
-    public void init(String fileNamePath) {
+    public void init(String selectedFunctionBlock) {
         String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\ruleBase.fcl";
         FIS fis = FIS.load(fileName, true);
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
             return;
         }
-        functionBlock = fis.getFunctionBlock(null);
+        functionBlock = fis.getFunctionBlock(selectedFunctionBlock);
     }
 
     public FunctionBlock getFunctionBlock() {
@@ -28,6 +28,7 @@ public class FuzzyLogic {
     public void setFunctionBlock(FunctionBlock functionBlock) {
         this.functionBlock = functionBlock;
     }
+
     public void functionBlockSetVariable(String variableName, Double variableValue) {
         functionBlock.setVariable(variableName, variableValue);
     }

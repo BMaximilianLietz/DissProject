@@ -10,21 +10,24 @@
 									pcingola@users.sourceforge.net
 */
 
-FUNCTION_BLOCK tipper	// Block definition (there may be more than one block per file)
+FUNCTION_BLOCK pricing	// Block definition (there may be more than one block per file)
 
 VAR_INPUT				// Define input variables
-	commodity : REAL;
-	quality : REAL;
+	commoditization : REAL;
+	itemQuality : REAL;
 	imitability : REAL;
 	customerExpectations : REAL;
-	marketCharacteristics : REAL;
+	marketSaturation : REAL;
 	pricingStrategy : REAL;
-	marketSize : REAL;
 	priceDiscrimination : REAL;
-	brand : REAL;
-	channel : REAL;
+	brandValue : REAL;
+	distributionChannel : REAL;
 	priceDetermination : REAL;
 	priceElasticity : REAL;
+	//delete
+	target : REAL;
+	priceClustering : REAL;
+
 END_VAR
 
 // probs gotta add suggested strategy at some point and add it as an output variable
@@ -32,58 +35,22 @@ VAR_OUTPUT				// Define output variable
 	price : REAL;
 END_VAR
 
-FUZZIFY commodity			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM very Low := (0, 1) (1, 0);
-	TERM low := (0, 0) (1,1) (2,0);
-	TERM medium := (1, 0) (2, 1) (3,0);
-	TERM high := (2,0) (3,1) (4,0);
-	Term vHigh := (3,0) (4,1) (5,0);
+FUZZIFY commoditization			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM low := (0,0) (0.33,1) (0.67,0);
+    TERM medium := (0.33,0) (0.67,1) (1,0);
+    TERM high := (0.67,0) (1,1);
 END_FUZZIFY
 
-FUZZIFY quality			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM vLow := (0, 1) (1, 0);
-    TERM low := (0, 0) (1,1) (2,0);
-    TERM medium := (1, 0) (2, 1) (3,0);
-    TERM high := (2,0) (3,1) (4,0);
-    Term vHigh := (3,0) (4,1) (5,0);
+FUZZIFY itemQuality			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM insignificant := (0, 1) (1, 0);
+    TERM medium := (0, 0) (1,1) (2,0);
+    TERM significant := (1, 0) (2, 1) (3,0);
 END_FUZZIFY
 
-FUZZIFY imitability			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM easyReplication := (0, 1) (1, 0);
-	TERM mediumReplication := (0, 1) (1,1) (2,0);
-	TERM difficultReplication := (1, 0) (2, 1) (3,0);
-END_FUZZIFY
-
-FUZZIFY customerExpectations			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM easyReplication := (0, 1) (1, 0);
-	TERM mediumReplication := (0, 0) (1,1) (2,0);
-	TERM difficultReplication := (1, 0) (2, 1) (3,0);
-END_FUZZIFY
-
-FUZZIFY marketCharacteristics			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+FUZZIFY marketSaturation			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM saturated := (0, 0) (1, 1) (2, 0);
 	TERM mediumSaturation := (1, 0) (2, 1) (3, 0);
 	TERM growing := (2, 0) (3, 1) (4, 0);
-END_FUZZIFY
-
-// This should be an output variable at some point as well
-// Also this needs heavy rework
-FUZZIFY pricingStrategy			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM shareMax := (0, 0) (1, 1) (2, 0);
-	TERM none := (1, 0) (2, 1) (3, 0);
-	TERM skimming := (2, 0) (3, 1) (4, 0);
-	TERM revenueMax := (3, 0) (4, 1) (5, 0);
-END_FUZZIFY
-
-//needs potential rework, this is one of the few where you can actually use real numbers,
-//i.e. one client, or even 100,000+ clients
-//also, differentiate between commodity and non commodity?
-FUZZIFY marketSize			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM vSmall := (0, 1) (1, 1) (2,0);
-    TERM small := (1, 0) (3, 1) (5,0);
-    TERM medium := (3, 0) (10, 1) (17,0);
-    TERM large := (10,0) (100,1) (1000,0);
-    Term vLarge := (500,0) (1000,1);
 END_FUZZIFY
 
 FUZZIFY priceDiscrimination			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
@@ -94,19 +61,20 @@ FUZZIFY priceDiscrimination			// Fuzzify input variable 'service': {'poor', 'goo
     Term vHigh := (4,0) (4,1) (5,0);
 END_FUZZIFY
 
-FUZZIFY brand			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM significant := (0, 1) (1, 0);
-	TERM unimportant := (0,0) (1,1);
+FUZZIFY brandValue			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM lowImportance := (0, 1) (1, 0);
+	TERM renownedBrand := (0, 0) (1, 1) (2,0);
+	TERM uniqueSellingProposition := (1,0) (2,1) (3,0);
 END_FUZZIFY
 
 //This is very unscientific and so, probs also doesn't make much sense...
-FUZZIFY channel			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+FUZZIFY distributionChannel			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
 	TERM online := (0, 1) (1,0) ;
 	//TERM phyisicalDistribution := (1,0) (2,1);
 	TERM other := (0,0) (1,1);
 END_FUZZIFY
 
-//how to implement
+//how to implement?
 FUZZIFY priceDetermination			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
 	TERM costBased := (0, 1) (1, 1) (2,0);
 	//TERM valueDriven := (1,0) (2,1);
@@ -116,9 +84,10 @@ END_FUZZIFY
 
 //how to implement
 FUZZIFY priceElasticity			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-	TERM low := (0, 1) (1, 1) (2,0);
-	TERM medium := (1,0) (2,1);
-	TERM high := (1,0) (2,1);
+	TERM absoluteElastic := (0, 1) (1, 0);
+	TERM elastic := (0,0) (1,1) (2,0);
+	TERM inelastic := (1,0) (2,1) (3,0);
+	TERM absoluteInelastic := (2,0) (3,1) (4,0);
 END_FUZZIFY
 
 //Still missing
@@ -142,31 +111,24 @@ RULEBLOCK No1
 
 	// pricing strategy rules ignored for now
 
-	RULE 1 : IF commodity IS low THEN price IS low;
-	RULE 2 : IF commodity IS medium THEN price IS medium;
-	RULE 3 : IF commodity IS high THEN price IS high;
-	RULE 4 : IF quality IS low THEN price IS low;
-	RULE 5 : IF quality IS low THEN price IS medium;
-	RULE 6 : IF quality IS low THEN price IS high;
-	RULE 7 : IF imitability IS easyReplication THEN price IS low;
-	RULE 8 : IF imitability IS mediumReplication THEN price IS medium;
-	RULE 9 : IF imitability IS difficultReplication THEN price IS high;
-	RULE 10 : IF imitability IS easyReplication THEN price IS low;
-	RULE 11 : IF imitability IS mediumReplication THEN price IS medium;
-	RULE 12 : IF imitability IS difficultReplication THEN price IS high;
-	RULE 13 : IF marketCharacteristics IS saturated THEN price IS low;
-	RULE 14 : IF marketCharacteristics IS mediumSaturation THEN price IS medium;
-	RULE 15 : IF marketCharacteristics IS growing THEN price IS high;
-	RULE 16 : IF marketSize IS small THEN price IS low;
-	RULE 17 : IF marketSize IS medium THEN price IS medium;
-	RULE 18 : IF marketSize IS large THEN price IS high;
-	RULE 19 : IF brand IS significant THEN price IS high;
-	RULE 20 : IF brand IS unimportant THEN price IS medium;
-   	RULE 21 : IF priceElasticity IS low THEN price IS high;
-    RULE 22 : IF priceElasticity IS medium THEN price IS medium;
-    RULE 23 : IF priceElasticity IS high THEN price IS low;
-    RULE 24 : IF channel IS online THEN price IS low;
-    RULE 25 : IF channel IS other THEN price IS low;
+	RULE 1 : IF commoditization IS low THEN price IS low;
+	RULE 2 : IF commoditization IS medium THEN price IS medium;
+	RULE 3 : IF commoditization IS high THEN price IS high;
+	RULE 4 : IF itemQuality IS insignificant THEN price IS low;
+	RULE 5 : IF itemQuality IS medium THEN price IS medium;
+	RULE 6 : IF itemQuality IS significant THEN price IS high;
+	RULE 7 : IF marketSaturation IS saturated THEN price IS low;
+	RULE 8 : IF marketSaturation IS mediumSaturation THEN price IS medium;
+	RULE 9 : IF marketSaturation IS growing THEN price IS high;
+	RULE 10 : IF brandValue IS lowImportance THEN price IS low;
+	RULE 11 : IF brandValue IS renownedBrand THEN price IS medium;
+	RULE 12 : IF brandValue IS uniqueSellingProposition THEN price IS high;
+   	RULE 13 : IF priceElasticity IS absoluteInelastic THEN price IS high;
+    RULE 14 : IF priceElasticity IS elastic THEN price IS medium;
+    RULE 15 : IF priceElasticity IS inelastic THEN price IS medium;
+    RULE 16 : IF priceElasticity IS absoluteInelastic THEN price IS low;
+    RULE 17 : IF distributionChannel IS online THEN price IS low;
+    RULE 18 : IF distributionChannel IS other THEN price IS medium;
     //RULE 26 : IF
     //RULE 27 : IF
     //RULE 28 : IF
@@ -187,47 +149,68 @@ END_RULEBLOCK
 
 END_FUNCTION_BLOCK
 
-// -------------------- NEW FUNCTION BLOCK ------------------
+// -------------------- NEW FUNCTION BLOCK FOR COMMODITIZATION ------------------ \\
 
-FUNCTION_BLOCK commoditization
+FUNCTION_BLOCK commoditizationOutput
 
-AR_INPUT				// Define input variables
+VAR_INPUT				// Define input variables
 	numberCustomers : REAL;
-	prePocessing : REAL;
+	preProcessing : REAL;
 	itemImitability : REAL;
+	degreePriceCompetition : REAL;
 END_VAR
 
 // probs gotta add suggested strategy at some point and add it as an output variable
 VAR_OUTPUT				// Define output variable
-	commoditization : REAL;
+	commoditizationOutputValue : REAL;
 END_VAR
 
-FUZZIFY prePocessing			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM very Low := (0, 1) (1, 0);
-	TERM low := (0, 0) (1,1) (2,0);
-	TERM medium := (1, 0) (2, 1) (3,0);
-	TERM high := (2,0) (3,1) (4,0);
-	Term vHigh := (3,0) (4,1) (5,0);
+FUZZIFY preProcessing			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM yes := (0, 1) (1, 0);
+	TERM no := (0, 0) (1,1);
+END_FUZZIFY
+
+// This should be an output variable at some point as well
+// Also this needs heavy rework
+FUZZIFY pricingStrategy			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM shareMax := (0, 0) (1, 1) (2, 0);
+	TERM none := (1, 0) (2, 1) (3, 0);
+	TERM skimming := (2, 0) (3, 1) (4, 0);
+	TERM revenueMax := (3, 0) (4, 1) (5, 0);
+END_FUZZIFY
+
+FUZZIFY customerExpectations			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM easyReplication := (0, 1) (1, 0);
+	TERM mediumReplication := (0, 0) (1,1) (2,0);
+	TERM difficultReplication := (1, 0) (2, 1) (3,0);
 END_FUZZIFY
 
 FUZZIFY itemImitability			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM Easyreplication := (0, 1) (1, 0);
-	TERM Mediumreplicationeffort := (0, 0) (1,1) (2,0);
-	TERM Difficultreplication := (1, 0) (2, 1) (3,0);
+	TERM easyReplication := (0, 1) (1, 0);
+	TERM mediumReplicationEffort := (0, 0) (1,1) (2,0);
+	TERM difficultReplication := (1, 0) (2, 1) (3,0);
 END_FUZZIFY
 
+// try to get some data into why these borders are set, e.g. average numbers of customers for businesses
 FUZZIFY numberCustomers			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM vSmall := (0, 1) (1, 3) (5,0);
-    TERM small := (3, 0) (10, 1) (17,0);
+	TERM vLow := (0, 1) (3, 1) (5,0);
+    TERM low := (3, 0) (10, 1) (17,0);
     TERM medium := (10, 0) (50, 1) (90,0);
-    TERM large := (50,0) (500,1) (1000,0);
-    Term vLarge := (500,0) (10000,1);
+    TERM high := (50,0) (500,1) (1000,0);
+    Term vHigh := (500,0) (10000,1);
 END_FUZZIFY
 
-DEFUZZIFY commoditization			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-	TERM low := (0,0) (5,1) (10,0);
-	TERM medium := (10,0) (15,1) (20,0);
-	TERM high := (20,0) (25,1) (30,0);
+FUZZIFY degreePriceCompetition
+    TERM perfectPriceCompetition := (0, 1) (1,0);
+    TERM priceCompetition := (0, 0) (1, 1) (2,0);
+    TERM differentiatedCompetition := (1, 0) (2, 1) (3,0);
+    TERM perfectDifferentiationCompetition := (2, 0) (3, 1);
+END_FUZZIFY
+
+DEFUZZIFY commoditizationOutputValue			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0, 0) (0.33, 1) (0.67,0);
+    TERM medium := (0.33,0) (0.67,1) (1,0);
+    TERM high := (0.67,0) (1,1);
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -237,47 +220,94 @@ RULEBLOCK No1
 	ACT : MIN;			// Use 'min' activation method
 	ACCU : MAX;			// Use 'max' accumulation method
 
-	// pricing strategy rules ignored for now
+	RULE 1 : IF numberCustomers IS vLow THEN commoditizationOutputValue IS low;
+	RULE 2 : IF numberCustomers IS low THEN commoditizationOutputValue IS low;
+	RULE 3 : IF numberCustomers IS medium THEN commoditizationOutputValue IS low;
+	RULE 4 : IF numberCustomers IS high THEN commoditizationOutputValue IS medium;
+	RULE 5 : IF numberCustomers IS vHigh THEN commoditizationOutputValue IS high;
+	Rule 6 : IF preProcessing IS no AND itemImitability IS easyReplication THEN commoditizationOutputValue IS high;
+	Rule 7 : IF preProcessing IS no AND itemImitability IS mediumReplicationEffort THEN commoditizationOutputValue IS high;
+	Rule 8 : IF preProcessing IS no AND itemImitability IS difficultReplication THEN commoditizationOutputValue IS medium;
+	Rule 9 : IF preProcessing IS yes AND itemImitability IS easyReplication THEN commoditizationOutputValue IS medium;
+    Rule 10 : IF preProcessing IS yes AND itemImitability IS mediumReplicationEffort THEN commoditizationOutputValue IS medium;
+    Rule 11 : IF preProcessing IS yes AND itemImitability IS difficultReplication THEN commoditizationOutputValue IS low;
+    Rule 12 : IF degreePriceCompetition IS perfectDifferentiationCompetition THEN commoditizationOutputValue IS low;
+    Rule 12 : IF degreePriceCompetition IS differentiatedCompetition THEN commoditizationOutputValue IS medium;
+    Rule 12 : IF degreePriceCompetition IS priceCompetition THEN commoditizationOutputValue IS medium;
+    Rule 12 : IF degreePriceCompetition IS perfectPriceCompetition THEN commoditizationOutputValue IS high;
 
-	RULE 1 : IF commodity IS low THEN price IS low;
-	RULE 2 : IF commodity IS medium THEN price IS medium;
-	RULE 3 : IF commodity IS high THEN price IS high;
-	RULE 4 : IF quality IS low THEN price IS low;
-	RULE 5 : IF quality IS low THEN price IS medium;
-	RULE 6 : IF quality IS low THEN price IS high;
-	RULE 7 : IF imitability IS easyReplication THEN price IS low;
-	RULE 8 : IF imitability IS mediumReplication THEN price IS medium;
-	RULE 9 : IF imitability IS difficultReplication THEN price IS high;
-	RULE 10 : IF imitability IS easyReplication THEN price IS low;
-	RULE 11 : IF imitability IS mediumReplication THEN price IS medium;
-	RULE 12 : IF imitability IS difficultReplication THEN price IS high;
-	RULE 13 : IF marketCharacteristics IS saturated THEN price IS low;
-	RULE 14 : IF marketCharacteristics IS mediumSaturation THEN price IS medium;
-	RULE 15 : IF marketCharacteristics IS growing THEN price IS high;
-	RULE 16 : IF marketSize IS small THEN price IS low;
-	RULE 17 : IF marketSize IS medium THEN price IS medium;
-	RULE 18 : IF marketSize IS large THEN price IS high;
-	RULE 19 : IF brand IS significant THEN price IS high;
-	RULE 20 : IF brand IS unimportant THEN price IS medium;
-   	RULE 21 : IF priceElasticity IS low THEN price IS high;
-    RULE 22 : IF priceElasticity IS medium THEN price IS medium;
-    RULE 23 : IF priceElasticity IS high THEN price IS low;
-    RULE 24 : IF channel IS online THEN price IS low;
-    RULE 25 : IF channel IS other THEN price IS low;
-    //RULE 26 : IF
-    //RULE 27 : IF
-    //RULE 28 : IF
-    //RULE 29 : IF
-	//RULE 30 : IF
-    //RULE 31 : IF
-    //RULE 32 : IF
-    //RULE 33 : IF
-    //RULE 34 : IF
-    //RULE 35 : IF
-    //RULE 36 : IF
-    //RULE 37 : IF
-    //RULE 38 : IF
-    //RULE 39 : IF
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK
+
+// -------------------- NEW FUNCTION BLOCK FOR LONG TERM PRICE DEVELOPMENT ------------------ \\
+
+FUNCTION_BLOCK priceDevelopment
+
+VAR_INPUT				// Define input variables
+	numberCustomers : REAL;
+	preProcessing : REAL;
+	itemImitability : REAL;
+	degreePriceCompetition : REAL;
+END_VAR
+
+// probs gotta add suggested strategy at some point and add it as an output variable
+VAR_OUTPUT				// Define output variable
+	priceDevelopment : REAL;
+END_VAR
+
+FUZZIFY preProcessing			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM yes := (0, 1) (1, 0);
+	TERM no := (0, 0) (1,1);
+END_FUZZIFY
+
+FUZZIFY itemImitability			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM easyReplication := (0, 1) (1, 0);
+	TERM mediumReplicationEffort := (0, 0) (1,1) (2,0);
+	TERM difficultReplication := (1, 0) (2, 1) (3,0);
+END_FUZZIFY
+
+// try to get some data into why these borders are set, e.g. average numbers of customers for businesses
+FUZZIFY numberCustomers			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM vLow := (0, 1) (3, 1) (5,0);
+    TERM low := (3, 0) (10, 1) (17,0);
+    TERM medium := (10, 0) (50, 1) (90,0);
+    TERM high := (50,0) (500,1) (1000,0);
+    Term vHigh := (500,0) (10000,1);
+END_FUZZIFY
+
+FUZZIFY degreePriceCompetition
+    TERM perfectPriceCompetition := (0, 1) (0.25, 1) (0.5,0);
+    TERM priceCompetition := (0.25, 1) (0.5, 1) (0.75,0);
+    TERM differentiatedCompetition := (0.5, 0) (0.75, 1) (1,0);
+    TERM perfectDifferentiationCompetition := (0.75, 0) (1, 1);
+END_FUZZIFY
+
+DEFUZZIFY commoditization			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0,0) (0.33,1) (0.67,0);
+	TERM medium := (0.33,0) (0.67,1) (1,0);
+	TERM high := (0.67,0) (1,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF numberCustomers IS vLow THEN commoditization IS low;
+	RULE 2 : IF numberCustomers IS low THEN commoditization IS low;
+	RULE 3 : IF numberCustomers IS medium THEN commoditization IS low;
+	RULE 4 : IF numberCustomers IS high THEN commoditization IS medium;
+	RULE 5 : IF numberCustomers IS vHigh THEN commoditization IS high;
+	Rule 6 : IF preProcessing IS no AND itemImitability IS easyReplication THEN commoditization IS high;
+	Rule 7 : IF preProcessing IS no AND itemImitability IS mediumReplicationEffort THEN commoditization IS high;
+	Rule 8 : IF preProcessing IS no AND itemImitability IS difficultReplication THEN commoditization IS medium;
+	Rule 9 : IF preProcessing IS yes AND itemImitability IS easyReplication THEN commoditization IS medium;
+    Rule 10 : IF preProcessing IS yes AND itemImitability IS mediumReplicationEffort THEN commoditization IS medium;
+    Rule 11 : IF preProcessing IS yes AND itemImitability IS difficultReplication THEN commoditization IS low;
 
 
 END_RULEBLOCK
