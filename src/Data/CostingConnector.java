@@ -1,0 +1,156 @@
+package Data;
+
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.Statement;
+import java.util.ArrayList;
+
+public class CostingConnector {
+
+    public static void insertIntoProductCosting(int id, double fTEEq, double labourEq){
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully for Product Costing Alteration");
+
+            stmt = c.createStatement();
+            String sql = "INSERT INTO public.\"ProductCosting\" " +
+                    "(\"productId\",\"fteEquivalent\",\"labourCosts1WorkingHour\") "
+                    + "VALUES (" + id + ", " + fTEEq +"," + labourEq + " );";
+            stmt.executeUpdate(sql);
+
+            stmt.close();
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+    }
+
+    public static void insertIntoUserStories(ArrayList<ArrayList<Object>> storyList) {
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully (for UserStories table alteration)");
+
+            try {
+                for (int i = 0; i < storyList.size(); i++){
+                    String storyName = (String) storyList.get(i).get(0);
+                    int points = (int) storyList.get(i).get(1);
+                    String iteration = (String) storyList.get(i).get(2);
+
+                    stmt = c.createStatement();
+                    String sql = "INSERT INTO public.\"UserStories\" " +
+                            "(\"storyName\",\"storyPoints\",\"Iteration\") "
+                            + "VALUES ('" + storyName + "', " + points +",'" + iteration + "');";
+                    stmt.executeUpdate(sql);
+                }
+            } catch (Exception e) {
+                System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+                System.exit(0);
+            }
+
+            stmt.close();
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+    }
+
+    public static void insertIntoEquipment(int id, ArrayList<ArrayList<Object>> equipmentList) {
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully (for Equipment table alteration)");
+
+            try {
+                for (int i = 0; i < equipmentList.size(); i++){
+                    System.out.println(equipmentList.get(i).get(1));
+
+                    String equipmentName = (String) equipmentList.get(i).get(0);
+                    int equipmentQuantity = Integer.parseInt((String) equipmentList.get(i).get(1));
+                    Double equipmentPrice = Double.parseDouble((String) equipmentList.get(i).get(2));
+
+                    stmt = c.createStatement();
+                    String sql = "INSERT INTO public.\"Equipment\" " +
+                            "(\"productId\",\"equipmentName\",\"equipmentQuantity\",\"equipmentPrice\") "
+                            + "VALUES (" + id + ", '" + equipmentName +"'," + equipmentQuantity + "," + equipmentPrice + " );";
+
+                    stmt.executeUpdate(sql);
+                }
+            } catch (Exception e) {
+                System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+                System.exit(0);
+            }
+
+            stmt.close();
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+    }
+
+    public static void insertIntoProduct(int projectId, String productName, double productCosts) {
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully (for Product table alteration)");
+
+            try {
+                stmt = c.createStatement();
+                String sql = "INSERT INTO public.\"Products\" " +
+                        "(\"projectId\",\"productName\",\"productCosts\") "
+                        + "VALUES (" + projectId + ", '" + productName +"'," + productCosts + " );";
+
+                stmt.executeUpdate(sql);
+            } catch (Exception e) {
+                System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+                System.exit(0);
+            }
+
+            stmt.close();
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+    }
+}
