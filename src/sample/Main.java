@@ -1,5 +1,6 @@
 package sample;
 
+import Controllers.ProjectController;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -11,25 +12,13 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
-        Parent root = FXMLLoader.load(getClass().getResource("../Views/costingView.fxml"));
+        Parent root = FXMLLoader.load(getClass().getResource("../Views/projectView.fxml"));
         primaryStage.setTitle("Hello World");
         primaryStage.setScene(new Scene(root, 300, 275));
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.show();
         primaryStage.setFullScreen(true);
-
-        /*
-        fuzzyLogicView eh = new fuzzyLogicView();
-        eh.initUI(primaryStage);
-         */
-
-        /*
-        FuzzyLogic eh = new FuzzyLogic();
-        eh.test();
-
-         */
     }
-
 
     public static void main(String[] args) {
         launch(args);

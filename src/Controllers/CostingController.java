@@ -1,6 +1,7 @@
 package Controllers;
 
 import Data.CostingConnector;
+import Data.ProductConnector;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -72,11 +73,6 @@ public class CostingController {
                 if (!newPropertyValue)
                 {
                     fTEEquivalent = Double.parseDouble(FTEEquivalent.getText());
-                    System.out.println("Out");
-                }
-                else
-                {
-                    System.out.println("Textfield out focus");
                 }
             }
         });
@@ -131,7 +127,7 @@ public class CostingController {
 
                 scrollPane.contentProperty().setValue(text);
                 gridPaneIterations.add(iterationLabel, 0, gridPaneIterations.getRowCount() + 1);
-                gridPaneIterations.add(scrollPane, 1, gridPaneIterations.getRowCount() + 1);
+                gridPaneIterations.add(scrollPane, 1, gridPaneIterations.getRowCount());
 
             } catch (Exception eh) {
                 System.out.println("Something in the convoluted try catch statement went wrong");
@@ -259,6 +255,6 @@ public class CostingController {
         CostingConnector.insertIntoProductCosting(n, check1, check2);
         CostingConnector.insertIntoUserStories(storyList);
         CostingConnector.insertIntoEquipment(n, equipmentList);
-        CostingConnector.insertIntoProduct(1, projectName.getText(), temp);
+        ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
     }
 }

@@ -2,14 +2,25 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Data/CostingConnector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jFuzzyLogic.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/jFuzzyLogic.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controllers/ProductController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controllers/ProjectController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Controllers/SceneController.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Data/ProductConnector.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Data/ProductPricingConnector.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Views/productView.fxml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/Views/projectView.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController$1.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Views/costingView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Views/costingView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/PriceSettingController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/PriceSettingController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Data/CostingConnector.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Data/CostingConnector.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Views/priceSetting.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Views/priceSetting.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/sample/Main.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/sample/Main.class" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Controllers/CostingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/CostingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/costingView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/costingView.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controllers/PriceSettingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/PriceSettingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Data/CostingConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Data/CostingConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Misc/ruleBase.fcl" beforeDir="false" afterPath="$PROJECT_DIR$/src/Misc/ruleBase.fcl" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Views/priceSetting.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/priceSetting.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -223,26 +234,30 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="521" y="235" key="#com.intellij.fileTypes.FileTypeChooser/0.0.1536.864@0.0.1536.864" timestamp="1583862371242" />
+    <state x="574" y="142" key="#com.intellij.ide.util.MemberChooser" timestamp="1585255041899">
+      <screen x="0" y="0" width="1536" height="864" />
+    </state>
+    <state x="574" y="142" key="#com.intellij.ide.util.MemberChooser/0.0.1536.864@0.0.1536.864" timestamp="1585255041899" />
     <state x="473" y="174" key="FileChooserDialogImpl" timestamp="1585228359943">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="473" y="174" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1585228359943" />
-    <state width="1493" height="220" key="GridCell.Tab.0.bottom" timestamp="1585250800757">
+    <state width="1493" height="220" key="GridCell.Tab.0.bottom" timestamp="1585267873113">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="220" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1585250800757" />
-    <state width="1493" height="220" key="GridCell.Tab.0.center" timestamp="1585250800757">
+    <state width="1493" height="220" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1585267873113" />
+    <state width="1493" height="220" key="GridCell.Tab.0.center" timestamp="1585267873113">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="220" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1585250800757" />
-    <state width="1493" height="220" key="GridCell.Tab.0.left" timestamp="1585250800757">
+    <state width="1493" height="220" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1585267873113" />
+    <state width="1493" height="220" key="GridCell.Tab.0.left" timestamp="1585267873112">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="220" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1585250800757" />
-    <state width="1493" height="220" key="GridCell.Tab.0.right" timestamp="1585250800757">
+    <state width="1493" height="220" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1585267873112" />
+    <state width="1493" height="220" key="GridCell.Tab.0.right" timestamp="1585267873113">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="220" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1585250800757" />
+    <state width="1493" height="220" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1585267873113" />
     <state width="1493" height="277" key="GridCell.Tab.1.bottom" timestamp="1585227992840">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -271,21 +286,21 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="578" y="349" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.864@0.0.1536.864" timestamp="1585059352041" />
-    <state x="463" y="30" width="847" height="804" key="find.popup" timestamp="1585245397652">
+    <state x="463" y="30" width="847" height="804" key="find.popup" timestamp="1585267825553">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="463" y="30" width="847" height="804" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1585245397652" />
+    <state x="463" y="30" width="847" height="804" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1585267825553" />
     <state x="209" y="134" key="new project wizard" timestamp="1584042271650">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="209" y="134" key="new project wizard/0.0.1536.864@0.0.1536.864" timestamp="1584042271650" />
-    <state x="425" y="197" key="run.anything.popup" timestamp="1584905495947">
+    <state x="425" y="197" key="run.anything.popup" timestamp="1585260150538">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="425" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1584905495947" />
-    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1585245500201">
+    <state x="425" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1585260150538" />
+    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1585267206670">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1585245500201" />
+    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1585267206670" />
   </component>
 </project>

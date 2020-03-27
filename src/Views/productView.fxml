@@ -1,0 +1,73 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane fx:id="borderPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.ProductController"
+            prefHeight="900.0" prefWidth="1920.0">
+    <top>
+        <MenuBar prefWidth="1920" fx:id="menuBar">
+            <Menu text="Navigation">
+                <MenuItem text="Open Project View" onAction="#openProjectViewMenuItemClick"></MenuItem>
+            </Menu>
+            <Menu text="Menu 2">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+        </MenuBar>
+    </top>
+    <left>
+        <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
+            <padding><Insets left="40" top="40"/></padding>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Product Name:</Label>
+            <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"></Label>
+
+            <!-- Group 1 -->
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                Product Details
+            </Label>
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
+                Product Name
+            </Label>
+            <Label GridPane.columnIndex="1" GridPane.rowIndex="2">
+                Product Description
+            </Label>
+            <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
+                Product Price
+            </Label>
+            <Label GridPane.columnIndex="3" GridPane.rowIndex="2">
+                Product Costs
+            </Label>
+            <Label GridPane.columnIndex="4" GridPane.rowIndex="2">
+                Product Version
+            </Label>
+            <Label GridPane.columnIndex="5" GridPane.rowIndex="2">
+                Select Product Pricing
+            </Label>
+            <Label GridPane.columnIndex="6" GridPane.rowIndex="2">
+                Select Product Costing
+            </Label>
+
+            <!-- Group 2 -->
+            <Button GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#addProductBtnClick">
+                Add a product
+            </Button>
+            <TextField fx:id="productNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Product Name"/>
+            <TextField fx:id="productDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1"
+                       promptText="Product Description"/>
+            <TextField fx:id="productVersionTF" GridPane.columnIndex="7" GridPane.rowIndex="1"
+                       promptText="Product Version"/>
+
+        </GridPane>
+    </left>
+
+</BorderPane>

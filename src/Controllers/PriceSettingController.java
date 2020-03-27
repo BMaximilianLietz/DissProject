@@ -1,5 +1,6 @@
 package Controllers;
 
+import Data.ProductPricingConnector;
 import Models.FuzzyLogic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -26,9 +27,18 @@ public class PriceSettingController {
     public ComboBox marketSaturationCB;
     public ComboBox isMarketSegmentedCB;
     public ComboBox degreePriceCompetitionCB;
+    public ComboBox brandValueCB;
+    public ComboBox distributionChannelCB;
+    public ComboBox priceElasticityCB;
     public FuzzyLogic priceSettingFLM;
     public FuzzyLogic commoditizationFLM;
     public Label commoditizationValueForm;
+
+    public Label projectName;
+    public Label productName;
+    public Label productCost;
+    private Double activeProductCost;
+    private int activeProductId;
 
     public void initialize() {
         numberCustomersTF.textProperty().addListener((observable, oldValue, newValue) -> {
@@ -50,10 +60,12 @@ public class PriceSettingController {
         commoditizationFLM = new FuzzyLogic();
         commoditizationFLM.init("commoditizationOutput");
 
-        /*
-        longTermPricingFLM = new FuzzyLogic();
-        commoditizationFLM.init("priceDevelopment");
-         */
+        activeProductCost = SceneController.activeProductCost;
+        activeProductId = SceneController.activeProductId;
+
+        projectName.setText(SceneController.activeProjectName);
+        productName.setText(SceneController.activeProductName);
+        productCost.setText(String.valueOf(activeProductCost));
     }
 
     public void handleButtonClick(javafx.event.ActionEvent actionEvent) {
@@ -69,26 +81,6 @@ public class PriceSettingController {
 
         System.out.println(element + " " + value + " with index: " + selectedIndex);
         priceSettingFLM.functionBlockSetVariable(element, (double) selectedIndex);
-        /*
-        if ((element.equals("comboBox5"))&&(value.equals("High"))) {
-            System.out.println("if statement is true");
-            Label lbl = new Label("Row 6");
-            lbl.setPadding(new Insets(0,0,0,40));
-            ComboBox myComboBox = new ComboBox();
-            myComboBox.getItems().addAll(
-                    "Very Low",
-                    "Low",
-                    "Medium",
-                    "High",
-                    "Very High"
-            );
-
-//            Button button6 = new Button("Button 6");
-            gridPane.add(lbl, 0,6);
-            gridPane.add(myComboBox,1,6);
-        }
-
-         */
     }
 
     public void priceSettingSubmitBtnClick(ActionEvent actionEvent) {
@@ -103,6 +95,22 @@ public class PriceSettingController {
             alert.showAndWait();
             return;
         } else {
+            ProductPricingConnector.insertAllProductPricing(activeProductId,
+                    java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
+                    Double.parseDouble(desiredMarginTF.getText()),
+                    java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
+                    Integer.parseInt(numberCustomersTF.getText()),
+                    java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
+                    java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()));
+
             double commValue = Double.parseDouble(commoditizationValueForm.getText());
             priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
 
@@ -150,5 +158,11 @@ public class PriceSettingController {
 
         //System.out.println(commoditizationFLM.getFunctionBlock());
         commoditizationValueForm.setText(String.valueOf(commoditizationFLM.getFunctionBlock().getVariable("commoditizationOutputValue").getValue()));
+    }
+
+    public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
+    }
+
+    public void openProductViewMenuItemClick(ActionEvent actionEvent) {
     }
 }

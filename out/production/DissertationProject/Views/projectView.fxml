@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane fx:id="borderPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.ProjectController"
+            prefHeight="900.0" prefWidth="1920.0">
+    <top>
+        <MenuBar prefWidth="1920">
+            <Menu text="Menu 1">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+            <Menu text="Menu 2">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+        </MenuBar>
+    </top>
+    <left>
+        <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
+            <padding><Insets left="40" top="40"/></padding>
+
+            <!-- Group 1 -->
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                List of Projects
+            </Label>
+
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                Project Name
+            </Label>
+            <Label GridPane.columnIndex="1" GridPane.rowIndex="1">
+                Project Description
+            </Label>
+            <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                Project Costs
+            </Label>
+            <Label GridPane.columnIndex="3" GridPane.rowIndex="1">
+                Select Project
+            </Label>
+
+            <!-- Group 2 -->
+            <Button GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#addProjectBtnClick">
+                Add a project
+            </Button>
+            <TextField fx:id="projectNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Project Name"></TextField>
+            <TextField fx:id="projectDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1" promptText="Project Description"></TextField>
+            <TextField fx:id="projectCostsTF" GridPane.columnIndex="7" GridPane.rowIndex="1" promptText="Project Costs"></TextField>
+
+            <!-- Group 3 -->
+            <Label GridPane.columnIndex="8" GridPane.rowIndex="0"> Competitors</Label>
+        </GridPane>
+    </left>
+
+</BorderPane>
