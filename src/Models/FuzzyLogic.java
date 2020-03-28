@@ -6,6 +6,8 @@ import net.sourceforge.jFuzzyLogic.JFuzzyLogic;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
+import java.io.*;
+
 
 public class FuzzyLogic {
 
@@ -31,6 +33,7 @@ public class FuzzyLogic {
 
     public void functionBlockSetVariable(String variableName, Double variableValue) {
         functionBlock.setVariable(variableName, variableValue);
+        //System.out.println(functionBlock.getVariable(variableName));
     }
 
     public void evaluate() {
@@ -44,6 +47,38 @@ public class FuzzyLogic {
     public void getChartVariable(String variableToGet) {
         Variable variable = functionBlock.getVariable(variableToGet);
         JFuzzyChart.get().chart(variable, variable.getDefuzzifier(), true);
+    }
+
+    public static void replacePriceTerm(int index, String ranges) {
+        File log= new File("C:/Users/maxim/IdeaProjects/DissertationProject/src/Misc/ruleBase.fcl");
+        String term;
+        if (index == 1) {
+            term = "TERM priceLow";
+        } else if (index == 2) {
+            term = "TERM priceMedium";
+        } else {
+            term = "TERM priceHigh";
+        }
+        try {
+            FileReader fr = new FileReader(log);
+            String s;
+            String totalStr = "";
+            try (BufferedReader br = new BufferedReader(fr)) {
+                while ((s = br.readLine()) != null) {
+                    if (s.contains(term)) {
+                        totalStr += term + " := " + ranges + ";" +"\n" ;
+                    } else {
+                        totalStr += s +"\n";
+                    }
+                }
+                //totalStr = totalStr.replaceAll(string1, replacementString);
+                FileWriter fw = new FileWriter(log);
+                fw.write(totalStr);
+                fw.close();
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
     }
 
     public void chart() {}

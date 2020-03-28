@@ -15,7 +15,7 @@
     <top>
         <MenuBar prefWidth="1920" fx:id="menuBar">
             <Menu text="Navigation">
-                <MenuItem text="Open Product View" onAction="#openProjectViewMenuItemClick"></MenuItem>
+                <MenuItem text="Open Project View" onAction="#openProjectViewMenuItemClick"></MenuItem>
             </Menu>
             <Menu text="Menu 2">
                 <MenuItem text="Menu sub-item 1"></MenuItem>
