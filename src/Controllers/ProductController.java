@@ -1,6 +1,8 @@
 package Controllers;
 
 import Data.ProductConnector;
+import Data.ProjectConnector;
+import Misc.HelperMethods;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +14,7 @@ import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 
+import java.sql.Date;
 import java.util.ArrayList;
 
 public class ProductController {
@@ -22,63 +25,82 @@ public class ProductController {
     public TextField productDescriptionTF;
     public TextField productCostsTF;
 
-    public String activeProject;
+    public String activeProjectName;
+    public ArrayList<Object> activeProject;
     public TextField productVersionTF;
 
     public void initialize() {
-        activeProject = SceneController.activeProjectName;
-        projectName.setText(activeProject);
-        ArrayList<Object> init = ProductConnector.getAllByProduct();
-        addProduct(
-                String.valueOf(init.get(2)),
-                String.valueOf(init.get(3)),
-                Double.parseDouble(String.valueOf(init.get(5))),
-                Double.parseDouble(String.valueOf(init.get(6))),
-                String.valueOf(init.get(7)));
+        activeProject = SceneController.activeProject;
+        projectName.setText(activeProject.get(1).toString());
+        int projectId = (int) activeProject.get(0);
+        if (activeProject.size() != 0) {
+            ArrayList<ArrayList<Object>> init = ProductConnector.getAllByProjectId(projectId);
+            if (init.size() != 0) {
+                for (int i = 0; i < init.size(); i++) {
+                    addProduct(init.get(i), gridPaneLeft);
+                }
+            } else {
+                System.out.println("Product init list empty");
+            }
+        }
     }
 
     public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
-        SceneController.openView(menuBar.getScene(), getClass(), "", "projectView.fxml");
+        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
     }
 
     public void addProductBtnClick(ActionEvent actionEvent) {
-        addProduct(productNameTF.getText(), productDescriptionTF.getText(), null, null, productVersionTF.getText());
+
+        ArrayList<Object> queryResults = ProductConnector.insertIntoProduct((Integer) activeProject.get(0),
+                productNameTF.getText(), productDescriptionTF.getText(), null, null,
+                null, productVersionTF.getText());
+
+        addProduct(queryResults, gridPaneLeft);
     }
 
-    public void addProduct(String productName, String productDescription, Double productPrice,
-                           Double productCosts, String productVersion) {
-        Label productNameLb = new Label(productName);
-        Label productDescriptionLb = new Label(productDescription);
-        Label productVersionLb = new Label(productVersion);
+    public void addProduct(ArrayList<Object> product, GridPane gridPaneChosen) {
+        System.out.println(product);
+        Label productNameLb = new Label((String)product.get(2));
+        Label productDescriptionLb = new Label((String)product.get(3));
+        Label productVersionLb = new Label((String)product.get(7));
         Label productCostsLb;
         Label productPriceLb;
 
-        if (productPrice == 0.0) { productPriceLb = new Label("Product Pricing Required"); }
-        else { productPriceLb = new Label(String.valueOf(productPrice)); }
+        try {
+            productPriceLb = new Label(String.valueOf(((Double)product.get(6))));
+        } catch (Exception e) {
+            productPriceLb = new Label("Product Pricing Required");
+            System.out.println(e.getMessage() + " " + e.getStackTrace());
+        }
 
-        if (productCosts == 0.0) { productCostsLb = new Label("Product Costing Required"); }
-        else { productCostsLb = new Label(String.valueOf(productCosts)); }
+        try {
+            productCostsLb = new Label(String.valueOf(((Double)product.get(6))));
+        } catch (Exception e) {
+            productCostsLb = new Label("Product Costing Required");
+            System.out.println(e.getMessage() + " " + e.getStackTrace());
+        }
 
-        Button productPricingButton = new Button(productName + " pricing");
+        Button productPricingButton = new Button(((String)product.get(2)) + " pricing");
         productPricingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
             // TODO Change hard-coded product ID
-            SceneController.openView(scene, getClass(), "<Project TODO>", productName, 1, productPrice, "priceSetting.fxml");
+            //ProductConnector.getProductByProjectAndProduct(projectId, productName);
+            SceneController.openView(scene, getClass(), activeProject, product,"priceSetting.fxml");
         });
-        Button productCostingButton = new Button(productName + " costing");
+        Button productCostingButton = new Button(((String)product.get(2)) + " costing");
         productCostingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), "<Project TODO>", productName, "costingView.fxml");
+            SceneController.openView(scene, getClass(), activeProject, product, "costingView.fxml");
         });
 
-        int rowIndex = gridPaneLeft.getRowCount()+1;
+        int rowIndex = gridPaneChosen.getRowCount()+1;
 
-        gridPaneLeft.add(productNameLb, 0, rowIndex);
-        gridPaneLeft.add(productDescriptionLb, 1, rowIndex);
-        gridPaneLeft.add(productPriceLb, 2, rowIndex);
-        gridPaneLeft.add(productCostsLb,3, rowIndex);
-        gridPaneLeft.add(productVersionLb, 4, rowIndex);
-        gridPaneLeft.add(productPricingButton, 5, rowIndex);
-        gridPaneLeft.add(productCostingButton, 6, rowIndex);
+        gridPaneChosen.add(productNameLb, 0, rowIndex);
+        gridPaneChosen.add(productDescriptionLb, 1, rowIndex);
+        gridPaneChosen.add(productPriceLb, 2, rowIndex);
+        gridPaneChosen.add(productCostsLb,3, rowIndex);
+        gridPaneChosen.add(productVersionLb, 4, rowIndex);
+        gridPaneChosen.add(productPricingButton, 5, rowIndex);
+        gridPaneChosen.add(productCostingButton, 6, rowIndex);
     }
 }

@@ -61,8 +61,8 @@ public class CostingController {
     private ArrayList<ArrayList<Object>> equipmentList = new ArrayList<>();
     private ArrayList<ArrayList<Object>> storyList = new ArrayList<>();
 
-    private String productName;
-    private String productId;
+    private ArrayList<Object> activeProduct;
+    private ArrayList<Object> activeProject;
 
     public void initialize() {
         FTEEquivalent.focusedProperty().addListener(new ChangeListener<Boolean>()
@@ -231,12 +231,6 @@ public class CostingController {
     }
 
     public void costingViewSaveButtonClick(ActionEvent actionEvent) {
-        Random rand = new Random();
-        int m = rand.nextInt(100);
-        Random random = new Random();
-        int n = random.nextInt(1000);
-        n = 1;
-        productId = String.valueOf(n);
         Double check1 = -1.0;
         Double check2 = -1.0;
         try {
@@ -252,9 +246,9 @@ public class CostingController {
             return;
         }
         double temp = totalEquipmentCosts + totalEmployeeCosts;
-        CostingConnector.insertIntoProductCosting(n, check1, check2);
-        CostingConnector.insertIntoUserStories(storyList);
-        CostingConnector.insertIntoEquipment(n, equipmentList);
-        ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
+//        CostingConnector.insertIntoProductCosting(n, check1, check2);
+//        CostingConnector.insertIntoUserStories(storyList);
+//        CostingConnector.insertIntoEquipment(n, equipmentList);
+        //ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
     }
 }

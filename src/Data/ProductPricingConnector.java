@@ -93,14 +93,13 @@ public class ProductPricingConnector {
         Connection c = null;
         Statement stmt = null;
         ArrayList<Object> queryResults = new ArrayList<>();
-        Object[] returnArray = new Object[2];
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully - Product Select by product name and project");
+            System.out.println("Opened database successfully - Product Pricing Select by product name and project");
 
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery( "SELECT * FROM public.\"ProductPricing\"" +

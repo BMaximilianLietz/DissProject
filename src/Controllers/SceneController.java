@@ -4,33 +4,25 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 
+import java.util.ArrayList;
+
 public class SceneController {
 
-    static String activeProjectName;
-    static String activeProductName;
-    static Double activeProductCost;
-    static int activeProductId;
+    static ArrayList<Object> activeProject;
+    static ArrayList<Object> activeProduct;
 
     public static void openView(Scene scene, Class getClass, String fileName) {
         setRoot(scene, getClass, fileName);
     }
 
-    public static void openView(Scene scene, Class getClass, String projectName, String fileName) {
-        activeProjectName = projectName;
+    public static void openView(Scene scene, Class getClass, ArrayList<Object> project, String fileName) {
+        activeProject = project;
         setRoot(scene, getClass, fileName);
     }
 
-    public static void openView(Scene scene, Class getClass, String projectName, String productName, String fileName) {
-        activeProjectName = projectName;
-        activeProductName = productName;
-        setRoot(scene, getClass, fileName);
-    }
-
-    public static void openView(Scene scene, Class getClass, String projectName, String productName, int productId, Double productCost, String fileName) {
-        activeProjectName = projectName;
-        activeProductName = productName;
-        activeProductCost = productCost;
-        activeProductId = productId;
+    public static void openView(Scene scene, Class getClass, ArrayList<Object> project, ArrayList<Object> product, String fileName) {
+        activeProject = project;
+        activeProduct = product;
         setRoot(scene, getClass, fileName);
     }
 

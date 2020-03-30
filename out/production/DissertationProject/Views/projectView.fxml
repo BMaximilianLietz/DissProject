@@ -7,6 +7,7 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
 <BorderPane fx:id="borderPane"
             xmlns="http://javafx.com/javafx"
             xmlns:fx="http://javafx.com/fxml"
@@ -47,19 +48,38 @@
                 Project Costs
             </Label>
             <Label GridPane.columnIndex="3" GridPane.rowIndex="1">
-                Select Project
+                Business Model
+            </Label>
+            <Label GridPane.columnIndex="4" GridPane.rowIndex="1">
+                Project Options
             </Label>
 
             <!-- Group 2 -->
             <Button GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#addProjectBtnClick">
                 Add a project
             </Button>
-            <TextField fx:id="projectNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Project Name"></TextField>
-            <TextField fx:id="projectDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1" promptText="Project Description"></TextField>
-            <TextField fx:id="projectCostsTF" GridPane.columnIndex="7" GridPane.rowIndex="1" promptText="Project Costs"></TextField>
+            <TextField fx:id="projectNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Project Name"/>
+            <TextField fx:id="projectDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1"
+                       promptText="Project Description"/>
+            <ComboBox fx:id="businessModelCB" GridPane.columnIndex="7" GridPane.rowIndex="1"
+                       promptText="Business Model">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="None"/>
+                        <String fx:value="Bait &amp; Hook"/>
+                        <String fx:value="Freemium Premium"/>
+                        <String fx:value="Multi-platform"/>
+                        <String fx:value="Long-tail"/>
+                        <String fx:value="Saas/IaaS (?)"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
 
             <!-- Group 3 -->
-            <Label GridPane.columnIndex="8" GridPane.rowIndex="0"> Competitors</Label>
+            <Label GridPane.columnIndex="9" GridPane.rowIndex="0"> Competitors</Label>
+            <Button GridPane.columnIndex="10" GridPane.rowIndex="0">
+                Add a competitor
+            </Button>
         </GridPane>
     </left>
 

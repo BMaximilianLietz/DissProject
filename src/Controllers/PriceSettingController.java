@@ -1,7 +1,9 @@
 package Controllers;
 
+import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Models.FuzzyLogic;
+import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -43,10 +45,12 @@ public class PriceSettingController {
     public Label productName;
     public Label productCost;
     public Label proposedPricePerCustomer;
-    private Double activeProductCost;
-    private int activeProductId;
+    private ArrayList<Object> activeProject;
+    private ArrayList<Object> activeProduct;
 
     public void initialize() {
+        activeProject = SceneController.activeProject;
+        activeProduct = SceneController.activeProduct;
 
         priceSettingFLM = new FuzzyLogic();
         priceSettingFLM.init("pricing");
@@ -67,19 +71,20 @@ public class PriceSettingController {
             System.out.println(newValue);
         });
 
-        activeProductCost = SceneController.activeProductCost;
-        activeProductId = SceneController.activeProductId;
-
-        projectName.setText(SceneController.activeProjectName);
-        productName.setText(SceneController.activeProductName);
-        productCost.setText(String.valueOf(activeProductCost));
+        projectName.setText((String)SceneController.activeProject.get(1));
+        productName.setText((String)activeProduct.get(2));
+        productCost.setText(((Double)activeProduct.get(5)).toString());
 
         Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
                 marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
                 numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
                 allowedVarianceTF};
 
-        ArrayList<Object> queryResults = ProductPricingConnector.getAllProductPricingByProductId(1);
+        System.out.println("Id: " + activeProduct.get(0));
+
+        ArrayList<Object> queryResults =
+                ProductPricingConnector.getAllProductPricingByProductId((Integer)activeProduct.get(0));
+//        System.out.println(queryResults);
 
         for (int i = 0; i < nodeArray.length; i++) {
             //System.out.println(i);
@@ -145,9 +150,7 @@ public class PriceSettingController {
             priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
 
             priceSettingFLM.evaluate();
-            //priceSettingFLM.getChartFunctionBlock();
 
-//            /zSystem.out.println(priceSettingFLM.getFunctionBlock());
             System.out.println("Price: " + priceSettingFLM.getFunctionBlock().getVariable("price").getValue());
             proposedPricePerCustomer.setText(String.valueOf(priceSettingFLM.getFunctionBlock().getVariable("price").getValue()));
 
