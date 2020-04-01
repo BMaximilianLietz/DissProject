@@ -45,8 +45,11 @@ public class PriceSettingController {
     public Label productName;
     public Label productCost;
     public Label proposedPricePerCustomer;
+    public MenuBar menuBar;
     private ArrayList<Object> activeProject;
     private ArrayList<Object> activeProduct;
+
+    Boolean isInsert = true;
 
     public void initialize() {
         activeProject = SceneController.activeProject;
@@ -75,29 +78,33 @@ public class PriceSettingController {
         productName.setText((String)activeProduct.get(2));
         productCost.setText(((Double)activeProduct.get(5)).toString());
 
-        Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
-                marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
-                numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
-                allowedVarianceTF};
-
         System.out.println("Id: " + activeProduct.get(0));
-
-        ArrayList<Object> queryResults =
-                ProductPricingConnector.getAllProductPricingByProductId((Integer)activeProduct.get(0));
 //        System.out.println(queryResults);
 
-        for (int i = 0; i < nodeArray.length; i++) {
-            //System.out.println(i);
-            String queryItem = String.valueOf(queryResults.get(i+1));
-//            System.out.println(queryItem);
-            if (nodeArray[i].getClass().getName().equals("javafx.scene.control.ComboBox")) {
-                ((ComboBox)nodeArray[i]).getSelectionModel().select(queryItem);
-                if ((i<10)||(i>13)) {
-                    System.out.println(queryItem);
-                    addVariableInit((ComboBox)nodeArray[i]);
+        if (activeProduct.size() != 0) {
+
+            isInsert = false;
+
+            Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
+                    marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
+                    numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
+                    allowedVarianceTF};
+
+            ArrayList<Object> queryResults =
+                    ProductPricingConnector.getAllProductPricingByProductId(Integer.parseInt(activeProduct.get(0).toString()));
+
+            for (int i = 0; i < nodeArray.length; i++) {
+                //System.out.println(i);
+                String queryItem = String.valueOf(queryResults.get(i+1));
+                if (nodeArray[i].getClass().getName().equals("javafx.scene.control.ComboBox")) {
+                    ((ComboBox)nodeArray[i]).getSelectionModel().select(queryItem);
+                    if ((i<10)||(i>13)) {
+                        System.out.println(queryItem);
+                        addVariableInit((ComboBox)nodeArray[i]);
+                    }
+                } else {
+                    ((TextField)nodeArray[i]).setText(queryItem);
                 }
-            } else {
-                ((TextField)nodeArray[i]).setText(queryItem);
             }
         }
     }
@@ -125,26 +132,44 @@ public class PriceSettingController {
             alert.showAndWait();
             return;
         } else {
-            /*
-            ProductPricingConnector.insertAllProductPricing(activeProductId,
-                    java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
-                    Double.parseDouble(desiredMarginTF.getText()),
-                    java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
-                    Integer.parseInt(numberCustomersTF.getText()),
-                    java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
-                    java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
-                    java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
-                    Double.parseDouble(desiredMarkupTF.getText()),
-                    Double.parseDouble(allowedVarianceTF.getText()));
+            if (isInsert) {
+                ProductPricingConnector.insertAllProductPricing((Integer)activeProduct.get(0),
+                        java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
+                        Double.parseDouble(desiredMarginTF.getText()),
+                        java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
+                        Integer.parseInt(numberCustomersTF.getText()),
+                        java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
+                        java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
+                        Double.parseDouble(desiredMarkupTF.getText()),
+                        Double.parseDouble(allowedVarianceTF.getText()));
+            } else {
+                ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
+                        java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
+                        Double.parseDouble(desiredMarginTF.getText()),
+                        java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
+                        Integer.parseInt(numberCustomersTF.getText()),
+                        java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
+                        java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
+                        java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
+                        Double.parseDouble(desiredMarkupTF.getText()),
+                        Double.parseDouble(allowedVarianceTF.getText()));
+            }
 
-             */
 
             double commValue = Double.parseDouble(commoditizationValueForm.getText());
             priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
@@ -195,16 +220,6 @@ public class PriceSettingController {
         commoditizationValueForm.setText(String.valueOf(commoditizationFLM.getFunctionBlock().getVariable("commoditizationOutputValue").getValue()));
     }
 
-    public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
-        Scene scene = ((Node)actionEvent.getTarget()).getScene();
-        SceneController.openView(scene, getClass(), "productView.fxml");
-    }
-
-    public void openProductViewMenuItemClick(ActionEvent actionEvent) {
-        Scene scene = ((Node)actionEvent.getTarget()).getScene();
-        SceneController.openView(scene, getClass(), "productView.fxml");
-    }
-
     public void calculatePriceButtonClick(ActionEvent actionEvent) {
 
         Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
@@ -233,5 +248,13 @@ public class PriceSettingController {
 
         System.out.println("element " + element + " and " + selectedIndex);
         priceSettingFLM.functionBlockSetVariable(element, (double) selectedIndex);
+    }
+
+    public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
+        SceneController.openView(menuBar.getScene(), getClass(), "projectView.fxml");
+    }
+
+    public void openProductViewMenuItemClick(ActionEvent actionEvent) {
+        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
     }
 }

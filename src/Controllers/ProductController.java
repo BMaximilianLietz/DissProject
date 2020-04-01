@@ -45,10 +45,6 @@ public class ProductController {
         }
     }
 
-    public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
-        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
-    }
-
     public void addProductBtnClick(ActionEvent actionEvent) {
 
         ArrayList<Object> queryResults = ProductConnector.insertIntoProduct((Integer) activeProject.get(0),
@@ -102,5 +98,11 @@ public class ProductController {
         gridPaneChosen.add(productVersionLb, 4, rowIndex);
         gridPaneChosen.add(productPricingButton, 5, rowIndex);
         gridPaneChosen.add(productCostingButton, 6, rowIndex);
+    }
+
+    // Navigation
+
+    public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
+        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
     }
 }

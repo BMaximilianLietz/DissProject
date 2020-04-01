@@ -17,7 +17,7 @@
 <?import javafx.scene.control.TextField?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.PriceSettingController" >
     <top>
-        <MenuBar GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" prefWidth="1920">
+        <MenuBar fx:id="menuBar" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" prefWidth="1920">
             <Menu text="Navigation">
                 <MenuItem text="Open Project View" onAction="#openProjectViewMenuItemClick"></MenuItem>
                 <MenuItem text="Open Product View" onAction="#openProductViewMenuItemClick"></MenuItem>

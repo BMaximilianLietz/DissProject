@@ -10,6 +10,8 @@ import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Alert;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
@@ -37,6 +39,7 @@ public class CostingController {
     public Label equipmentTotalCostLabel;
     public GridPane gridPaneHardware;
     public TextField projectName;
+    public MenuBar menuBar;
     List<List<String>> iterationList;
 
     @FXML
@@ -76,95 +79,35 @@ public class CostingController {
                 }
             }
         });
+
+        ArrayList<Object> userStoryQueryResults =
+                CostingConnector.getUserStoriesByProduct((Integer)activeProduct.get(0));
+        ArrayList<Object> equipmentQueryResults =
+                CostingConnector.getEquipmentByProduct((Integer)activeProduct.get(0));
+        ArrayList<Object> getCostingQueryRsults =
+                CostingConnector.getCostingByProduct((Integer)activeProduct.get(0));
+
+        for (int i = 0; i < userStoryQueryResults.size(); i++) {
+//            addUserStory(gridPaneLeft.getScene(), );
+            /*
+            addUserStory(gridPaneLeft.getScene(),
+            Integer.parseInt(storyPointsTextField.getText()),
+            iterationTextField.getText(),
+            userStoryNameTextField.getText());
+
+             */
+        }
+        for (int i = 0; i < userStoryQueryResults.size(); i++) {
+//            addEquipmentBtnClick();
+        }
+        // Do costing manually, only two fields anyway
+
+
     }
 
     public void addUserStoryBtnClick(ActionEvent actionEvent) {
-
-        // TODO add points for iterations
-        //<Label fx:id="iterationsTotalPoints" GridPane.columnIndex="2" GridPane.rowIndex="1">0</Label>
-
-//        int addedRow = gridPaneLeft.getRowCount()+1;
-        //int addedRowUserStories = gridPaneUserStories.getRowCount();
-        int actualPoints;
-        Scene scene = ((Node)actionEvent.getTarget()).getScene();
-        try {
-            actualPoints = Integer.parseInt(storyPointsTextField.getText());
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error");
-            alert.setContentText("The Input for Story Points must be an integer");
-            alert.initOwner(((Node)actionEvent.getTarget()).getScene().getWindow());
-            alert.showAndWait();
-            return;
-        }
-
-        Label iterationLabel;
-        Text preExistingLbl;
-
-        try {
-            iterationLabel = (Label) scene.lookup("#" + iterationTextField.getText());
-            preExistingLbl = (Text) scene.lookup("#list" + iterationTextField.getText());
-            preExistingLbl.setText(preExistingLbl.getText() + ", " + userStoryNameTextField.getText());
-        } catch (Exception e) {
-            System.out.println(e.getCause() + " " + e.getStackTrace());
-            ScrollPane scrollPane = new ScrollPane();
-            scrollPane.prefWidth(250.0);
-            scrollPane.pannableProperty().setValue(true);
-            scrollPane.fitToWidthProperty().setValue(true);
-            scrollPane.fitToHeightProperty().setValue(true);
-            scrollPane.hbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
-
-            try {
-                iterationLabel = new Label(iterationTextField.getText());
-                iterationLabel.setId(iterationTextField.getText());
-
-                Text text = new Text();
-                text.idProperty().setValue("list"+iterationTextField.getText());
-                text.setText(userStoryNameTextField.getText());
-                System.out.println("id: " + text.getId());
-                text.wrappingWidthProperty().bind(scrollPane.widthProperty());
-
-                scrollPane.contentProperty().setValue(text);
-                gridPaneIterations.add(iterationLabel, 0, gridPaneIterations.getRowCount() + 1);
-                gridPaneIterations.add(scrollPane, 1, gridPaneIterations.getRowCount());
-
-            } catch (Exception eh) {
-                System.out.println("Something in the convoluted try catch statement went wrong");
-            }
-        }
-
-        /*
-        iterationsListLabel.wrappingWidthProperty().bind(scrollPaneIterations.widthProperty());
-
-        <ScrollPane fx:id="scrollPaneIterations" GridPane.columnIndex="1" GridPane.rowIndex="1"
-                                prefWidth="250.0"
-                                pannable="true" fitToWidth="true" fitToHeight="true" hbarPolicy="NEVER">
-                        <content>
-                            <Text fx:id="iterationsListLabel"></Text>
-                        </content>
-                    </ScrollPane>
-         */
-        Label iteration = new Label(iterationTextField.getText());
-        Label storyName = new Label(userStoryNameTextField.getText());
-        Label storyPoints = new Label(storyPointsTextField.getText());
-
-        System.out.println(GridPane.getRowIndex(storyPointsTotalLabel));
-        GridPane.setRowIndex(storyPointsTotalLabel, GridPane.getRowIndex(storyPointsTotalLabel)+1);
-        GridPane.setRowIndex(storyPointsTotalPoints, GridPane.getRowIndex(storyPointsTotalPoints)+1);
-        System.out.println(gridPaneUserStories.getRowCount());
-
-        gridPaneUserStories.add(storyName, 0, gridPaneUserStories.getRowCount()-2);
-        gridPaneUserStories.add(storyPoints, 1,gridPaneUserStories.getRowCount()-2);
-
-        int totalPoints = Integer.parseInt(storyPointsTotalPoints.getText())+actualPoints;
-        storyPointsTotal = totalPoints;
-        ArrayList<Object> bufferList = new ArrayList<Object>();
-        bufferList.add(userStoryNameTextField.getText());
-        bufferList.add(actualPoints);
-        bufferList.add(iterationTextField.getText());
-        storyList.add(bufferList);
-        storyPointsTotalPoints.setText(String.valueOf(totalPoints));
+        addUserStory(((Node)actionEvent.getTarget()).getScene(), Integer.parseInt(storyPointsTextField.getText()),
+                iterationTextField.getText(), userStoryNameTextField.getText());
     }
 
     public void calculateEmployeeCosts(ActionEvent actionEvent) {
@@ -191,43 +134,6 @@ public class CostingController {
 
 //        int addedRow = gridPaneLeft.getRowCount()+1;
         //int addedRowUserStories = gridPaneUserStories.getRowCount();
-        double equipmentPrice;
-        double equipmentQuantity;
-        double equipmentCosts;
-        try {
-            equipmentPrice = Double.parseDouble(equipmentPriceTextField.getText());
-            equipmentQuantity = Double.parseDouble(equipmentQuantityTextField.getText());
-            totalEquipmentCosts += equipmentPrice * equipmentQuantity;
-        } catch (Exception e) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error");
-            alert.setContentText("The Input for Equipment Price/Quantity must be a decimal");
-            alert.initOwner(((Node)actionEvent.getTarget()).getScene().getWindow());
-            alert.showAndWait();
-            return;
-        }
-
-        Label equipmentNameLabel = new Label(equipmentNameTextField.getText());
-        Label equipmentPriceLabel = new Label(equipmentPriceTextField.getText());
-        Label equipmentQuantityLabel = new Label(equipmentQuantityTextField.getText());
-        Label equipmentWholePrice = new Label (String.valueOf(equipmentPrice*equipmentQuantity));
-
-        GridPane.setRowIndex(equipmentTotalCostInfoLabel, GridPane.getRowIndex(equipmentTotalCostInfoLabel)+1);
-        GridPane.setRowIndex(equipmentTotalCostLabel, GridPane.getRowIndex(equipmentTotalCostLabel)+1);
-        System.out.println(gridPaneHardware.getRowCount());
-
-        gridPaneHardware.add(equipmentNameLabel, 0, gridPaneHardware.getRowCount()-2);
-        gridPaneHardware.add(equipmentWholePrice, 1,gridPaneHardware.getRowCount()-2);
-        gridPaneHardware.add(equipmentPriceLabel, 2,gridPaneHardware.getRowCount()-2);
-        gridPaneHardware.add(equipmentQuantityLabel, 3,gridPaneHardware.getRowCount()-2);
-
-        equipmentTotalCostLabel.setText(String.valueOf(totalEquipmentCosts) + "\u00a3");
-        ArrayList<Object> bufferList = new ArrayList<Object>();
-        bufferList.add(equipmentNameTextField.getText());
-        bufferList.add(equipmentQuantityTextField.getText());
-        bufferList.add(equipmentPriceTextField.getText());
-        equipmentList.add(bufferList);
     }
 
     public void costingViewSaveButtonClick(ActionEvent actionEvent) {
@@ -251,4 +157,112 @@ public class CostingController {
 //        CostingConnector.insertIntoEquipment(n, equipmentList);
         //ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
     }
+
+    public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
+        SceneController.openView(menuBar.getScene(), getClass(), "projectView.fxml");
+    }
+
+    public void openProductViewMenuItemClick(ActionEvent actionEvent) {
+        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
+    }
+
+    public void addUserStory(Scene scene, Integer storyPoints, String iteration, String storyName){
+//        ((Node)actionEvent.getTarget()).getScene()
+        int actualPoints = storyPoints;
+
+        Label iterationLabel;
+        Text preExistingLbl;
+
+        try {
+            iterationLabel = (Label) scene.lookup("#" + iteration);
+            preExistingLbl = (Text) scene.lookup("#list" + iteration);
+            preExistingLbl.setText(preExistingLbl.getText() + ", " + storyName);
+        } catch (Exception e) {
+            System.out.println(e.getCause() + " " + e.getStackTrace());
+            ScrollPane scrollPane = new ScrollPane();
+            scrollPane.prefWidth(250.0);
+            scrollPane.pannableProperty().setValue(true);
+            scrollPane.fitToWidthProperty().setValue(true);
+            scrollPane.fitToHeightProperty().setValue(true);
+            scrollPane.hbarPolicyProperty().setValue(ScrollPane.ScrollBarPolicy.NEVER);
+
+            try {
+                iterationLabel = new Label(iteration);
+                iterationLabel.setId(iteration);
+
+                Text text = new Text();
+                text.idProperty().setValue("list"+iteration);
+                text.setText(storyName);
+                System.out.println("id: " + text.getId());
+                text.wrappingWidthProperty().bind(scrollPane.widthProperty());
+
+                scrollPane.contentProperty().setValue(text);
+                gridPaneIterations.add(iterationLabel, 0, gridPaneIterations.getRowCount() + 1);
+                gridPaneIterations.add(scrollPane, 1, gridPaneIterations.getRowCount());
+
+            } catch (Exception eh) {
+                System.out.println("Something in the convoluted try catch statement went wrong");
+            }
+        }
+
+        Label iterationLbl = new Label(iteration);
+        Label storyNameLbl = new Label(storyName);
+        Label storyPointsLbl = new Label(storyPoints.toString());
+
+        System.out.println(GridPane.getRowIndex(storyPointsTotalLabel));
+        GridPane.setRowIndex(storyPointsTotalLabel, GridPane.getRowIndex(storyPointsTotalLabel)+1);
+        GridPane.setRowIndex(storyPointsTotalPoints, GridPane.getRowIndex(storyPointsTotalPoints)+1);
+        System.out.println(gridPaneUserStories.getRowCount());
+
+        int rowIndex = gridPaneUserStories.getRowCount()-2;
+        gridPaneUserStories.add(storyNameLbl, 0, rowIndex);
+        gridPaneUserStories.add(storyPointsLbl, 1,rowIndex);
+
+        int totalPoints = Integer.parseInt(storyPointsTotalPoints.getText())+actualPoints;
+        storyPointsTotal = totalPoints;
+        ArrayList<Object> bufferList = new ArrayList<Object>();
+        bufferList.add(userStoryNameTextField.getText());
+        bufferList.add(actualPoints);
+        bufferList.add(iterationTextField.getText());
+        storyList.add(bufferList);
+        storyPointsTotalPoints.setText(String.valueOf(totalPoints));
+    }
+
+    public void addEquipment(Scene scene, String equipmentName, Double equipmentPrice, Integer equipmentQuantity) {
+
+        totalEquipmentCosts += equipmentPrice * equipmentQuantity;
+
+        Label equipmentNameLabel = new Label(equipmentName);
+        Label equipmentPriceLabel = new Label(equipmentPrice.toString());
+        Label equipmentQuantityLabel = new Label(equipmentQuantity.toString());
+        Label equipmentWholePrice = new Label (String.valueOf(equipmentPrice*equipmentQuantity));
+
+        int rowIndex = GridPane.getRowIndex(equipmentTotalCostInfoLabel)+1;
+        GridPane.setRowIndex(equipmentTotalCostInfoLabel, rowIndex);
+        GridPane.setRowIndex(equipmentTotalCostLabel, rowIndex);
+//        System.out.println(gridPaneHardware.getRowCount());
+
+        int rowIndex2 = gridPaneHardware.getRowCount()-2;
+        gridPaneHardware.add(equipmentNameLabel, 0, rowIndex2);
+        gridPaneHardware.add(equipmentWholePrice, 1,rowIndex2);
+        gridPaneHardware.add(equipmentPriceLabel, 2,rowIndex2);
+        gridPaneHardware.add(equipmentQuantityLabel, 3,rowIndex2);
+
+        equipmentTotalCostLabel.setText(String.valueOf(totalEquipmentCosts) + "\u00a3");
+        ArrayList<Object> bufferList = new ArrayList<Object>();
+        bufferList.add(equipmentName);
+        bufferList.add(equipmentQuantity.toString());
+        bufferList.add(equipmentPrice.toString());
+        equipmentList.add(bufferList);
+    }
+
+    /*
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error");
+            alert.setContentText("The Input for Story Points must be an integer");
+            alert.initOwner(scene.getWindow());
+            alert.showAndWait();
+            return;
+             */
 }

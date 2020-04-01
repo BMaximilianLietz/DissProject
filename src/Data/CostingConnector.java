@@ -1,8 +1,6 @@
 package Data;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.Statement;
+import java.sql.*;
 import java.util.ArrayList;
 
 public class CostingConnector {
@@ -117,5 +115,133 @@ public class CostingConnector {
             System.exit(0);
         }
         System.out.println("Records created successfully");
+    }
+
+    public static void updateProductCosting(int id, double fTEEq, double labourEq) {
+        Connection c = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully for Product Costing Alteration");
+
+            PreparedStatement sql = c.prepareStatement("UPDATE public.\"ProductCosting\" " +
+                    "SET \"fteEquivalent\" = ?" +
+                    ",\"labourCosts1WorkingHour\" = ? "
+                    + " WHERE \"productId\" = ? );");
+            sql.execute();
+
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+    }
+
+    public static ArrayList<Object> getCostingByProduct(int productId) {
+        Connection c = null;
+        ArrayList<Object> queryResults = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully - Product Costing");
+
+            PreparedStatement getCosting = c.prepareStatement("SELECT * FROM public.\"ProductCosting\" " +
+                    "WHERE \"productId\" = ?;");
+
+            ResultSet getCostingResultSet = getCosting.executeQuery();
+
+            while ( getCostingResultSet.next() ) {
+                queryResults.add(getCostingResultSet.getInt(1));
+                queryResults.add(getCostingResultSet.getDouble(2));
+                queryResults.add(getCostingResultSet.getDouble(3));
+            }
+
+            getCosting.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Costing SELECT Successful");
+        return queryResults;
+    }
+
+    public static ArrayList<Object> getUserStoriesByProduct(int productId) {
+        Connection c = null;
+        ArrayList<Object> queryResults = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully - User Stories");
+
+            PreparedStatement getCosting = c.prepareStatement("SELECT * FROM public.\"UserStories\" " +
+                    "WHERE \"productId\" = ?;");
+
+            ResultSet getCostingResultSet = getCosting.executeQuery();
+
+            while ( getCostingResultSet.next() ) {
+                queryResults.add(getCostingResultSet.getInt(1));
+                queryResults.add(getCostingResultSet.getString(2));
+                queryResults.add(getCostingResultSet.getInt(3));
+                queryResults.add(getCostingResultSet.getString(4));
+                queryResults.add(getCostingResultSet.getInt(5));
+            }
+            getCosting.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("User Stories SELECT Successful");
+        return queryResults;
+    }
+
+    public static ArrayList<Object> getEquipmentByProduct(int productId) {
+        Connection c = null;
+        ArrayList<Object> queryResults = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully - Equipment");
+
+            PreparedStatement getCosting = c.prepareStatement("SELECT * FROM public.\"Equipment\" " +
+                    "WHERE \"productId\" = ?;");
+
+            ResultSet getCostingResultSet = getCosting.executeQuery();
+
+            while ( getCostingResultSet.next() ) {
+                queryResults.add(getCostingResultSet.getInt(1));
+                queryResults.add(getCostingResultSet.getString(2));
+                queryResults.add(getCostingResultSet.getInt(3));
+                queryResults.add(getCostingResultSet.getDouble(4));
+                queryResults.add(getCostingResultSet.getInt(5));
+            }
+            getCosting.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Equipment SELECT Successful");
+        return queryResults;
     }
 }

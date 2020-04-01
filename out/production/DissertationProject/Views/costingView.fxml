@@ -7,7 +7,6 @@
 <?import javafx.scene.layout.*?>
 
 <?import javafx.geometry.Insets?>
-<?import javafx.scene.control.skin.SplitPaneSkin.Content?>
 <?import javafx.scene.text.Text?>
 <BorderPane fx:id="borderPane"
             xmlns="http://javafx.com/javafx"
@@ -15,12 +14,10 @@
             fx:controller="Controllers.CostingController"
             prefHeight="900.0" prefWidth="1920.0">
     <top>
-        <MenuBar prefWidth="1920">
-            <Menu text="Menu 1">
-                <MenuItem text="Menu sub-item 1"></MenuItem>
-                <MenuItem text="Menu sub-item 2"></MenuItem>
-                <MenuItem text="Menu sub-item 3"></MenuItem>
-                <MenuItem text="Menu sub-item 4"></MenuItem>
+        <MenuBar fx:id="menuBar" prefWidth="1920">
+            <Menu text="Navigation">
+                <MenuItem text="Open Project View" onAction="#openProjectViewMenuItemClick"></MenuItem>
+                <MenuItem text="Open Product View" onAction="#openProductViewMenuItemClick"></MenuItem>
             </Menu>
             <Menu text="Menu 2">
                 <MenuItem text="Menu sub-item 1"></MenuItem>

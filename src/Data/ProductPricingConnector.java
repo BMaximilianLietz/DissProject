@@ -40,11 +40,11 @@ public class ProductPricingConnector {
         System.out.println("Records created successfully");
     }
 
-    public static void insertAllProductPricing(int projectId, String preferredPricingStrategy,
+    public static void insertAllProductPricing(Integer projectId, String preferredPricingStrategy,
                                                Double desiredMargin, String target, String industryPriceClustering,
                                                String itemQualityImportance, String marketSaturation,
                                                String marketSegmentation, String brandValue, String distributionChannel,
-                                               String priceElasticity, int numberCustomers, String preProcessing,
+                                               String priceElasticity, Integer numberCustomers, String preProcessing,
                                                String itemImitability, String degreePriceCompetition,
                                                Double desiredMarkup, Double allowedVariance) {
         Connection c = null;
@@ -56,7 +56,7 @@ public class ProductPricingConnector {
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully (for Product table alteration)");
+            System.out.println("Opened database successfully (for productPricing insert)");
 
             try {
                 stmt = c.createStatement();
@@ -139,6 +139,78 @@ public class ProductPricingConnector {
         }
         System.out.println("Operation getAllByProductNameAndProject done successfully");
         return queryResults;
+    }
+
+    public static void updateProductPricing(Integer productId, String preferredPricingStrategy,
+                                            Double desiredMargin, String target, String industryPriceClustering,
+                                            String itemQualityImportance, String marketSaturation,
+                                            String marketSegmentation, String brandValue, String distributionChannel,
+                                            String priceElasticity, Integer numberCustomers, String preProcessing,
+                                            String itemImitability, String degreePriceCompetition,
+                                            Double desiredMarkup, Double allowedVariance) {
+
+        Connection c = null;
+        Statement stmt = null;
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully (for productPricing table update)");
+
+            try {
+                PreparedStatement  sql = c.prepareStatement("UPDATE public.\"ProductPricing\" " +
+                        "SET \"pricingStrategy\" = ?" +
+                        ", \"desiredMargin\" = ?" +
+                        ", \"target\" = ?" +
+                        ", \"priceClustering\" = ?" +
+                        ", \"itemQuality\" = ?" +
+                        ", \"marketSaturation\" = ?" +
+                        ", \"marketSegmentation\" = ?" +
+                        ", \"brandValue\" = ?" +
+                        ", \"distributionChannel\" = ?" +
+                        ", \"priceElasticity\" = ?" +
+                        ", \"numberCustomers\" = ?" +
+                        ", \"preProcessing\" = ?" +
+                        ", \"itemImitability\" = ?" +
+                        ", \"degreePriceCompetition\" = ?" +
+                        ", \"desiredMarkup\" = ?" +
+                        ", \"allowedVariance\" = ?" +
+                        "WHERE productId = ?;");
+                sql.setString(1, preferredPricingStrategy);
+                sql.setDouble(2, desiredMargin);
+                sql.setString(3, target);
+                sql.setString(4, industryPriceClustering);
+                sql.setString(5, itemQualityImportance);
+                sql.setString(6, marketSaturation);
+                sql.setString(7, marketSegmentation);
+                sql.setString(8, brandValue);
+                sql.setString(9, distributionChannel);
+                sql.setString(10, priceElasticity);
+                sql.setInt(11, numberCustomers);
+                sql.setString(12, preProcessing);
+                sql.setString(13, itemImitability);
+                sql.setString(14, degreePriceCompetition);
+                sql.setDouble(15, desiredMarkup);
+                sql.setDouble(16, allowedVariance);
+                sql.setInt(17, productId);
+
+                sql.execute();
+            } catch (Exception e) {
+                System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+                System.exit(0);
+            }
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+
     }
 
 }
