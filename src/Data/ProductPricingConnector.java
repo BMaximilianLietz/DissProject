@@ -168,7 +168,7 @@ public class ProductPricingConnector {
                         ", \"priceClustering\" = ?" +
                         ", \"itemQuality\" = ?" +
                         ", \"marketSaturation\" = ?" +
-                        ", \"marketSegmentation\" = ?" +
+                        ", \"isMarketSegmented\" = ?" +
                         ", \"brandValue\" = ?" +
                         ", \"distributionChannel\" = ?" +
                         ", \"priceElasticity\" = ?" +
@@ -178,7 +178,7 @@ public class ProductPricingConnector {
                         ", \"degreePriceCompetition\" = ?" +
                         ", \"desiredMarkup\" = ?" +
                         ", \"allowedVariance\" = ?" +
-                        "WHERE productId = ?;");
+                        "WHERE \"productId\" = ?;");
                 sql.setString(1, preferredPricingStrategy);
                 sql.setDouble(2, desiredMargin);
                 sql.setString(3, target);

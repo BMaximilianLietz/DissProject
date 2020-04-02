@@ -33,8 +33,7 @@ public class ProjectConnector {
             queryResults.add(returnedProjectId.getString(3));
             queryResults.add(returnedProjectId.getDate(4));
             queryResults.add(returnedProjectId.getString(5));
-            queryResults.add(returnedProjectId.getString(5));
-            System.out.println(queryResults);
+            queryResults.add(returnedProjectId.getDouble(6));
 
             stmt.close();
             c.commit();
@@ -73,7 +72,6 @@ public class ProjectConnector {
                 queryResults.add(rs.getString(5));
                 queryResults.add(rs.getDouble(6));
             }
-//            System.out.println(queryResults);
             rs.close();
             stmt.close();
             c.close();

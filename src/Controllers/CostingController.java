@@ -66,6 +66,7 @@ public class CostingController {
 
     private ArrayList<Object> activeProduct;
     private ArrayList<Object> activeProject;
+    private Boolean isUpdate = false;
 
     public void initialize() {
         FTEEquivalent.focusedProperty().addListener(new ChangeListener<Boolean>()
@@ -80,28 +81,40 @@ public class CostingController {
             }
         });
 
-        ArrayList<Object> userStoryQueryResults =
+        activeProduct = SceneController.activeProduct;
+
+        ArrayList<ArrayList<Object>> userStoryQueryResults =
                 CostingConnector.getUserStoriesByProduct((Integer)activeProduct.get(0));
-        ArrayList<Object> equipmentQueryResults =
+        ArrayList<ArrayList<Object>> equipmentQueryResults =
                 CostingConnector.getEquipmentByProduct((Integer)activeProduct.get(0));
-        ArrayList<Object> getCostingQueryRsults =
+        ArrayList<ArrayList<Object>> getCostingQueryRsults =
                 CostingConnector.getCostingByProduct((Integer)activeProduct.get(0));
 
-        for (int i = 0; i < userStoryQueryResults.size(); i++) {
+        //TODO update for each and everyone one of the above required...
+
+        if (getCostingQueryRsults.size() > 0) {
+
+            isUpdate = true;
+
+            for (int i = 0; i < userStoryQueryResults.size(); i++) {
 //            addUserStory(gridPaneLeft.getScene(), );
-            /*
-            addUserStory(gridPaneLeft.getScene(),
-            Integer.parseInt(storyPointsTextField.getText()),
-            iterationTextField.getText(),
-            userStoryNameTextField.getText());
-
-             */
-        }
-        for (int i = 0; i < userStoryQueryResults.size(); i++) {
+                addUserStory(gridPaneLeft.getScene(),
+                        (Integer) userStoryQueryResults.get(i).get(2),
+                        (String) userStoryQueryResults.get(i).get(3),
+                        (String) userStoryQueryResults.get(i).get(1));
+            }
+            for (int i = 0; i < equipmentQueryResults.size(); i++) {
 //            addEquipmentBtnClick();
+//            Scene scene, String equipmentName, Double equipmentPrice, Integer equipmentQuantity
+                addEquipment(gridPaneLeft.getScene(),
+                        (String) equipmentQueryResults.get(i).get(1),
+                        (Double) equipmentQueryResults.get(i).get(3),
+                        (Integer) equipmentQueryResults.get(i).get(2));
+            }
+            // Do costing manually, only two fields anyway
+            FTEEquivalent.setText(getCostingQueryRsults.get(0).get(1).toString());
+            labourCostsWorkingHour.setText(getCostingQueryRsults.get(0).get(2).toString());
         }
-        // Do costing manually, only two fields anyway
-
 
     }
 
@@ -128,9 +141,10 @@ public class CostingController {
     }
 
     public void addEquipmentBtnClick(ActionEvent actionEvent) {
-        System.out.println(equipmentNameTextField.getText());
-        System.out.println(equipmentPriceTextField.getText());
-        System.out.println(equipmentQuantityTextField.getText());
+        addEquipment(gridPaneLeft.getScene(),
+                equipmentNameTextField.getText(),
+                Double.parseDouble(equipmentPriceTextField.getText()),
+                Integer.parseInt(equipmentQuantityTextField.getText()));
 
 //        int addedRow = gridPaneLeft.getRowCount()+1;
         //int addedRowUserStories = gridPaneUserStories.getRowCount();
@@ -152,9 +166,9 @@ public class CostingController {
             return;
         }
         double temp = totalEquipmentCosts + totalEmployeeCosts;
-//        CostingConnector.insertIntoProductCosting(n, check1, check2);
-//        CostingConnector.insertIntoUserStories(storyList);
-//        CostingConnector.insertIntoEquipment(n, equipmentList);
+        CostingConnector.insertIntoProductCosting((Integer)activeProduct.get(0), check1, check2);
+        CostingConnector.insertIntoUserStories(storyList, (Integer)activeProduct.get(0));
+        CostingConnector.insertIntoEquipment((Integer)activeProduct.get(0), equipmentList);
         //ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
     }
 
@@ -163,7 +177,7 @@ public class CostingController {
     }
 
     public void openProductViewMenuItemClick(ActionEvent actionEvent) {
-        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
+        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "productView.fxml");
     }
 
     public void addUserStory(Scene scene, Integer storyPoints, String iteration, String storyName){
@@ -193,12 +207,12 @@ public class CostingController {
                 Text text = new Text();
                 text.idProperty().setValue("list"+iteration);
                 text.setText(storyName);
-                System.out.println("id: " + text.getId());
                 text.wrappingWidthProperty().bind(scrollPane.widthProperty());
 
+                int rowIndex = gridPaneIterations.getRowCount() + 1;
                 scrollPane.contentProperty().setValue(text);
-                gridPaneIterations.add(iterationLabel, 0, gridPaneIterations.getRowCount() + 1);
-                gridPaneIterations.add(scrollPane, 1, gridPaneIterations.getRowCount());
+                gridPaneIterations.add(iterationLabel, 0, rowIndex);
+                gridPaneIterations.add(scrollPane, 1, rowIndex);
 
             } catch (Exception eh) {
                 System.out.println("Something in the convoluted try catch statement went wrong");
@@ -209,14 +223,13 @@ public class CostingController {
         Label storyNameLbl = new Label(storyName);
         Label storyPointsLbl = new Label(storyPoints.toString());
 
-        System.out.println(GridPane.getRowIndex(storyPointsTotalLabel));
-        GridPane.setRowIndex(storyPointsTotalLabel, GridPane.getRowIndex(storyPointsTotalLabel)+1);
-        GridPane.setRowIndex(storyPointsTotalPoints, GridPane.getRowIndex(storyPointsTotalPoints)+1);
-        System.out.println(gridPaneUserStories.getRowCount());
+        int rowIndex = GridPane.getRowIndex(storyPointsTotalLabel)+1;
+        GridPane.setRowIndex(storyPointsTotalLabel, rowIndex);
+        GridPane.setRowIndex(storyPointsTotalPoints, rowIndex);
 
-        int rowIndex = gridPaneUserStories.getRowCount()-2;
-        gridPaneUserStories.add(storyNameLbl, 0, rowIndex);
-        gridPaneUserStories.add(storyPointsLbl, 1,rowIndex);
+        int rowIndex2 = gridPaneUserStories.getRowCount()-2;
+        gridPaneUserStories.add(storyNameLbl, 0, rowIndex2);
+        gridPaneUserStories.add(storyPointsLbl, 1,rowIndex2);
 
         int totalPoints = Integer.parseInt(storyPointsTotalPoints.getText())+actualPoints;
         storyPointsTotal = totalPoints;

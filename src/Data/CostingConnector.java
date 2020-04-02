@@ -34,7 +34,7 @@ public class CostingConnector {
         System.out.println("Records created successfully");
     }
 
-    public static void insertIntoUserStories(ArrayList<ArrayList<Object>> storyList) {
+    public static void insertIntoUserStories(ArrayList<ArrayList<Object>> storyList, int productId) {
         Connection c = null;
         Statement stmt = null;
 
@@ -54,8 +54,9 @@ public class CostingConnector {
 
                     stmt = c.createStatement();
                     String sql = "INSERT INTO public.\"UserStories\" " +
-                            "(\"storyName\",\"storyPoints\",\"Iteration\") "
-                            + "VALUES ('" + storyName + "', " + points +",'" + iteration + "');";
+                            "(\"storyName\",\"storyPoints\",\"Iteration\", \"productId\") "
+                            + "VALUES ('" + storyName + "', " + points +",'" + iteration + "'" +
+                            ", " + productId + ");";
                     stmt.executeUpdate(sql);
                 }
             } catch (Exception e) {
@@ -131,7 +132,10 @@ public class CostingConnector {
             PreparedStatement sql = c.prepareStatement("UPDATE public.\"ProductCosting\" " +
                     "SET \"fteEquivalent\" = ?" +
                     ",\"labourCosts1WorkingHour\" = ? "
-                    + " WHERE \"productId\" = ? );");
+                    + " WHERE \"productId\" = ? ;");
+            sql.setDouble(1, fTEEq);
+            sql.setDouble(2, labourEq);
+            sql.setInt(3, id);
             sql.execute();
 
             c.commit();
@@ -144,9 +148,9 @@ public class CostingConnector {
         System.out.println("Records created successfully");
     }
 
-    public static ArrayList<Object> getCostingByProduct(int productId) {
+    public static ArrayList<ArrayList<Object>> getCostingByProduct(int productId) {
         Connection c = null;
-        ArrayList<Object> queryResults = new ArrayList<>();
+        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -158,13 +162,16 @@ public class CostingConnector {
 
             PreparedStatement getCosting = c.prepareStatement("SELECT * FROM public.\"ProductCosting\" " +
                     "WHERE \"productId\" = ?;");
+            getCosting.setInt(1, productId);
 
             ResultSet getCostingResultSet = getCosting.executeQuery();
 
             while ( getCostingResultSet.next() ) {
-                queryResults.add(getCostingResultSet.getInt(1));
-                queryResults.add(getCostingResultSet.getDouble(2));
-                queryResults.add(getCostingResultSet.getDouble(3));
+                ArrayList<Object> temp = new ArrayList<>();
+                queryResults.add(temp);
+                temp.add(getCostingResultSet.getInt(1));
+                temp.add(getCostingResultSet.getDouble(2));
+                temp.add(getCostingResultSet.getDouble(3));
             }
 
             getCosting.close();
@@ -177,9 +184,9 @@ public class CostingConnector {
         return queryResults;
     }
 
-    public static ArrayList<Object> getUserStoriesByProduct(int productId) {
+    public static ArrayList<ArrayList<Object>> getUserStoriesByProduct(int productId) {
         Connection c = null;
-        ArrayList<Object> queryResults = new ArrayList<>();
+        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -189,19 +196,22 @@ public class CostingConnector {
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - User Stories");
 
-            PreparedStatement getCosting = c.prepareStatement("SELECT * FROM public.\"UserStories\" " +
+            PreparedStatement getUserStories = c.prepareStatement("SELECT * FROM public.\"UserStories\" " +
                     "WHERE \"productId\" = ?;");
+            getUserStories.setInt(1, productId);
 
-            ResultSet getCostingResultSet = getCosting.executeQuery();
+            ResultSet getCostingResultSet = getUserStories.executeQuery();
 
             while ( getCostingResultSet.next() ) {
-                queryResults.add(getCostingResultSet.getInt(1));
-                queryResults.add(getCostingResultSet.getString(2));
-                queryResults.add(getCostingResultSet.getInt(3));
-                queryResults.add(getCostingResultSet.getString(4));
-                queryResults.add(getCostingResultSet.getInt(5));
+                ArrayList<Object> temp = new ArrayList<>();
+                queryResults.add(temp);
+                temp.add(getCostingResultSet.getInt(1));
+                temp.add(getCostingResultSet.getString(2));
+                temp.add(getCostingResultSet.getInt(3));
+                temp.add(getCostingResultSet.getString(4));
+                temp.add(getCostingResultSet.getInt(5));
             }
-            getCosting.close();
+            getUserStories.close();
             c.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
@@ -211,9 +221,9 @@ public class CostingConnector {
         return queryResults;
     }
 
-    public static ArrayList<Object> getEquipmentByProduct(int productId) {
+    public static ArrayList<ArrayList<Object>> getEquipmentByProduct(int productId) {
         Connection c = null;
-        ArrayList<Object> queryResults = new ArrayList<>();
+        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -223,19 +233,22 @@ public class CostingConnector {
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Equipment");
 
-            PreparedStatement getCosting = c.prepareStatement("SELECT * FROM public.\"Equipment\" " +
+            PreparedStatement getEquipment = c.prepareStatement("SELECT * FROM public.\"Equipment\" " +
                     "WHERE \"productId\" = ?;");
+            getEquipment.setInt(1, productId);
 
-            ResultSet getCostingResultSet = getCosting.executeQuery();
+            ResultSet getCostingResultSet = getEquipment.executeQuery();
 
             while ( getCostingResultSet.next() ) {
-                queryResults.add(getCostingResultSet.getInt(1));
-                queryResults.add(getCostingResultSet.getString(2));
-                queryResults.add(getCostingResultSet.getInt(3));
-                queryResults.add(getCostingResultSet.getDouble(4));
-                queryResults.add(getCostingResultSet.getInt(5));
+                ArrayList<Object> temp = new ArrayList<>();
+                queryResults.add(temp);
+                temp.add(getCostingResultSet.getInt(1));
+                temp.add(getCostingResultSet.getString(2));
+                temp.add(getCostingResultSet.getInt(3));
+                temp.add(getCostingResultSet.getDouble(4));
+                temp.add(getCostingResultSet.getInt(5));
             }
-            getCosting.close();
+            getEquipment.close();
             c.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );

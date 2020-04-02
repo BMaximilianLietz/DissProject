@@ -3,6 +3,7 @@ package Controllers;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Models.FuzzyLogic;
+import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -11,6 +12,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 
+import java.net.Inet4Address;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class PriceSettingController {
@@ -78,12 +81,8 @@ public class PriceSettingController {
         productName.setText((String)activeProduct.get(2));
         productCost.setText(((Double)activeProduct.get(5)).toString());
 
-        System.out.println("Id: " + activeProduct.get(0));
-//        System.out.println(queryResults);
-
         if (activeProduct.size() != 0) {
-
-            isInsert = false;
+            System.out.println(activeProduct.size());
 
             Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
                     marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
@@ -93,17 +92,22 @@ public class PriceSettingController {
             ArrayList<Object> queryResults =
                     ProductPricingConnector.getAllProductPricingByProductId(Integer.parseInt(activeProduct.get(0).toString()));
 
-            for (int i = 0; i < nodeArray.length; i++) {
-                //System.out.println(i);
-                String queryItem = String.valueOf(queryResults.get(i+1));
-                if (nodeArray[i].getClass().getName().equals("javafx.scene.control.ComboBox")) {
-                    ((ComboBox)nodeArray[i]).getSelectionModel().select(queryItem);
-                    if ((i<10)||(i>13)) {
-                        System.out.println(queryItem);
-                        addVariableInit((ComboBox)nodeArray[i]);
+            if (queryResults.size() > 0) {
+
+                isInsert = false;
+
+                for (int i = 0; i < nodeArray.length; i++) {
+                    //System.out.println(i);
+                    String queryItem = String.valueOf(queryResults.get(i+1));
+                    if (nodeArray[i].getClass().getName().equals("javafx.scene.control.ComboBox")) {
+                        ((ComboBox)nodeArray[i]).getSelectionModel().select(queryItem);
+                        if ((i<10)||(i>13)) {
+                            System.out.println(queryItem);
+                            addVariableInit((ComboBox)nodeArray[i]);
+                        }
+                    } else {
+                        ((TextField)nodeArray[i]).setText(queryItem);
                     }
-                } else {
-                    ((TextField)nodeArray[i]).setText(queryItem);
                 }
             }
         }
@@ -120,7 +124,7 @@ public class PriceSettingController {
         //priceSettingFLM.getChartVariable(element);
     }
 
-    public void priceSettingSubmitBtnClick(ActionEvent actionEvent) {
+    public void priceSettingSubmitBtnClick(ActionEvent actionEvent)  {
         // TODO implement check that every combobox/input field has a value
         System.out.println(commoditizationValueForm.getText());
         if (commoditizationValueForm.getText().equals("Please fill out form")) {
@@ -132,6 +136,18 @@ public class PriceSettingController {
             alert.showAndWait();
             return;
         } else {
+
+            double commValue = Double.parseDouble(commoditizationValueForm.getText());
+            priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
+
+            priceSettingFLM.evaluate();
+
+            double priceRounded = priceSettingFLM.getFunctionBlock().getVariable("price").getValue();
+            DecimalFormat df = new DecimalFormat("#.##");
+
+            System.out.println("Price: " + priceSettingFLM.getFunctionBlock().getVariable("price").getValue());
+            proposedPricePerCustomer.setText(df.format(priceRounded));
+
             if (isInsert) {
                 ProductPricingConnector.insertAllProductPricing((Integer)activeProduct.get(0),
                         java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
@@ -150,6 +166,15 @@ public class PriceSettingController {
                         java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
                         Double.parseDouble(desiredMarkupTF.getText()),
                         Double.parseDouble(allowedVarianceTF.getText()));
+
+                activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
+                        activeProduct.get(2).toString(),
+                        activeProduct.get(3).toString(),
+                        null,
+                        (Double) activeProduct.get(5),
+                        Double.parseDouble(proposedPricePerCustomer.getText()),
+                        activeProduct.get(7).toString(),
+                        (Integer)activeProduct.get(1));
             } else {
                 ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
                         java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
@@ -168,27 +193,17 @@ public class PriceSettingController {
                         java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
                         Double.parseDouble(desiredMarkupTF.getText()),
                         Double.parseDouble(allowedVarianceTF.getText()));
-            }
 
-
-            double commValue = Double.parseDouble(commoditizationValueForm.getText());
-            priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
-
-            priceSettingFLM.evaluate();
-
-            System.out.println("Price: " + priceSettingFLM.getFunctionBlock().getVariable("price").getValue());
-            proposedPricePerCustomer.setText(String.valueOf(priceSettingFLM.getFunctionBlock().getVariable("price").getValue()));
-
-            try {
-
-            } catch (Exception e) {
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("FML");
-                alert.setHeaderText("FML");
-                alert.setContentText(e.toString());
-                alert.initOwner(((Node)actionEvent.getTarget()).getScene().getWindow());
-                alert.showAndWait();
-                return;
+                System.out.println(activeProduct);
+                activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
+                        activeProduct.get(2).toString(),
+                        activeProduct.get(3).toString(),
+                        null,
+                        Double.parseDouble(activeProduct.get(5).toString()),
+                        Double.parseDouble(proposedPricePerCustomer.getText()),
+                        activeProduct.get(7).toString(),
+                        Integer.parseInt(activeProduct.get(1).toString()));
+                System.out.println(activeProduct);
             }
         }
         //priceSettingFLM.evaluate();
@@ -246,7 +261,6 @@ public class PriceSettingController {
         //String value = ((ComboBox)actionEvent.getSource()).getSelectionModel().getSelectedItem().toString().replaceAll("\\s+", "");;
         int selectedIndex = ((ComboBox)source).getSelectionModel().getSelectedIndex();
 
-        System.out.println("element " + element + " and " + selectedIndex);
         priceSettingFLM.functionBlockSetVariable(element, (double) selectedIndex);
     }
 
@@ -255,6 +269,6 @@ public class PriceSettingController {
     }
 
     public void openProductViewMenuItemClick(ActionEvent actionEvent) {
-        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "projectView.fxml");
+        SceneController.openView(menuBar.getScene(), getClass(), activeProject, "productView.fxml");
     }
 }

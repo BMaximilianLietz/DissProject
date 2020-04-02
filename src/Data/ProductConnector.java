@@ -23,11 +23,11 @@ public class ProductConnector {
                 stmt = c.createStatement();
                 String sql = "INSERT INTO public.\"Products\" " +
                         "(\"projectId\",\"productName\",\"productDescription\"," +
-                        "\"creationDate\",\"productCosts\"\"productPrice\",\"productVersion\") "
+                        "\"creationDate\",\"productCosts\",\"productPrice\",\"version\") "
                         + "VALUES (" + projectId + ", '" + productName +"', '" + productDescription +"', " +
-                        "" + creationDate + ", " + productCosts + ", " + productPrice + ", '" + productVersion + ") " +
+                        "" + creationDate + ", " + productCosts + ", " + productPrice + ", '" + productVersion + "') " +
                         "RETURNING \"productId\",\"projectId\",\"productName\",\"productDescription\"," +
-                        "\"creationDate\",\"productCosts\"\"productPrice\",\"productVersion\";";
+                        "\"creationDate\",\"productCosts\",\"productPrice\",\"version\";";
 
                 stmt.execute(sql);
 
@@ -133,6 +133,63 @@ public class ProductConnector {
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
+        }
+        System.out.println("Operation getAllByProductNameAndProject done successfully");
+        return queryResults;
+    }
+
+    public static ArrayList<Object> updateProductById(int productId, String productName,
+                                                      String productDescription, Date creationDate, Double productCosts,
+                                                      Double productPrice, String productVersion, int projectId) {
+        Connection c = null;
+        ArrayList<Object> queryResults = new ArrayList<>();
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully - Product Update");
+
+            PreparedStatement sql = c.prepareStatement("UPDATE public.\"Products\" " +
+                    "SET \"projectId\" = ? " +
+                    ",\"productName\" = ?" +
+                    ",\"productDescription\" = ? " +
+                    ",\"creationDate\" = ? " +
+                    ",\"productCosts\" = ?" +
+                    ",\"productPrice\" = ?" +
+                    ",\"version\" = ?" +
+                    " WHERE \"productId\" = ? " +
+                    "RETURNING \"productId\", \"projectId\", \"productName\",\"productDescription\"," +
+                    "\"creationDate\", \"productCosts\", \"productPrice\", \"version\";");
+            sql.setInt(1, projectId);
+            sql.setString(2, productName);
+            sql.setString(3, productDescription);
+            sql.setDate(4, new Date(1585846482429L));
+            sql.setDouble(5, productCosts);
+            sql.setDouble(6, productPrice);
+            sql.setString(7, productVersion);
+            sql.setInt(8, productId);
+            System.out.println(sql);
+            sql.execute();
+
+            ResultSet returnedProduct = sql.getResultSet();
+
+            returnedProduct.next();
+            queryResults.add(returnedProduct.getInt(1));
+            queryResults.add(returnedProduct.getInt(2));
+            queryResults.add(returnedProduct.getString(3));
+            queryResults.add(returnedProduct.getString(4));
+            queryResults.add(returnedProduct.getDate(5));
+            queryResults.add(returnedProduct.getDouble(6));
+            queryResults.add(returnedProduct.getDouble(7));
+            queryResults.add(returnedProduct.getString(8));
+
+            sql.close();
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
         }
         System.out.println("Operation getAllByProductNameAndProject done successfully");
         return queryResults;

@@ -55,6 +55,7 @@ public class ProductController {
     }
 
     public void addProduct(ArrayList<Object> product, GridPane gridPaneChosen) {
+        System.out.println("Product: " + product);
         System.out.println(product);
         Label productNameLb = new Label((String)product.get(2));
         Label productDescriptionLb = new Label((String)product.get(3));
@@ -70,7 +71,7 @@ public class ProductController {
         }
 
         try {
-            productCostsLb = new Label(String.valueOf(((Double)product.get(6))));
+            productCostsLb = new Label(String.valueOf(((Double)product.get(5))));
         } catch (Exception e) {
             productCostsLb = new Label("Product Costing Required");
             System.out.println(e.getMessage() + " " + e.getStackTrace());
