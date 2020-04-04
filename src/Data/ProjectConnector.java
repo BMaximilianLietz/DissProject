@@ -108,7 +108,7 @@ public class ProjectConnector {
                 temp.add(rs.getString(3));
                 temp.add(rs.getDate(4));
                 temp.add(rs.getString(5));
-                temp.add(rs.getString(5));
+                temp.add(rs.getString(6));
             }
             rs.close();
             stmt.close();

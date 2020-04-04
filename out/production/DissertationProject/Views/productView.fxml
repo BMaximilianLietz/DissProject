@@ -26,46 +26,78 @@
         </MenuBar>
     </top>
     <left>
-        <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
-            <padding><Insets left="40" top="40"/></padding>
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Product Name:</Label>
-            <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"></Label>
+        <GridPane hgap="10" vgap="10">
 
-            <!-- Group 1 -->
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
-                Product Details
-            </Label>
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
-                Product Name
-            </Label>
-            <Label GridPane.columnIndex="1" GridPane.rowIndex="2">
-                Product Description
-            </Label>
-            <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
-                Product Price
-            </Label>
-            <Label GridPane.columnIndex="3" GridPane.rowIndex="2">
-                Product Costs
-            </Label>
-            <Label GridPane.columnIndex="4" GridPane.rowIndex="2">
-                Product Version
-            </Label>
-            <Label GridPane.columnIndex="5" GridPane.rowIndex="2">
-                Select Product Pricing
-            </Label>
-            <Label GridPane.columnIndex="6" GridPane.rowIndex="2">
-                Select Product Costing
-            </Label>
+            <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
+                <padding><Insets left="40" top="40"/></padding>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Product Name:</Label>
+                <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"></Label>
 
-            <!-- Group 2 -->
-            <Button GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#addProductBtnClick">
-                Add a product
-            </Button>
-            <TextField fx:id="productNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Product Name"/>
-            <TextField fx:id="productDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1"
-                       promptText="Product Description"/>
-            <TextField fx:id="productVersionTF" GridPane.columnIndex="7" GridPane.rowIndex="1"
-                       promptText="Product Version"/>
+                <!-- Group 1 -->
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    Product Details
+                </Label>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    Product Name
+                </Label>
+                <Label GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    Product Description
+                </Label>
+                <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
+                    Product Price
+                </Label>
+                <Label GridPane.columnIndex="3" GridPane.rowIndex="2">
+                    Product Costs
+                </Label>
+                <Label GridPane.columnIndex="4" GridPane.rowIndex="2">
+                    Product Version
+                </Label>
+                <Label GridPane.columnIndex="5" GridPane.rowIndex="2">
+                    Subsidizing/Subsidized
+                </Label>
+                <Label GridPane.columnIndex="6" GridPane.rowIndex="2">
+                    Options
+                </Label>
+
+                <!-- Group 2 -->
+                <Button GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#addProductBtnClick">
+                    Add a product
+                </Button>
+                <TextField fx:id="productNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Product Name"/>
+                <TextField fx:id="productDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1"
+                           promptText="Product Description"/>
+                <TextField fx:id="productVersionTF" GridPane.columnIndex="7" GridPane.rowIndex="1"
+                           promptText="Product Version"/>
+            </GridPane>
+
+            <!-- Group 3 -->
+
+            <GridPane fx:id="competitorGridPane" GridPane.columnIndex="1" GridPane.rowIndex="0"
+                      hgap="10" vgap="10">
+                <padding><Insets left="40" top="40"/></padding>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    List of Competitors
+                </Label>
+
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    Competitor Name
+                </Label>
+                <Label GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    Price of Competitor's product
+                </Label>
+            </GridPane>
+
+            <!-- Group 4 -->
+
+            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="20">
+                <padding><Insets top="40"/></padding>
+                <Label> Competitors</Label>
+                <TextField fx:id="competitorNameTF" promptText="Competitor name"/>
+                <TextField fx:id="competitorPriceTF" promptText="Competitor Price"/>
+                <Button onAction="#addCompetitorBtnClick">
+                    Add a competitor
+                </Button>
+            </VBox>
 
         </GridPane>
     </left>

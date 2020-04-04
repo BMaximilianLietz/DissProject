@@ -7,10 +7,12 @@ import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
+import javafx.scene.layout.HBox;
 
 import java.net.Inet4Address;
 import java.text.DecimalFormat;
@@ -65,16 +67,16 @@ public class PriceSettingController {
         commoditizationFLM.init("commoditizationOutput");
 
         numberCustomersTF.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
+//            System.out.println(newValue);
         });
         valueAddedTF.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
+//            System.out.println(newValue);
         });
         desiredMarginTF.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
+//            System.out.println(newValue);
         });
         depreciationTF.textProperty().addListener((observable, oldValue, newValue) -> {
-            System.out.println(newValue);
+//            System.out.println(newValue);
         });
 
         projectName.setText((String)SceneController.activeProject.get(1));
@@ -102,7 +104,6 @@ public class PriceSettingController {
                     if (nodeArray[i].getClass().getName().equals("javafx.scene.control.ComboBox")) {
                         ((ComboBox)nodeArray[i]).getSelectionModel().select(queryItem);
                         if ((i<10)||(i>13)) {
-                            System.out.println(queryItem);
                             addVariableInit((ComboBox)nodeArray[i]);
                         }
                     } else {
@@ -121,12 +122,38 @@ public class PriceSettingController {
 //        System.out.println(comboBox1.getSelectionModel().getSelectedItem().toString() + " " + actionEvent.getSource());
         addVariableInit((Control) actionEvent.getSource());
 
+        if (((Control) actionEvent.getSource()).getId().equals("priceClusteringCB")) {
+            if (priceClusteringCB.getSelectionModel().getSelectedItem().equals("Yes")) {
+                Label clusteringRanges = new Label("Clustering Ranges:");
+                clusteringRanges.setPadding(new Insets(0,0,0,40));
+
+                TextField rangeLow = new TextField();
+                rangeLow.setPromptText("Lower price range");
+
+                TextField rangeHigh = new TextField();
+                rangeHigh.setPromptText("Upper price Range");
+
+                HBox hBox = new HBox(rangeLow, rangeHigh);
+                for (Node node : gridPane.getChildren()) {
+//                    gridPane.
+                    //TODO move other gridpane children down and put in hBox
+                    if ((gridPane.getRowIndex(node) > 9)&&
+                            ((gridPane.getColumnIndex(node)==2)||(gridPane.getColumnIndex(node)==3))) {
+                        gridPane.setRowIndex(node, gridPane.getRowIndex(node)+1);
+                    }
+                }
+
+                gridPane.add(clusteringRanges, 2, 10);
+                gridPane.add(hBox, 3,10);
+            }
+        }
+
         //priceSettingFLM.getChartVariable(element);
     }
 
     public void priceSettingSubmitBtnClick(ActionEvent actionEvent)  {
         // TODO implement check that every combobox/input field has a value
-        System.out.println(commoditizationValueForm.getText());
+//        System.out.println(commoditizationValueForm.getText());
         if (commoditizationValueForm.getText().equals("Please fill out form")) {
             Alert alert = new Alert(Alert.AlertType.ERROR);
             alert.setTitle("Error");
@@ -194,7 +221,7 @@ public class PriceSettingController {
                         Double.parseDouble(desiredMarkupTF.getText()),
                         Double.parseDouble(allowedVarianceTF.getText()));
 
-                System.out.println(activeProduct);
+//                System.out.println(activeProduct);
                 activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
                         activeProduct.get(2).toString(),
                         activeProduct.get(3).toString(),
@@ -203,7 +230,7 @@ public class PriceSettingController {
                         Double.parseDouble(proposedPricePerCustomer.getText()),
                         activeProduct.get(7).toString(),
                         Integer.parseInt(activeProduct.get(1).toString()));
-                System.out.println(activeProduct);
+//                System.out.println(activeProduct);
             }
         }
         //priceSettingFLM.evaluate();
