@@ -185,12 +185,17 @@
 
             <!-- Row 5  -->
 
-            <Label text="Competitors :" GridPane.columnIndex="2" GridPane.rowIndex="8">
+            <Label text="Competition orientation:" GridPane.columnIndex="2" GridPane.rowIndex="8">
                 <padding><Insets left="40"/></padding>
             </Label>
-            <Label GridPane.columnIndex="3" GridPane.rowIndex="8">
-                    To-Do
-            </Label>
+            <ComboBox GridPane.columnIndex="3" GridPane.rowIndex="8">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="Competitor-driven"/>
+                        <String fx:value="Differentiation Orientation"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
 
             <!-- /* How to implement competitors */ -->
 

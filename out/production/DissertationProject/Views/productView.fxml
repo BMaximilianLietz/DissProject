@@ -53,9 +53,6 @@
                     Product Version
                 </Label>
                 <Label GridPane.columnIndex="5" GridPane.rowIndex="2">
-                    Subsidizing/Subsidized
-                </Label>
-                <Label GridPane.columnIndex="6" GridPane.rowIndex="2">
                     Options
                 </Label>
 

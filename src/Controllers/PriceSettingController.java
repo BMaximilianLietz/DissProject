@@ -1,5 +1,6 @@
 package Controllers;
 
+import Data.CompetitorConnector;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Models.FuzzyLogic;
@@ -57,6 +58,8 @@ public class PriceSettingController {
     Boolean isInsert = true;
 
     public void initialize() {
+        // TODO Add repeating payments textfield/combobox
+        // TODO implement preferred pricing strategy somehow
         activeProject = SceneController.activeProject;
         activeProduct = SceneController.activeProduct;
 
@@ -83,14 +86,12 @@ public class PriceSettingController {
         productName.setText((String)activeProduct.get(2));
         productCost.setText(((Double)activeProduct.get(5)).toString());
 
+        Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
+                marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
+                numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
+                allowedVarianceTF};
+
         if (activeProduct.size() != 0) {
-            System.out.println(activeProduct.size());
-
-            Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
-                    marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
-                    numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
-                    allowedVarianceTF};
-
             ArrayList<Object> queryResults =
                     ProductPricingConnector.getAllProductPricingByProductId(Integer.parseInt(activeProduct.get(0).toString()));
 
@@ -111,6 +112,32 @@ public class PriceSettingController {
                     }
                 }
             }
+        }
+        // TODO add combobox for when is subsidized
+        // TODO add something for when it is subsidizing
+        if ((Boolean)activeProduct.get(8)) {
+            // TODO - make other change value depending on this?
+            Label degree_of_subsidizationLbl = new Label("Degree of Subsidization");
+            degree_of_subsidizationLbl.setPadding(new Insets(0,0,0,40));
+
+            ComboBox subsidizationDegreesCB = new ComboBox();
+            subsidizationDegreesCB.getItems().add("Absolute");
+            subsidizationDegreesCB.getItems().add("Significant");
+            subsidizationDegreesCB.getItems().add("Medium");
+            subsidizationDegreesCB.getItems().add("???");
+//            subsidizationDegreesCB.setItems();
+
+            for (Node node : gridPane.getChildren()) {
+                if ((gridPane.getRowIndex(node) > 1)&&
+                        ((gridPane.getColumnIndex(node)==2)||(gridPane.getColumnIndex(node)==3))) {
+                    gridPane.setRowIndex(node, gridPane.getRowIndex(node)+1);
+                }
+            }
+
+            gridPane.add(degree_of_subsidizationLbl, 2, 2);
+            gridPane.add(subsidizationDegreesCB, 3,2);
+        } else if ((Boolean)activeProduct.get(9)) {
+
         }
     }
 
@@ -135,8 +162,6 @@ public class PriceSettingController {
 
                 HBox hBox = new HBox(rangeLow, rangeHigh);
                 for (Node node : gridPane.getChildren()) {
-//                    gridPane.
-                    //TODO move other gridpane children down and put in hBox
                     if ((gridPane.getRowIndex(node) > 9)&&
                             ((gridPane.getColumnIndex(node)==2)||(gridPane.getColumnIndex(node)==3))) {
                         gridPane.setRowIndex(node, gridPane.getRowIndex(node)+1);
@@ -201,7 +226,8 @@ public class PriceSettingController {
                         (Double) activeProduct.get(5),
                         Double.parseDouble(proposedPricePerCustomer.getText()),
                         activeProduct.get(7).toString(),
-                        (Integer)activeProduct.get(1));
+                        (Integer)activeProduct.get(1),
+                        null, null);
             } else {
                 ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
                         java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
@@ -229,7 +255,8 @@ public class PriceSettingController {
                         Double.parseDouble(activeProduct.get(5).toString()),
                         Double.parseDouble(proposedPricePerCustomer.getText()),
                         activeProduct.get(7).toString(),
-                        Integer.parseInt(activeProduct.get(1).toString()));
+                        Integer.parseInt(activeProduct.get(1).toString()),
+                        null, null);
 //                System.out.println(activeProduct);
             }
         }

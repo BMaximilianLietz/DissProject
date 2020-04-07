@@ -3,6 +3,7 @@ package Controllers;
 import Data.CompetitorConnector;
 import Data.ProductConnector;
 import Data.ProjectConnector;
+import Data.SubsidyConnector;
 import Misc.HelperMethods;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -49,10 +50,8 @@ public class ProductController {
         }
         ArrayList<ArrayList<Object>> competitorInit =
                 CompetitorConnector.getCompetitorsByProjectId(projectId);
-        System.out.println(competitorInit);
         if (competitorInit.size() > 0) {
             for (int i = 0; i < init.size(); i++) {
-                System.out.println(competitorInit.get(i));
                 addCompetitor((String) competitorInit.get(i).get(1),
                         (Double) competitorInit.get(i).get(2),
                         competitorGridPane);
@@ -90,38 +89,98 @@ public class ProductController {
             System.out.println(e.getMessage() + " " + e.getStackTrace());
         }
 
+        ArrayList<Object> productCopy = new ArrayList<>(product);
+
         Button productPricingButton = new Button("Pricing");
         productPricingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), activeProject, product,"priceSetting.fxml");
+            SceneController.openView(scene, getClass(), activeProject, productCopy,"priceSetting.fxml");
         });
         Button productCostingButton = new Button("Costing");
         productCostingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), activeProject, product, "costingView.fxml");
+            SceneController.openView(scene, getClass(), activeProject, productCopy, "costingView.fxml");
         });
-
-        CheckBox subsidizing = new CheckBox();
-        CheckBox subsidized = new CheckBox();
-
-        subsidizing.onActionProperty().setValue(actionEvent -> {
-            System.out.println("Hellllooooooooo");
-            subsidized.selectedProperty().setValue(false);
-        });
-
-        HBox subsidyHBox = new HBox(subsidizing, subsidized);
-        subsidyHBox.spacingProperty().setValue(15);
-        HBox hbox = new HBox(productPricingButton, productCostingButton);
 
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
+        HBox hbox = new HBox(productPricingButton, productCostingButton);
         gridPaneChosen.add(productNameLb, 0, rowIndex);
         gridPaneChosen.add(productDescriptionLb, 1, rowIndex);
         gridPaneChosen.add(productPriceLb, 2, rowIndex);
         gridPaneChosen.add(productCostsLb,3, rowIndex);
         gridPaneChosen.add(productVersionLb, 4, rowIndex);
-        gridPaneChosen.add(subsidyHBox, 5, rowIndex);
-        gridPaneChosen.add(hbox, 6, rowIndex);
+        gridPaneChosen.add(hbox, 5, rowIndex);
+
+        if ((((String)activeProject.get(4)).equals("Bait & Hook"))||
+                (((String)activeProject.get(4)).equals("Multi-platform"))) {
+
+            CheckBox subsidizing = new CheckBox();
+            CheckBox subsidized = new CheckBox();
+
+            Label subsidizingTitleLbl = new Label("Subsidizing/Subsidized");
+            if (((Boolean)product.get(8))) {
+                subsidized.selectedProperty().setValue(true);
+            } else {
+
+            }
+            if (((Boolean)product.get(9))) {
+                subsidizing.selectedProperty().setValue(true);
+            }
+
+            subsidizing.onActionProperty().setValue(actionEvent -> {
+                subsidized.selectedProperty().setValue(false);
+
+                ProductConnector.updateProductById((Integer) productCopy.get(0),
+                        productCopy.get(2).toString(),
+                        productCopy.get(3).toString(),
+                        null,
+                        (Double) productCopy.get(5),
+                        (Double) productCopy.get(6),
+                        (String) productCopy.get(7),
+                        (Integer)productCopy.get(1),
+                        false, true);
+                SubsidyConnector.insertIntoSubsidies((Integer) productCopy.get(0), null,
+                        (Integer) activeProject.get(0));
+            });
+
+            subsidized.onActionProperty().setValue(actionEvent -> {
+                subsidizing.selectedProperty().setValue(false);
+
+                ProductConnector.updateProductById((Integer) productCopy.get(0),
+                        productCopy.get(2).toString(),
+                        productCopy.get(3).toString(),
+                        null,
+                        (Double) productCopy.get(5),
+                        (Double) productCopy.get(6),
+                        (String) productCopy.get(7),
+                        (Integer)productCopy.get(1),
+                        true, false);
+
+                ArrayList<ArrayList<Object>> check =
+                        SubsidyConnector.getSubsidizerByProjectId((Integer) activeProject.get(0));
+                if (check.size() > 0 ) {
+                    for (int i = 0; i < check.size(); i++) {
+                        if ((check.get(i).get(1) == null)||(Integer.parseInt(check.get(i).get(1).toString()))==0) {
+                            SubsidyConnector.updateSubsidizerByProjectId((Integer)productCopy.get(0),
+                                    (Integer) activeProject.get(0));
+                        } else {
+                            Integer subsidizingId = (Integer)check.get(i).get(1);
+                            SubsidyConnector.insertIntoSubsidies(subsidizingId,
+                                    (Integer) productCopy.get(0), (Integer) activeProject.get(0));
+                        }
+                    }
+                }
+            });
+            SceneController.activeProduct = ProductConnector.getProductByProjectAndProduct((Integer)activeProject.get(0),
+                    (String)product.get(2));
+
+            HBox subsidyHBox = new HBox(subsidizing, subsidized);
+            subsidyHBox.spacingProperty().setValue(15);
+
+            gridPaneChosen.add(subsidizingTitleLbl, 6, 2);
+            gridPaneChosen.add(subsidyHBox, 6, rowIndex);
+        }
     }
 
     // Navigation

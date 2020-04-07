@@ -42,7 +42,6 @@ public class ProductConnector {
                 queryResults.add(returnedProductId.getDouble(6));
                 queryResults.add(returnedProductId.getDouble(7));
                 queryResults.add(returnedProductId.getString(8));
-                System.out.println(queryResults);
 
             } catch (Exception e) {
                 System.err.println( e.getClass().getName()+": "+ e.getMessage() );
@@ -89,6 +88,8 @@ public class ProductConnector {
                 temp.add(rs.getDouble(6));
                 temp.add(rs.getDouble(7));
                 temp.add(rs.getString(8));
+                temp.add(rs.getBoolean(9));
+                temp.add(rs.getBoolean(10));
             }
             rs.close();
             stmt.close();
@@ -115,7 +116,7 @@ public class ProductConnector {
 
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery( "SELECT * FROM public.\"Products\"" +
-                    "WHERE \"projectId\"=" + projectId + " AND \"productName\"=" + productName +";" );
+                    "WHERE \"projectId\"=" + projectId + " AND \"productName\"='" + productName +"';" );
 
             while ( rs.next() ) {
                 queryResults.add(rs.getInt(1));
@@ -126,6 +127,8 @@ public class ProductConnector {
                 queryResults.add(rs.getDouble(6));
                 queryResults.add(rs.getDouble(7));
                 queryResults.add(rs.getString(8));
+                queryResults.add(rs.getBoolean(9));
+                queryResults.add(rs.getBoolean(10));
             }
             rs.close();
             stmt.close();
@@ -140,7 +143,8 @@ public class ProductConnector {
 
     public static ArrayList<Object> updateProductById(int productId, String productName,
                                                       String productDescription, Date creationDate, Double productCosts,
-                                                      Double productPrice, String productVersion, int projectId) {
+                                                      Double productPrice, String productVersion, int projectId,
+                                                      Boolean isSubsidized, Boolean isSubsidizing) {
         Connection c = null;
         ArrayList<Object> queryResults = new ArrayList<>();
         try {
@@ -159,9 +163,13 @@ public class ProductConnector {
                     ",\"productCosts\" = ?" +
                     ",\"productPrice\" = ?" +
                     ",\"version\" = ?" +
+                    ",\"isSubsidized\" = ?" +
+                    ",\"isSubsidizing\" = ?" +
                     " WHERE \"productId\" = ? " +
                     "RETURNING \"productId\", \"projectId\", \"productName\",\"productDescription\"," +
-                    "\"creationDate\", \"productCosts\", \"productPrice\", \"version\";");
+                    "\"creationDate\", \"productCosts\", \"productPrice\", \"version\", " +
+                    "\"isSubsidized\", \"isSubsidizing\";");
+            System.out.println(sql);
             sql.setInt(1, projectId);
             sql.setString(2, productName);
             sql.setString(3, productDescription);
@@ -169,7 +177,9 @@ public class ProductConnector {
             sql.setDouble(5, productCosts);
             sql.setDouble(6, productPrice);
             sql.setString(7, productVersion);
-            sql.setInt(8, productId);
+            sql.setBoolean(8, isSubsidized);
+            sql.setBoolean(9, isSubsidizing);
+            sql.setInt(10, productId);
             System.out.println(sql);
             sql.execute();
 
@@ -184,6 +194,8 @@ public class ProductConnector {
             queryResults.add(returnedProduct.getDouble(6));
             queryResults.add(returnedProduct.getDouble(7));
             queryResults.add(returnedProduct.getString(8));
+            queryResults.add(returnedProduct.getBoolean(9));
+            queryResults.add(returnedProduct.getBoolean(10));
 
             sql.close();
             c.commit();

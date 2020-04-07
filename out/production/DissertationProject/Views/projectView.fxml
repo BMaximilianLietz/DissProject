@@ -70,7 +70,7 @@
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="None"/>
                             <String fx:value="Bait &amp; Hook"/>
-                            <String fx:value="Freemium Premium"/>
+                            <String fx:value="Freemium"/>
                             <String fx:value="Multi-platform"/>
                             <String fx:value="Long-tail"/>
                             <String fx:value="Saas/IaaS (?)"/>
