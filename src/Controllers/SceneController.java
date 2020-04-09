@@ -3,6 +3,7 @@ package Controllers;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Scene;
+import javafx.stage.Stage;
 
 import java.util.ArrayList;
 
@@ -10,6 +11,7 @@ public class SceneController {
 
     static ArrayList<Object> activeProject;
     static ArrayList<Object> activeProduct;
+    public static Stage stage;
 
     public static void openView(Scene scene, Class getClass, String fileName) {
         setRoot(scene, getClass, fileName);

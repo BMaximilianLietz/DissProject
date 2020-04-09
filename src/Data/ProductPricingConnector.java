@@ -60,25 +60,36 @@ public class ProductPricingConnector {
 
             try {
                 stmt = c.createStatement();
-                String sql = "INSERT INTO public.\"ProductPricing\" " +
+                PreparedStatement sql = c.prepareStatement("INSERT INTO public.\"ProductPricing\" " +
                         "(\"productId\",\"pricingStrategy\",\"desiredMargin\", \"target\", \"priceClustering\", " +
-                        "\"itemQuality\", \"marketSaturation\", \"marketSegmentation\", \"brandValue\", " +
+                        "\"itemQuality\", \"marketSaturation\", \"isMarketSegmented\", \"brandValue\", " +
                         "\"distributionChannel\", \"priceElasticity\", \"numberCustomers\", \"preProcessing\", \"itemImitability\", " +
                         "\"degreePriceCompetition\", \"desiredMarkup\", \"allowedVariance\") " +
-                        "VALUES (" + projectId + ", '" + preferredPricingStrategy +"'," + desiredMargin + ", " +
-                        "'" + target + "', '" + industryPriceClustering +"', '" + itemQualityImportance + "', " +
-                        "'" + marketSaturation + "', '" + marketSegmentation + "', '" + brandValue + "', " +
-                        "'" + distributionChannel + "', '" + priceElasticity +"', " + numberCustomers +", " +
-                        "'" + preProcessing + "', '" + itemImitability + "', '" + degreePriceCompetition +"', " +
-                        "'" + desiredMarkup + "', '" + allowedVariance + ");";
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                sql.setInt(1, projectId);
+                sql.setString(2, preferredPricingStrategy);
+                sql.setDouble(3, desiredMargin);
+                sql.setString(4, target);
+                sql.setString(5, industryPriceClustering);
+                sql.setString(6, itemQualityImportance);
+                sql.setString(7, marketSaturation);
+                sql.setString(8, marketSegmentation);
+                sql.setString(9, brandValue);
+                sql.setString(10, distributionChannel);
+                sql.setString(11, priceElasticity);
+                sql.setInt(12, numberCustomers);
+                sql.setString(13, preProcessing);
+                sql.setString(14, itemImitability);
+                sql.setString(15, degreePriceCompetition);
+                sql.setDouble(16, desiredMarkup);
+                sql.setDouble(17, allowedVariance);
 
-                stmt.executeUpdate(sql);
+                sql.execute();
             } catch (Exception e) {
                 System.err.println( e.getClass().getName()+": "+ e.getMessage() );
                 System.exit(0);
             }
 
-            stmt.close();
             c.commit();
             c.close();
 

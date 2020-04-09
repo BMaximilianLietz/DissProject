@@ -71,7 +71,7 @@ public class ProjectController {
             SceneController.openView(scene, getClass(), project, "productView.fxml");
         });
 
-        Button projectDeleteButton = new Button("Delete" + projectNameTF.getText());
+        Button projectDeleteButton = new Button("Delete");
         projectDeleteButton.onActionProperty().setValue(actionEvent1 -> {
             gridPaneLeft.getChildren().removeIf(node -> GridPane.getRowIndex(node) ==
                     GridPane.getRowIndex(((Button)actionEvent1.getTarget())));

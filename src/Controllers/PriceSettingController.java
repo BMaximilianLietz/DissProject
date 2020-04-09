@@ -3,10 +3,12 @@ package Controllers;
 import Data.CompetitorConnector;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
+import Models.FuturePricing;
 import Models.FuzzyLogic;
 import javafx.beans.binding.DoubleBinding;
 import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -14,6 +16,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
+import javafx.stage.Stage;
 
 import java.net.Inet4Address;
 import java.text.DecimalFormat;
@@ -30,7 +34,6 @@ public class PriceSettingController {
     public TextField desiredMarginTF;
     public TextField desiredMarkupTF;
     public TextField allowedVarianceTF;
-    public TextField depreciationTF;
     public ComboBox preProcessingCB;
     public ComboBox itemImitabilityCB;
     public ComboBox pricingStrategyCB;
@@ -44,6 +47,7 @@ public class PriceSettingController {
     public ComboBox distributionChannelCB;
     public ComboBox priceElasticityCB;
     public FuzzyLogic priceSettingFLM;
+    public FuzzyLogic priceDevelopmentFLM;
     public FuzzyLogic commoditizationFLM;
     public Label commoditizationValueForm;
 
@@ -52,14 +56,33 @@ public class PriceSettingController {
     public Label productCost;
     public Label proposedPricePerCustomer;
     public MenuBar menuBar;
+    public ComboBox timePeriodCB;
+
+    // Price development fields
+    public ComboBox pricingGoalCB;
+    public TextField depreciationTF;
+    public ComboBox customerExpectationsCB;
+    public ComboBox customerExpectationImportanceCB;
+    public ComboBox competitionRelatedPriceReductionCB;
+
+
+    public GridPane gridPaneGraph;
+    public GridPane gridPaneMeta;
+
+
     private ArrayList<Object> activeProject;
     private ArrayList<Object> activeProduct;
+    private int rowAdditions = 0;
+
+//    TODO remove or put somewhere else
+    ArrayList<ArrayList<Object>> graphData = new ArrayList<>();
 
     Boolean isInsert = true;
 
     public void initialize() {
         // TODO Add repeating payments textfield/combobox
         // TODO implement preferred pricing strategy somehow
+        // TODO add subscription
         activeProject = SceneController.activeProject;
         activeProduct = SceneController.activeProduct;
 
@@ -68,6 +91,9 @@ public class PriceSettingController {
 
         commoditizationFLM = new FuzzyLogic();
         commoditizationFLM.init("commoditizationOutput");
+
+        priceDevelopmentFLM = new FuzzyLogic();
+        priceDevelopmentFLM.initPD("priceDevelopmentBlock");
 
         numberCustomersTF.textProperty().addListener((observable, oldValue, newValue) -> {
 //            System.out.println(newValue);
@@ -111,10 +137,12 @@ public class PriceSettingController {
                         ((TextField)nodeArray[i]).setText(queryItem);
                     }
                 }
+                priceClusteringCheck(priceClusteringCB);
             }
         }
         // TODO add combobox for when is subsidized
         // TODO add something for when it is subsidizing
+        System.out.println(activeProduct);
         if ((Boolean)activeProduct.get(8)) {
             // TODO - make other change value depending on this?
             Label degree_of_subsidizationLbl = new Label("Degree of Subsidization");
@@ -126,19 +154,43 @@ public class PriceSettingController {
             subsidizationDegreesCB.getItems().add("Medium");
             subsidizationDegreesCB.getItems().add("???");
 //            subsidizationDegreesCB.setItems();
-
-            for (Node node : gridPane.getChildren()) {
-                if ((gridPane.getRowIndex(node) > 1)&&
-                        ((gridPane.getColumnIndex(node)==2)||(gridPane.getColumnIndex(node)==3))) {
-                    gridPane.setRowIndex(node, gridPane.getRowIndex(node)+1);
-                }
-            }
+            moveGridpPaneChildrenDown(gridPane, 1, 2);
+            rowAdditions++;
 
             gridPane.add(degree_of_subsidizationLbl, 2, 2);
             gridPane.add(subsidizationDegreesCB, 3,2);
         } else if ((Boolean)activeProduct.get(9)) {
 
         }
+        if (activeProject.get(4).equals("Subscription")) {
+            Label frequencyOfPayments = new Label("Frequency of payments");
+            frequencyOfPayments.setPadding(new Insets(0,0,0,40));
+
+            ComboBox paymentFrequencyCB = new ComboBox();
+            paymentFrequencyCB.setId("paymentFrequencyCBId");
+            paymentFrequencyCB.getItems().add("Daily");
+            paymentFrequencyCB.getItems().add("Weekly");
+            paymentFrequencyCB.getItems().add("Monthly");
+            paymentFrequencyCB.getItems().add("Yearly");
+            paymentFrequencyCB.getItems().add("Other");
+            paymentFrequencyCB.setOnAction(e -> test());
+//            subsidizationDegreesCB.setItems();
+            moveGridpPaneChildrenDown(gridPane, 1, 2);
+            rowAdditions++;
+            moveGridpPaneChildrenDown(gridPane, 2, 2);
+            rowAdditions++;
+
+            Label subscriptionLengthLbl = new Label("Subscription length in months");
+            subscriptionLengthLbl.setPadding(new Insets(0,0,0,40));
+            TextField subscriptionLengthTF = new TextField();
+            subscriptionLengthTF.setId("subscriptionLengthTF");
+
+            gridPane.add(frequencyOfPayments, 2, 2);
+            gridPane.add(paymentFrequencyCB, 3,2);
+            gridPane.add(subscriptionLengthLbl, 2, 3);
+            gridPane.add(subscriptionLengthTF, 3,3);
+        }
+
     }
 
     public void handleButtonClick(javafx.event.ActionEvent actionEvent) {
@@ -149,31 +201,7 @@ public class PriceSettingController {
 //        System.out.println(comboBox1.getSelectionModel().getSelectedItem().toString() + " " + actionEvent.getSource());
         addVariableInit((Control) actionEvent.getSource());
 
-        if (((Control) actionEvent.getSource()).getId().equals("priceClusteringCB")) {
-            if (priceClusteringCB.getSelectionModel().getSelectedItem().equals("Yes")) {
-                Label clusteringRanges = new Label("Clustering Ranges:");
-                clusteringRanges.setPadding(new Insets(0,0,0,40));
-
-                TextField rangeLow = new TextField();
-                rangeLow.setPromptText("Lower price range");
-
-                TextField rangeHigh = new TextField();
-                rangeHigh.setPromptText("Upper price Range");
-
-                HBox hBox = new HBox(rangeLow, rangeHigh);
-                for (Node node : gridPane.getChildren()) {
-                    if ((gridPane.getRowIndex(node) > 9)&&
-                            ((gridPane.getColumnIndex(node)==2)||(gridPane.getColumnIndex(node)==3))) {
-                        gridPane.setRowIndex(node, gridPane.getRowIndex(node)+1);
-                    }
-                }
-
-                gridPane.add(clusteringRanges, 2, 10);
-                gridPane.add(hBox, 3,10);
-            }
-        }
-
-        //priceSettingFLM.getChartVariable(element);
+        priceClusteringCheck((ComboBox) actionEvent.getSource());
     }
 
     public void priceSettingSubmitBtnClick(ActionEvent actionEvent)  {
@@ -324,5 +352,175 @@ public class PriceSettingController {
 
     public void openProductViewMenuItemClick(ActionEvent actionEvent) {
         SceneController.openView(menuBar.getScene(), getClass(), activeProject, "productView.fxml");
+    }
+
+    public void moveGridpPaneChildrenDown(GridPane chosenGridPane, int row, int group) {
+        for (Node node : chosenGridPane.getChildren()) {
+            if ((chosenGridPane.getRowIndex(node) > row)&&
+                    ((chosenGridPane.getColumnIndex(node)== group)||(chosenGridPane.getColumnIndex(node)==group+1))) {
+                chosenGridPane.setRowIndex(node, chosenGridPane.getRowIndex(node)+1);
+            }
+        }
+    }
+
+    public void test() {
+        System.out.println("hello");
+    }
+
+    public void testSubscription(ActionEvent actionEvent) {
+        Scene scene = gridPane.getScene();
+        ComboBox paymentFrequencyCB = (ComboBox) scene.lookup("#paymentFrequencyCBId");
+        String paymentFrequencyText = paymentFrequencyCB.getSelectionModel().getSelectedItem().toString();
+        TextField subscriptionLengthTF = (TextField) scene.lookup("#subscriptionLengthTF");
+        Double subscriptionParse = Double.parseDouble(subscriptionLengthTF.getText());
+        int numberCustomers = Integer.parseInt(numberCustomersTF.getText());
+        int time = 1;
+
+        // TODO add other options such as biweekly perhaps
+        // TODO replace with switch/case?
+        if (paymentFrequencyText.equals("Daily")) {
+            time = 365;
+        } else if (paymentFrequencyText.equals("Weekly")) {
+            time = 53;
+        } else if (paymentFrequencyText.equals("Monthly")) {
+            time = 12;
+        } else if (paymentFrequencyText.equals("Yearly")) {
+            time = 1;
+        } else if (paymentFrequencyText.equals("Other")){
+            System.out.println("To do");
+        }
+        Double cost = (Double)activeProduct.get(5);
+        // TODO - probably change so that user can choose to earn money faster and not by the time subscription expires
+        Double newCost = (cost/numberCustomers) / (time / subscriptionParse);
+        System.out.println(newCost);
+        //timePeriodCB
+    }
+
+    public void priceClusteringCheck(ComboBox comboBox) {
+        if (comboBox.getId().equals("priceClusteringCB")) {
+            if (priceClusteringCB.getSelectionModel().getSelectedItem().equals("Yes")) {
+                Label clusteringRanges = new Label("Clustering Ranges:");
+                clusteringRanges.setPadding(new Insets(0,0,0,40));
+
+                TextField rangeLow = new TextField();
+                rangeLow.setPromptText("Lower price range");
+
+                TextField rangeHigh = new TextField();
+                rangeHigh.setPromptText("Upper price Range");
+
+                HBox hBox = new HBox(rangeLow, rangeHigh);
+                int clusterRow = gridPane.getRowIndex(priceClusteringCB);
+                moveGridpPaneChildrenDown(gridPane, clusterRow, 2);
+                rowAdditions++;
+
+                gridPane.add(clusteringRanges, 2, clusterRow+1);
+                gridPane.add(hBox, 3,clusterRow+1);
+
+            }
+        }
+    }
+
+    public void priceComboBoxChange(ActionEvent actionEvent) {
+        String element = ((ComboBox) actionEvent.getSource()).getId();
+        element = element.substring(0, element.length()-2);
+        //String value = ((ComboBox)actionEvent.getSource()).getSelectionModel().getSelectedItem().toString().replaceAll("\\s+", "");;
+        int selectedIndex = ((ComboBox) actionEvent.getSource()).getSelectionModel().getSelectedIndex();
+
+        if (element.equals("timePeriod")) {
+            // TODO for loop for the time period
+        } else {
+            priceDevelopmentFLM.functionBlockSetVariable(element, (double) selectedIndex);
+        }
+    }
+
+
+    public void priceDevelopmentBtnClick(ActionEvent actionEvent) {
+        // TODO add price clusters
+        String depreciationBuffer = depreciationTF.getId().substring(0, depreciationTF.getId().length()-2);
+        int depreciationTFIndex = Integer.parseInt(depreciationTF.getText());
+        priceDevelopmentFLM.functionBlockSetVariable(depreciationBuffer, (double) depreciationTFIndex);
+
+        String pricingGoalCBBuffer = pricingGoalCB.getId().substring(0, pricingGoalCB.getId().length()-2);
+        int pricingGoalCBIndex = pricingGoalCB.getSelectionModel().getSelectedIndex();
+        priceDevelopmentFLM.functionBlockSetVariable(pricingGoalCBBuffer, (double) pricingGoalCBIndex);
+
+        String customerExpectationsCBuffer = customerExpectationsCB.getId().substring(0, customerExpectationsCB.getId().length()-2);
+        int customerExpectationsCBIndex = customerExpectationsCB.getSelectionModel().getSelectedIndex();
+        priceDevelopmentFLM.functionBlockSetVariable(customerExpectationsCBuffer, (double) customerExpectationsCBIndex);
+
+        String customerExpectationImportanceCBBuffer = customerExpectationImportanceCB.getId().substring(0, customerExpectationImportanceCB.getId().length()-2);
+        int customerExpectationImportanceCBIndex = customerExpectationImportanceCB.getSelectionModel().getSelectedIndex();
+        priceDevelopmentFLM.functionBlockSetVariable(customerExpectationImportanceCBBuffer, (double) customerExpectationImportanceCBIndex);
+
+        String competitionRelatedPriceReductionCBBBuffer = competitionRelatedPriceReductionCB.getId().substring(0, competitionRelatedPriceReductionCB.getId().length()-2);
+        int competitionRelatedPriceReductionCBIndex = competitionRelatedPriceReductionCB.getSelectionModel().getSelectedIndex();
+        priceDevelopmentFLM.functionBlockSetVariable(competitionRelatedPriceReductionCBBBuffer, (double) competitionRelatedPriceReductionCBIndex);
+
+        priceDevelopmentFLM.evaluate();
+
+        graphData.clear();
+
+        System.out.println(String.valueOf(priceDevelopmentFLM.getFunctionBlock().getVariable("priceDevelopment").getValue()));
+        Double test = (Double) activeProduct.get(6);
+        System.out.println("Final: " + test * priceDevelopmentFLM.getFunctionBlock().getVariable("priceDevelopment").getValue());
+
+        Double tempRemove = test * 1;
+        Double tempRemove2 = priceDevelopmentFLM.getFunctionBlock().getVariable("priceDevelopment").getValue();
+        // TODO make it so that the loop re-evaluate the proposed price over and over instead of reusing the same result
+        int timePeriodIndex = timePeriodCB.getSelectionModel().getSelectedIndex();
+        ArrayList<Object> tempRemove3 = new ArrayList<>();
+        tempRemove3.add(0);
+        tempRemove3.add(tempRemove);
+        graphData.add(tempRemove3);
+        System.out.println("time period: " + timePeriodIndex);
+
+        if (timePeriodIndex == 0) {
+
+        } else if (timePeriodIndex == 1) {
+            // TODO convert
+            for (int i = 1; i < 6; i++) {
+                ArrayList<Object> temp = new ArrayList<>();
+                temp.add(i);
+                tempRemove = tempRemove * (1-tempRemove2/12);
+                temp.add(tempRemove);
+                graphData.add(temp);
+            }
+        } else if (timePeriodIndex == 2) {
+            for (int i = 1; i < 12; i++) {
+                ArrayList<Object> temp = new ArrayList<>();
+                temp.add(i);
+                tempRemove = tempRemove * (1-tempRemove2/12);
+                temp.add(tempRemove);
+                graphData.add(temp);
+            }
+        }
+        else if (timePeriodIndex == 3) {
+            // TODO convert
+            for (int i = 1; i < 36; i++) {
+                ArrayList<Object> temp = new ArrayList<>();
+                temp.add(i);
+                tempRemove = tempRemove * (1-tempRemove2/12);
+                temp.add(tempRemove);
+                graphData.add(temp);
+            }
+        }
+
+        //commoditizationFLM.getChartFunctionBlock();
+//        commoditizationFLM.getChartVariable("commoditizationOutputValue");
+
+        //System.out.println(commoditizationFLM.getFunctionBlock());
+
+    }
+
+    public void testGraphBtnClick(ActionEvent actionEvent) {
+        FuturePricing pricing = new FuturePricing();
+        pricing.lineChartInit("Price in Pounds",
+                "Number of Months",
+                "Proposed Price Development");
+        pricing.setLineChartData("Lorem ipsum", graphData);
+        System.out.println(graphData);
+        System.out.println(pricing.getLineChart().getData());
+
+        gridPaneGraph.add(pricing.getLineChart(), 0,0);
     }
 }

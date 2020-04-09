@@ -23,6 +23,16 @@ public class FuzzyLogic {
         functionBlock = fis.getFunctionBlock(selectedFunctionBlock);
     }
 
+    public void initPD(String selectedFunctionBlock) {
+        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\priceDevelopmentRules.fcl";
+        FIS fis = FIS.load(fileName, true);
+        if (fis == null) {
+            System.err.println("Can't load file: '" + fileName + "'");
+            return;
+        }
+        functionBlock = fis.getFunctionBlock(selectedFunctionBlock);
+    }
+
     public FunctionBlock getFunctionBlock() {
         return functionBlock;
     }
