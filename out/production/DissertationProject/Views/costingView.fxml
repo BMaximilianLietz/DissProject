@@ -30,21 +30,15 @@
 
     <left>
             <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
-            <padding><Insets left="40" top="40"/></padding>
+            <padding><Insets left="10" top="40"/></padding>
 
             <!-- row 1 -->
             <TextField fx:id="projectName" GridPane.columnIndex="0" GridPane.rowIndex="0" promptText="Product Name">
                 Sample Product
             </TextField>
-            <Button GridPane.columnIndex="1" GridPane.rowIndex="0">
-                Add Iteration
+            <Button GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#addUserStoryBtnClick">
+                Add User Story
             </Button>
-            <Button GridPane.columnIndex="2" GridPane.rowIndex="0">
-                Edit Name:
-            </Button>
-            <Label GridPane.columnIndex="3" GridPane.rowIndex="0">
-                Lorem Ipsum
-            </Label>
 
             <!-- row 2 -->
             <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
@@ -54,13 +48,10 @@
             </TextField>
             <TextField fx:id="userStoryNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" promptText="User Story Name">
             </TextField>
-            <TextField fx:id="storyPointsTextField" GridPane.columnIndex="3" GridPane.rowIndex="1" promptText="Story Points">
+            <TextField fx:id="storyPointsTextField" GridPane.columnIndex="2" GridPane.rowIndex="0" promptText="Story Points">
             </TextField>
-            <Button GridPane.columnIndex="4" GridPane.rowIndex="1" onAction="#addUserStoryBtnClick">
-                Add User Story
-            </Button>
                 <ScrollPane GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"
-                            prefHeight="400.0" prefWidth="200.0"
+                            prefHeight="400.0" prefWidth="100.0"
                             pannable="true" fitToWidth="true" fitToHeight="true" vbarPolicy="ALWAYS" hbarPolicy="ALWAYS">
                     <content>
                         <GridPane hgap="10" vgap="10" fx:id="gridPaneUserStories">
@@ -79,56 +70,100 @@
                 </GridPane>
 
                 <GridPane hgap="10" vgap="10" fx:id="gridPaneMisc" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="5">
-                    <Label GridPane.columnIndex="0" GridPane.rowIndex="0">FTE Equivalent for Story Point:</Label>
-                    <TextField GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="Equivalent" fx:id="FTEEquivalent"></TextField>
+                    <Label GridPane.columnIndex="0" GridPane.rowIndex="0">FTE Equivalent&#10;for Story Point:</Label>
+                    <TextField GridPane.columnIndex="0" GridPane.rowIndex="1" promptText    ="Equivalent" fx:id="FTEEquivalent"></TextField>
 
-                    <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Labour costs for one working hour:</Label>
+                    <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Labour costs for&#10;one working hour:</Label>
                     <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Labour costs" fx:id="labourCostsWorkingHour"></TextField>
 
-                    <Label GridPane.columnIndex="2" GridPane.rowIndex="0">Projected Employee cost:</Label>
+                    <Label GridPane.columnIndex="2" GridPane.rowIndex="0">Projected Employee&#10;cost:</Label>
                     <Label GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="projectedEmployeeCostLB"></Label>
 
-                    <Button GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#calculateEmployeeCosts">
-                        Calculate employee costs</Button>
+                    <Button GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#calculateEmployeeCosts">
+                        Submit
+                    </Button>
 
                 </GridPane>
+
 
         </GridPane>
     </left>
 
-    <right>
+    <center>
         <GridPane hgap="10" vgap="10" fx:id="gridPaneHardware">
             <padding><Insets right="40" top="40"/></padding>
             <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
                 Add Equipment:
             </Label>
-            <TextField fx:id="equipmentNameTextField" GridPane.columnIndex="1" GridPane.rowIndex="0" promptText="Name">
+            <TextField fx:id="equipmentNameTextField" GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="Name">
             </TextField>
-            <TextField fx:id="equipmentPriceTextField" GridPane.columnIndex="2" GridPane.rowIndex="0" promptText="Price">
+            <TextField fx:id="equipmentPriceTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Price">
             </TextField>
-            <TextField fx:id="equipmentQuantityTextField" GridPane.columnIndex="3" GridPane.rowIndex="0" promptText="Quantity">
+            <TextField fx:id="equipmentQuantityTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" promptText="Quantity">
             </TextField>
-            <Button GridPane.columnIndex="4" GridPane.rowIndex="0" onAction="#addEquipmentBtnClick">
+            <Button GridPane.columnIndex="3" GridPane.rowIndex="1" onAction="#addEquipmentBtnClick">
                 Save Equipment
             </Button>
 
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
                 Equipment Name
             </Label>
-            <Label GridPane.columnIndex="1" GridPane.rowIndex="1">
+            <Label GridPane.columnIndex="1" GridPane.rowIndex="2">
                 Equipment costs
             </Label>
-            <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+            <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
                 Cost of single&#10;equipment item
             </Label>
-            <Label GridPane.columnIndex="3" GridPane.rowIndex="1">
+            <Label GridPane.columnIndex="3" GridPane.rowIndex="2">
                 Equipment Quantity
             </Label>
 
-            <Label fx:id="equipmentTotalCostInfoLabel" GridPane.columnIndex="0" GridPane.rowIndex="2">
+            <Label fx:id="equipmentTotalCostInfoLabel" GridPane.columnIndex="0" GridPane.rowIndex="3">
                 Total equipment costs:
             </Label>
-            <Label fx:id="equipmentTotalCostLabel" GridPane.columnIndex="1" GridPane.rowIndex="2">-</Label>
+            <Label fx:id="equipmentTotalCostLabel" GridPane.columnIndex="1" GridPane.rowIndex="3">-</Label>
+        </GridPane>
+    </center>
+
+    <right>
+        <!-- ############################     RUNNING COSTS     ############################ -->
+
+        <GridPane hgap="10" vgap="10" >
+            <padding><Insets right="10" top="40"/></padding>
+            <!-- row 1 -->
+
+
+            <!-- row 2 -->
+            <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                Running Costs
+            </Label>
+            <Button GridPane.columnIndex="1" GridPane.rowIndex="0" onAction="#addRunningCostsBtnClick">
+                Add Running Cost
+            </Button>
+            <TextField fx:id="userStoryNameRepeatTF" GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="Running cost name">
+            </TextField>
+            <TextField fx:id="storyPointsRepeatTF" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Story points">
+            </TextField>
+
+            <!--
+                    perhaps add a field that sets the time interval for the running costs
+
+            <TextField fx:id="storyPoints" GridPane.columnIndex="2" GridPane.rowIndex="0" promptText="Story Points">
+            </TextField>
+            -->
+            <ScrollPane GridPane.columnIndex="0" GridPane.rowIndex="2" GridPane.columnSpan="2"
+                        prefHeight="400.0" prefWidth="100.0"
+                        pannable="true" fitToWidth="true" fitToHeight="true" vbarPolicy="ALWAYS" hbarPolicy="ALWAYS">
+                <content>
+                    <GridPane hgap="10" vgap="10" fx:id="gridPaneRunningCosts">
+                        <Label GridPane.columnIndex="0" GridPane.rowIndex="0">User Story</Label>
+                        <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Story Points</Label>
+
+                        <Label fx:id="storyPointsTotalRepeatLabel" GridPane.columnIndex="0" GridPane.rowIndex="1">Total</Label>
+                        <Label fx:id="storyPointsTotalRepeatPoints" GridPane.columnIndex="1" GridPane.rowIndex="1">0</Label>
+                    </GridPane>
+                </content>
+            </ScrollPane>
         </GridPane>
     </right>
 

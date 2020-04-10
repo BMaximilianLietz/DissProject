@@ -40,6 +40,13 @@ public class CostingController {
     public GridPane gridPaneHardware;
     public TextField projectName;
     public MenuBar menuBar;
+
+    //Running Costs
+    public GridPane gridPaneRunningCosts;
+    public Label storyPointsTotalRepeatLabel;
+    public Label storyPointsTotalRepeatPoints;
+    public TextField userStoryNameRepeatTF;
+    public TextField storyPointsRepeatTF;
     List<List<String>> iterationList;
 
     @FXML
@@ -63,6 +70,8 @@ public class CostingController {
     private double totalEquipmentCosts = 0;
     private ArrayList<ArrayList<Object>> equipmentList = new ArrayList<>();
     private ArrayList<ArrayList<Object>> storyList = new ArrayList<>();
+    private ArrayList<ArrayList<Object>> runningCosts = new ArrayList<>();
+    private int runningCostsTotal = 0;
 
     private ArrayList<Object> activeProduct;
     private ArrayList<Object> activeProject;
@@ -96,12 +105,21 @@ public class CostingController {
 
             isUpdate = true;
 
+            System.out.println(userStoryQueryResults);
             for (int i = 0; i < userStoryQueryResults.size(); i++) {
 //            addUserStory(gridPaneLeft.getScene(), );
-                addUserStory(gridPaneLeft.getScene(),
-                        (Integer) userStoryQueryResults.get(i).get(2),
-                        (String) userStoryQueryResults.get(i).get(3),
-                        (String) userStoryQueryResults.get(i).get(1));
+                if (!(Boolean) userStoryQueryResults.get(i).get(5)) {
+                    addUserStory(gridPaneLeft.getScene(),
+                            (Integer) userStoryQueryResults.get(i).get(2),
+                            (String) userStoryQueryResults.get(i).get(3),
+                            (String) userStoryQueryResults.get(i).get(1));
+                } else {
+                    addRunningCost((Integer) userStoryQueryResults.get(i).get(2),
+                            (String) userStoryQueryResults.get(i).get(1));
+                    //runningCostsTotal += (Integer)userStoryQueryResults.get(i).get(2);
+                    System.out.println("product running costs " + (Integer)userStoryQueryResults.get(i).get(2));
+                    System.out.println("total " + runningCostsTotal);
+                }
             }
             for (int i = 0; i < equipmentQueryResults.size(); i++) {
 //            addEquipmentBtnClick();
@@ -167,7 +185,7 @@ public class CostingController {
         }
         double temp = totalEquipmentCosts + totalEmployeeCosts;
         CostingConnector.insertIntoProductCosting((Integer)activeProduct.get(0), check1, check2);
-        CostingConnector.insertIntoUserStories(storyList, (Integer)activeProduct.get(0));
+        CostingConnector.insertIntoUserStories(storyList);
         CostingConnector.insertIntoEquipment((Integer)activeProduct.get(0), equipmentList);
         //ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
     }
@@ -237,6 +255,8 @@ public class CostingController {
         bufferList.add(userStoryNameTextField.getText());
         bufferList.add(actualPoints);
         bufferList.add(iterationTextField.getText());
+        bufferList.add((Integer)activeProduct.get(0));
+        bufferList.add((false));
         storyList.add(bufferList);
         storyPointsTotalPoints.setText(String.valueOf(totalPoints));
     }
@@ -267,6 +287,39 @@ public class CostingController {
         bufferList.add(equipmentQuantity.toString());
         bufferList.add(equipmentPrice.toString());
         equipmentList.add(bufferList);
+    }
+
+    public void addRunningCostsBtnClick(ActionEvent actionEvent) {
+        addRunningCost(Integer.parseInt(storyPointsRepeatTF.getText()),
+                userStoryNameRepeatTF.getText());
+
+        ArrayList<ArrayList<Object>> bufferBufferList = new ArrayList<>();
+        ArrayList<Object> bufferList = new ArrayList<Object>();
+        bufferList.add(userStoryNameRepeatTF.getText());
+        bufferList.add(Integer.parseInt(storyPointsRepeatTF.getText()));
+        bufferList.add("");
+        bufferList.add((Integer)activeProduct.get(0));
+        bufferList.add((true));
+        System.out.println(bufferList);
+        bufferBufferList.add(bufferList);
+        CostingConnector.insertIntoUserStories(bufferBufferList);
+    }
+
+    public void addRunningCost(Integer storyPoints, String storyName) {
+
+        Label storyNameLbl = new Label(storyName);
+        Label storyPointsLbl = new Label(storyPoints.toString());
+
+        int rowIndex2 = GridPane.getRowIndex(storyPointsTotalRepeatLabel) + 1;
+        GridPane.setRowIndex(storyPointsTotalRepeatLabel, rowIndex2);
+        GridPane.setRowIndex(storyPointsTotalRepeatPoints, rowIndex2);
+
+        int rowIndex = gridPaneRunningCosts.getRowCount() - 2;
+        gridPaneRunningCosts.add(storyNameLbl, 0, rowIndex);
+        gridPaneRunningCosts.add(storyPointsLbl, 1,rowIndex);
+
+        runningCostsTotal += storyPoints;
+        storyPointsTotalRepeatPoints.setText(String.valueOf(runningCostsTotal));
     }
 
     /*

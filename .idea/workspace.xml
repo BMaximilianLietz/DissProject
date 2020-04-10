@@ -2,30 +2,16 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="cdb932d9-7e58-4d94-93a9-e7b232ef17da" name="Default" comment="">
-      <change afterPath="$PROJECT_DIR$/src/Misc/priceDevelopmentRules.fcl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/.idea/libraries/jFuzzyLogic.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/libraries/jFuzzyLogic.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/FuturePricing.class" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/PriceSettingController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/PriceSettingController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/ProjectController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/ProjectController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/SceneController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/SceneController.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Data/ProductPricingConnector.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Data/ProductPricingConnector.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Misc/ruleBase.fcl" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Misc/ruleBase.fcl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Models/FuzzyLogic.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Models/FuzzyLogic.class" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Views/futurePricing.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Views/futurePricing.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController$1.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController$1.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Controllers/CostingController.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Data/CostingConnector.class" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Data/CostingConnector.class" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Views/costingView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Views/costingView.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Views/priceSetting.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Views/priceSetting.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/out/production/DissertationProject/Views/projectView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/out/production/DissertationProject/Views/projectView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/FuturePricing.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Models/FuturePricing.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/PriceSettingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/PriceSettingController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/ProjectController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/ProjectController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Controllers/SceneController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/SceneController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Data/ProductPricingConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Data/ProductPricingConnector.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Misc/ruleBase.fcl" beforeDir="false" afterPath="$PROJECT_DIR$/src/Misc/ruleBase.fcl" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Models/FuzzyLogic.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Models/FuzzyLogic.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/futurePricing.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/futurePricing.fxml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Controllers/CostingController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Controllers/CostingController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Data/CostingConnector.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/Data/CostingConnector.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/Views/costingView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/costingView.fxml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/Views/priceSetting.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/priceSetting.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/Views/projectView.fxml" beforeDir="false" afterPath="$PROJECT_DIR$/src/Views/projectView.fxml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/sample/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/sample/Main.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -253,38 +239,38 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="473" y="174" key="FileChooserDialogImpl/0.0.1536.864@0.0.1536.864" timestamp="1586430460888" />
-    <state width="1493" height="193" key="GridCell.Tab.0.bottom" timestamp="1586441364140">
+    <state width="1493" height="192" key="GridCell.Tab.0.bottom" timestamp="1586518592033">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="193" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1586441364140" />
-    <state width="1493" height="193" key="GridCell.Tab.0.center" timestamp="1586441364139">
+    <state width="1493" height="192" key="GridCell.Tab.0.bottom/0.0.1536.864@0.0.1536.864" timestamp="1586518592033" />
+    <state width="1493" height="192" key="GridCell.Tab.0.center" timestamp="1586518592033">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="193" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1586441364139" />
-    <state width="1493" height="193" key="GridCell.Tab.0.left" timestamp="1586441364139">
+    <state width="1493" height="192" key="GridCell.Tab.0.center/0.0.1536.864@0.0.1536.864" timestamp="1586518592033" />
+    <state width="1493" height="192" key="GridCell.Tab.0.left" timestamp="1586518592033">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="193" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1586441364139" />
-    <state width="1493" height="193" key="GridCell.Tab.0.right" timestamp="1586441364140">
+    <state width="1493" height="192" key="GridCell.Tab.0.left/0.0.1536.864@0.0.1536.864" timestamp="1586518592033" />
+    <state width="1493" height="192" key="GridCell.Tab.0.right" timestamp="1586518592033">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="193" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1586441364139" />
-    <state width="1493" height="277" key="GridCell.Tab.1.bottom" timestamp="1585497501495">
+    <state width="1493" height="192" key="GridCell.Tab.0.right/0.0.1536.864@0.0.1536.864" timestamp="1586518592033" />
+    <state width="1493" height="277" key="GridCell.Tab.1.bottom" timestamp="1586452518581">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.1.bottom/0.0.1536.864@0.0.1536.864" timestamp="1585497501495" />
-    <state width="1493" height="277" key="GridCell.Tab.1.center" timestamp="1585497501495">
+    <state width="1493" height="277" key="GridCell.Tab.1.bottom/0.0.1536.864@0.0.1536.864" timestamp="1586452518581" />
+    <state width="1493" height="277" key="GridCell.Tab.1.center" timestamp="1586452518580">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.1.center/0.0.1536.864@0.0.1536.864" timestamp="1585497501495" />
-    <state width="1493" height="277" key="GridCell.Tab.1.left" timestamp="1585497501495">
+    <state width="1493" height="277" key="GridCell.Tab.1.center/0.0.1536.864@0.0.1536.864" timestamp="1586452518580" />
+    <state width="1493" height="277" key="GridCell.Tab.1.left" timestamp="1586452518580">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.1.left/0.0.1536.864@0.0.1536.864" timestamp="1585497501495" />
-    <state width="1493" height="277" key="GridCell.Tab.1.right" timestamp="1585497501495">
+    <state width="1493" height="277" key="GridCell.Tab.1.left/0.0.1536.864@0.0.1536.864" timestamp="1586452518580" />
+    <state width="1493" height="277" key="GridCell.Tab.1.right" timestamp="1586452518580">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state width="1493" height="277" key="GridCell.Tab.1.right/0.0.1536.864@0.0.1536.864" timestamp="1585497501495" />
+    <state width="1493" height="277" key="GridCell.Tab.1.right/0.0.1536.864@0.0.1536.864" timestamp="1586452518580" />
     <state x="249" y="0" key="SettingsEditor" timestamp="1586430468165">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -297,10 +283,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="578" y="349" key="com.intellij.openapi.vcs.update.UpdateOrStatusOptionsDialogupdate-v2/0.0.1536.864@0.0.1536.864" timestamp="1586101687184" />
-    <state x="180" y="-3" width="847" height="804" key="find.popup" timestamp="1586441883003">
+    <state x="180" y="-3" width="847" height="804" key="find.popup" timestamp="1586513568886">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="180" y="-3" width="847" height="804" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1586441883003" />
+    <state x="180" y="-3" width="847" height="804" key="find.popup/0.0.1536.864@0.0.1536.864" timestamp="1586513568886" />
     <state x="209" y="134" key="new project wizard" timestamp="1584042271650">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
@@ -313,10 +299,10 @@
       <screen x="0" y="0" width="1536" height="864" />
     </state>
     <state x="425" y="197" key="run.anything.popup/0.0.1536.864@0.0.1536.864" timestamp="1586108874200" />
-    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1586431316434">
+    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup" timestamp="1586515311212">
       <screen x="0" y="0" width="1536" height="864" />
     </state>
-    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1586431316434" />
+    <state x="431" y="181" width="672" height="678" key="search.everywhere.popup/0.0.1536.864@0.0.1536.864" timestamp="1586515311212" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/DissertationProject$Main.ic" NAME="Main Coverage Results" MODIFIED="1585497313975" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="idea" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false">

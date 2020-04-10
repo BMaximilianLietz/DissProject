@@ -48,6 +48,9 @@
             <Label text="Product Cost" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
             <Label fx:id="productCost" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
 
+            <Label text="Running Costs" GridPane.columnIndex="4" GridPane.rowIndex="0"/>
+            <Label fx:id="productRunningCosts" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
+
             <Label text="Commoditization" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"
                    alignment="BASELINE_CENTER" style="-fx-font-weight: bold">
                 <padding><Insets left="20"/></padding>

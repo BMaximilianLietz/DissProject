@@ -34,7 +34,7 @@ public class CostingConnector {
         System.out.println("Records created successfully");
     }
 
-    public static void insertIntoUserStories(ArrayList<ArrayList<Object>> storyList, int productId) {
+    public static void insertIntoUserStories(ArrayList<ArrayList<Object>> storyList) {
         Connection c = null;
         Statement stmt = null;
 
@@ -44,27 +44,33 @@ public class CostingConnector {
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully (for UserStories table alteration)");
+            System.out.println("Opened database successfully (for running costs insert)");
+
+            PreparedStatement sql = c.prepareStatement("INSERT INTO public.\"UserStories\" " +
+                    "(\"storyName\",\"storyPoints\",\"Iteration\", \"productId\", \"repeats\") VALUES " +
+                    "(?,?,?,?,?)");
 
             try {
                 for (int i = 0; i < storyList.size(); i++){
                     String storyName = (String) storyList.get(i).get(0);
                     int points = (int) storyList.get(i).get(1);
                     String iteration = (String) storyList.get(i).get(2);
+                    int productId = (int) storyList.get(i).get(3);
+                    Boolean repeats = (Boolean) storyList.get(i).get(4);
 
-                    stmt = c.createStatement();
-                    String sql = "INSERT INTO public.\"UserStories\" " +
-                            "(\"storyName\",\"storyPoints\",\"Iteration\", \"productId\") "
-                            + "VALUES ('" + storyName + "', " + points +",'" + iteration + "'" +
-                            ", " + productId + ");";
-                    stmt.executeUpdate(sql);
+                    sql.setString(1, storyName);
+                    sql.setInt(2, points);
+                    sql.setString(3, iteration);
+                    sql.setInt(4, productId);
+                    sql.setBoolean(5, repeats);
+                    sql.execute();
                 }
             } catch (Exception e) {
                 System.err.println( e.getClass().getName()+": "+ e.getMessage() );
                 System.exit(0);
             }
 
-            stmt.close();
+            sql.close();
             c.commit();
             c.close();
 
@@ -210,6 +216,7 @@ public class CostingConnector {
                 temp.add(getCostingResultSet.getInt(3));
                 temp.add(getCostingResultSet.getString(4));
                 temp.add(getCostingResultSet.getInt(5));
+                temp.add(getCostingResultSet.getBoolean(6));
             }
             getUserStories.close();
             c.close();
