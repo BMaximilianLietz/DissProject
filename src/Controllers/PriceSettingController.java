@@ -1,15 +1,10 @@
 package Controllers;
 
-import Data.CompetitorConnector;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Data.SubsidyConnector;
-import Models.FuturePricing;
 import Models.FuzzyLogic;
-import javafx.beans.binding.DoubleBinding;
-import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
-import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
@@ -17,10 +12,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
-import javafx.scene.text.Text;
-import javafx.stage.Stage;
 
-import java.net.Inet4Address;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -68,10 +60,9 @@ public class PriceSettingController {
     public ComboBox customerExpectationImportanceCB;
     public ComboBox competitionRelatedPriceReductionCB;
 
-
     public GridPane gridPaneGraph;
     public GridPane gridPaneMeta;
-
+    public Slider itemQualitySl;
 
     private ArrayList<Object> activeProject;
     private ArrayList<Object> activeProduct;
@@ -257,25 +248,26 @@ public class PriceSettingController {
 
             if (isInsert) {
                 // TODO remove hardcoded price ranges
+                // TODO remove hardcoded highest price & item quality slider
                 ProductPricingConnector.insertAllProductPricing((Integer)activeProduct.get(0),
-                        java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
                         Double.parseDouble(desiredMarginTF.getText()),
-                        java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
                         Integer.parseInt(numberCustomersTF.getText()),
-                        java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
-                        java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
+                        String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
+                        String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
                         Double.parseDouble(desiredMarkupTF.getText()),
                         Double.parseDouble(allowedVarianceTF.getText()),
                         0.0, 0.0,
-                        subsidizationDegrees);
+                        subsidizationDegrees, 0.0,0.0, 0.0);
 
                 activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
                         activeProduct.get(2).toString(),
@@ -308,7 +300,7 @@ public class PriceSettingController {
                         Double.parseDouble(desiredMarkupTF.getText()),
                         Double.parseDouble(allowedVarianceTF.getText()),
                         0.0, 0.0,
-                        subsidizationDegrees);
+                        subsidizationDegrees, 0.0, 0.0, 0.0);
 
 //                System.out.println(activeProduct);
                 activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
@@ -547,11 +539,10 @@ public class PriceSettingController {
             }
         }
 
-        FuturePricing pricing = new FuturePricing();
-        pricing.lineChartInit("Price in Pounds",
-                "Number of Months",
+        GraphController pricing = new GraphController();
+        pricing.setAxes("Number of Months",
                 "Proposed Price Development");
-        pricing.setLineChartData("Lorem ipsum", graphData);
+        pricing.setLineChartData("Lorem ipsum", graphData, "Price in Pounds");
         System.out.println(graphData);
         System.out.println(pricing.getLineChart().getData());
 

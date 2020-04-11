@@ -142,7 +142,7 @@
             </Button>
             <TextField fx:id="userStoryNameRepeatTF" GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="Running cost name">
             </TextField>
-            <TextField fx:id="storyPointsRepeatTF" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Story points">
+            <TextField fx:id="storyPointsRepeatTF" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Monthly costs">
             </TextField>
 
             <!--
@@ -157,7 +157,7 @@
                 <content>
                     <GridPane hgap="10" vgap="10" fx:id="gridPaneRunningCosts">
                         <Label GridPane.columnIndex="0" GridPane.rowIndex="0">User Story</Label>
-                        <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Story Points</Label>
+                        <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Monthly Costs</Label>
 
                         <Label fx:id="storyPointsTotalRepeatLabel" GridPane.columnIndex="0" GridPane.rowIndex="1">Total</Label>
                         <Label fx:id="storyPointsTotalRepeatPoints" GridPane.columnIndex="1" GridPane.rowIndex="1">0</Label>

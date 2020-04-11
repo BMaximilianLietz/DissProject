@@ -47,7 +47,9 @@ public class ProductPricingConnector {
                                                String priceElasticity, Integer numberCustomers, String preProcessing,
                                                String itemImitability, String degreePriceCompetition,
                                                Double desiredMarkup, Double allowedVariance, Double priceRangeLow,
-                                               Double priceRangeHigh, Integer subsidizationDegree) {
+                                               Double priceRangeHigh, Integer subsidizationDegree,
+                                               Double itemQualitySlider, Double customerHighestPrice,
+                                               Double priceIndex) {
         Connection c = null;
         Statement stmt = null;
 
@@ -66,8 +68,9 @@ public class ProductPricingConnector {
                         "\"itemQuality\", \"marketSaturation\", \"isMarketSegmented\", \"brandValue\", " +
                         "\"distributionChannel\", \"priceElasticity\", \"numberCustomers\", \"preProcessing\", \"itemImitability\", " +
                         "\"degreePriceCompetition\", \"desiredMarkup\", \"allowedVariance\", " +
-                        "\"priceRangeLow\", \"priceRangeHigh\", \"subsidizationDegree\") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                        "\"priceRangeLow\", \"priceRangeHigh\", \"subsidizationDegree\", " +
+                        "\"itemQualitySlider\", \"customerHighestPrice\", \"priceIndex\") " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);
                 sql.setDouble(3, desiredMargin);
@@ -88,6 +91,9 @@ public class ProductPricingConnector {
                 sql.setDouble(18, priceRangeLow);
                 sql.setDouble(19, priceRangeHigh);
                 sql.setInt(20, subsidizationDegree);
+                sql.setDouble(21, itemQualitySlider);
+                sql.setDouble(22, customerHighestPrice);
+                sql.setDouble(22, priceIndex);
 
                 sql.execute();
             } catch (Exception e) {
@@ -142,6 +148,9 @@ public class ProductPricingConnector {
                 queryResults.add(rs.getDouble(18));
                 queryResults.add(rs.getDouble(19));
                 queryResults.add(rs.getInt(20));
+                queryResults.add(rs.getDouble(21));
+                queryResults.add(rs.getDouble(22));
+                queryResults.add(rs.getDouble(22));
             }
             ResultSetMetaData rsmd = rs.getMetaData();
             ArrayList<String> columnNames = new ArrayList<>();
@@ -167,8 +176,9 @@ public class ProductPricingConnector {
                                             String priceElasticity, Integer numberCustomers, String preProcessing,
                                             String itemImitability, String degreePriceCompetition,
                                             Double desiredMarkup, Double allowedVariance,
-                                            Double priceRangeLow, Double priceRangeHigh,
-                                            Integer subsidizationDegree) {
+                                            Double priceRangeLow, Double priceRangeHigh, Integer subsidizationDegree,
+                                            Double itemQualitySlider, Double customerHighestPrice,
+                                            Double priceIndex) {
 
         Connection c = null;
         Statement stmt = null;
@@ -202,6 +212,9 @@ public class ProductPricingConnector {
                         ", \"priceRangeLow\" = ?" +
                         ", \"priceRangeHigh\" = ?" +
                         ", \"subsidizationDegree\" = ?" +
+                        ", \"itemQualitySlider\" = ?" +
+                        ", \"customerHighestPrice\" = ?" +
+                        ", \"priceIndex\" = ?" +
                         "WHERE \"productId\" = ?;");
                 sql.setString(1, preferredPricingStrategy);
                 sql.setDouble(2, desiredMargin);
@@ -219,10 +232,13 @@ public class ProductPricingConnector {
                 sql.setString(14, degreePriceCompetition);
                 sql.setDouble(15, desiredMarkup);
                 sql.setDouble(16, allowedVariance);
-                sql.setDouble(17, desiredMarkup);
-                sql.setDouble(18, allowedVariance);
+                sql.setDouble(17, priceRangeLow);
+                sql.setDouble(18, priceRangeHigh);
                 sql.setInt(19, subsidizationDegree);
-                sql.setInt(20, productId);
+                sql.setDouble(20, itemQualitySlider);
+                sql.setDouble(21, customerHighestPrice);
+                sql.setDouble(22, priceIndex);
+                sql.setInt(23, productId);
 
                 sql.execute();
             } catch (Exception e) {

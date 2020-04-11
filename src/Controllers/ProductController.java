@@ -2,6 +2,7 @@ package Controllers;
 
 import Data.*;
 import Misc.HelperMethods;
+import com.sun.glass.ui.GlassRobot;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -12,6 +13,8 @@ import javafx.scene.control.*;
 import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.sql.Date;
@@ -32,6 +35,9 @@ public class ProductController {
     public TextField competitorPriceTF;
     public TextField competitorNameTF;
     public GridPane competitorGridPane;
+    public TextField competitorSales;
+    public Slider competitorQualitySlider;
+    public Label sliderTitle;
 
     public void initialize() {
         activeProject = SceneController.activeProject;
@@ -49,12 +55,15 @@ public class ProductController {
         ArrayList<ArrayList<Object>> competitorInit =
                 CompetitorConnector.getCompetitorsByProjectId(projectId);
         if (competitorInit.size() > 0) {
-            for (int i = 0; i < init.size(); i++) {
+            for (int i = 0; i < competitorInit.size(); i++) {
                 addCompetitor((String) competitorInit.get(i).get(1),
                         (Double) competitorInit.get(i).get(2),
+                        (Double) competitorInit.get(i).get(5),
+                        (Double) competitorInit.get(i).get(4),
                         competitorGridPane);
             }
         }
+        sliderTitle.setText("Competitor's product quality\nfrom lowest to highest");
     }
 
     public void addProductBtnClick(ActionEvent actionEvent) {
@@ -66,7 +75,8 @@ public class ProductController {
         ProductPricingConnector.insertAllProductPricing((Integer) queryResults.get(0), "", 0.0,
                 "", "", "", "", "","",
                 "", "",0, "", "", "",
-                0.0, 0.0, 0.0, 0.0, 0);
+                0.0, 0.0, 0.0, 0.0, 0,
+                0.0, 0.0, 0.0);
 
         addProduct(queryResults, gridPaneLeft);
     }
@@ -195,21 +205,124 @@ public class ProductController {
     }
 
     public void addCompetitorBtnClick(ActionEvent actionEvent) {
+        Double competitorQuality = Double.valueOf(Math.round(competitorQualitySlider.getValue()));
         addCompetitor(competitorNameTF.getText(),
                 Double.parseDouble(competitorPriceTF.getText()),
+                Double.parseDouble(competitorSales.getText()),
+                competitorQuality,
                 competitorGridPane);
         CompetitorConnector.insertIntoCompetitors(competitorNameTF.getText(),
                 Double.parseDouble(competitorPriceTF.getText()),
-                (Integer) activeProject.get(0));
+                (Integer) activeProject.get(0),
+                competitorQuality, Double.parseDouble(competitorSales.getText()));
     }
 
-    public void addCompetitor(String competitorName, Double competitorPrice, GridPane gridPaneChosen) {
+    public void addCompetitor(String competitorName, Double competitorPrice,
+                              Double competitorSales, Double competitorQuality,
+                              GridPane gridPaneChosen) {
         Label competitorNameLb = new Label(competitorName);
         Label competitorPriceLb = new Label(competitorPrice.toString());
+        Label competitorSalesLb = new Label(competitorSales.toString());
+        Label competitorQualityLb = new Label(competitorQuality.toString());
 
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
         gridPaneChosen.add(competitorNameLb, 0, rowIndex);
         gridPaneChosen.add(competitorPriceLb, 1, rowIndex);
+        gridPaneChosen.add(competitorSalesLb, 2, rowIndex);
+        gridPaneChosen.add(competitorQualityLb, 3, rowIndex);
+    }
+
+    public void competitorComparisonBtnClick(ActionEvent actionEvent) {
+        ArrayList<ArrayList<Object>> competitorQueryResults =
+                CompetitorConnector.getCompetitorsByProjectId((Integer) activeProject.get(0));
+        Double largestPrice = 0.0;
+
+        for (int i = 0; i < competitorQueryResults.size(); i++) {
+            if ((Double) competitorQueryResults.get(i).get(2) > largestPrice) {
+                largestPrice = (Double) competitorQueryResults.get(i).get(2);
+            }
+        }
+        int divisor = 1;
+        String unit = "";
+        if (largestPrice >= 1000) {
+            divisor = 100;
+            unit = " k GBP";
+        } else if (largestPrice >= 1000000) {
+            divisor = 100000;
+            unit = " m GBP";
+        } else if (largestPrice >= 1000000000) {
+            divisor = 100000000;
+            unit = " bn GBP";
+        }
+
+        GraphController competitorGraph = new GraphController();
+        competitorGraph.setBubbleChartAxes("Product Quality Points",
+                "Product Prices",
+                divisor,
+                unit);
+
+        ArrayList<ArrayList<Object>> init = ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
+
+        for (int i = 0; i < init.size(); i++) {
+            ArrayList<Object> ownProductPricing = ProductPricingConnector.getAllProductPricingByProductId(
+                    (Integer) init.get(i).get(0)
+            );
+            Double ownProductPrice = (Double) init.get(i).get(6);
+            Double ownProductItemQuality = (Double) ownProductPricing.get(20);
+            if ((ownProductPrice != 0) && (ownProductItemQuality != 0)) {
+                ArrayList<Double> temp = new ArrayList<>();
+                temp.add(ownProductItemQuality);
+                temp.add(ownProductPrice);
+//                temp.add();
+                competitorGraph.setBubbleChartData("Your product",
+                        temp,
+                        "Competitor Comparison",
+                        divisor);
+            }
+        }
+
+        for (ArrayList<Object> competitorQueryResult : competitorQueryResults) {
+            ArrayList<Double> temp = new ArrayList<>();
+            temp.add((Double) competitorQueryResult.get(4));
+            temp.add((Double) competitorQueryResult.get(2));
+            temp.add((Double) competitorQueryResult.get(5));
+            competitorGraph.setBubbleChartData((String) competitorQueryResult.get(1),
+                    temp,
+                    "Competitor Comparison",
+                    divisor);
+        }
+        competitorGraph.showBubbleChart();
+    }
+
+    // TODO move to helper methods, as it is required at several various points
+    public void priceIndexComparison(ActionEvent actionEvent) {
+        ArrayList<ArrayList<Object>> init =
+                ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
+        ArrayList<ArrayList<Object>> competitorQueryResults =
+                CompetitorConnector.getCompetitorsByProjectId((Integer) activeProject.get(0));
+
+        // price index formula: (competitor price / your price) * 100
+        // for the market: priceIndex1 + priceIndex2 + ... + priceIndexN / number of competitors
+        for (int i = 0; i < init.size(); i++) {
+            ArrayList<Double> priceIndexCurrentProduct = new ArrayList<>();
+            Double ownProductPrice = (Double) init.get(i).get(6);
+            if (ownProductPrice != 0) {
+                for (int j = 0; j < competitorQueryResults.size(); j++) {
+                    priceIndexCurrentProduct.add(
+                            (((Double)competitorQueryResults.get(j).get(2))/ownProductPrice)*100);
+                    System.out.println(competitorQueryResults.get(j).get(1));
+                    System.out.println("Individual price Index: " + priceIndexCurrentProduct.get(j));
+                }
+                Double sumPriceIndices = 0.0;
+                for (int j = 0; j < priceIndexCurrentProduct.size(); j++) {
+                    sumPriceIndices += priceIndexCurrentProduct.get(0);
+                }
+                Double indexResult = sumPriceIndices/competitorQueryResults.size();
+                System.out.println("Final price Index: " + indexResult);
+            }
+        }
+
+        // TODO add update product pricing
     }
 }

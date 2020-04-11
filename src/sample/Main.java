@@ -14,11 +14,11 @@ public class Main extends Application {
     @Override
     public void start(Stage primaryStage) throws Exception{
         Parent root = FXMLLoader.load(getClass().getResource("../Views/projectView.fxml"));
-        primaryStage.setTitle("Hello World");
-        primaryStage.setScene(new Scene(root, 300, 275));
+        primaryStage.setTitle("Pricing System");
+        primaryStage.setScene(new Scene(root, 0, 0));
+        primaryStage.setMaximized(true);
         primaryStage.setFullScreenExitKeyCombination(KeyCombination.NO_MATCH);
         primaryStage.show();
-        primaryStage.setFullScreen(true);
         SceneController.stage = primaryStage;
     }
 

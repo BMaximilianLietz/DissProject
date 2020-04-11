@@ -31,6 +31,8 @@ public class CompetitorConnector {
                 temp.add(rs.getString(2));
                 temp.add(rs.getDouble(3));
                 temp.add(rs.getInt(4));
+                temp.add(rs.getDouble(5));
+                temp.add(rs.getDouble(6));
             }
 
             c.commit();
@@ -45,7 +47,8 @@ public class CompetitorConnector {
         return queryResults;
     }
 
-    public static void insertIntoCompetitors(String competitorName, Double competitorPrice, Integer projectId) {
+    public static void insertIntoCompetitors(String competitorName, Double competitorPrice, Integer projectId,
+                                             Double competitorQuality, Double competitorSales) {
         Connection c = null;
         ArrayList<Object> queryResults = new ArrayList<>();
 
@@ -58,11 +61,14 @@ public class CompetitorConnector {
             System.out.println("Opened database successfully for Competitor Insert");
 
             PreparedStatement sql = c.prepareStatement("INSERT INTO public.\"Competitors\" " +
-                            "(\"competitorName\",\"competitorPrice\",\"projectId\") " +
-                            "VALUES(?,?,?);");
+                    "(\"competitorName\",\"competitorPrice\",\"projectId\"," +
+                    "\"competitorQuality\",\"sales\") " +
+                    "VALUES(?,?,?,?,?);");
             sql.setString(1, competitorName);
             sql.setDouble(2, competitorPrice);
             sql.setInt(3, projectId);
+            sql.setDouble(4, competitorQuality);
+            sql.setDouble(5, competitorSales);
             sql.execute();
 
             c.commit();

@@ -29,7 +29,7 @@
         <GridPane hgap="10" vgap="10">
 
             <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
-                <padding><Insets left="40" top="40"/></padding>
+                <padding><Insets left="20" top="40"/></padding>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Product Name:</Label>
                 <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"></Label>
 
@@ -55,46 +55,67 @@
                 <Label GridPane.columnIndex="5" GridPane.rowIndex="2">
                     Options
                 </Label>
-
-                <!-- Group 2 -->
-                <Button GridPane.columnIndex="5" GridPane.rowIndex="0" onAction="#addProductBtnClick">
-                    Add a product
-                </Button>
-                <TextField fx:id="productNameTF" GridPane.columnIndex="5" GridPane.rowIndex="1" promptText="Product Name"/>
-                <TextField fx:id="productDescriptionTF" GridPane.columnIndex="6" GridPane.rowIndex="1"
-                           promptText="Product Description"/>
-                <TextField fx:id="productVersionTF" GridPane.columnIndex="7" GridPane.rowIndex="1"
-                           promptText="Product Version"/>
             </GridPane>
+
+            <!-- Group 2 -->
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="5">
+                <padding><Insets top="40"/></padding>
+                <Label>Add a product</Label>
+                <TextField fx:id="productNameTF" promptText="Product Name"/>
+                <TextField fx:id="productDescriptionTF" promptText="Product Description"/>
+                <TextField fx:id="productVersionTF" promptText="Product Version"/>
+                <Button onAction="#addProductBtnClick">
+                    Add
+                </Button>
+            </VBox>
 
             <!-- Group 3 -->
 
-            <GridPane fx:id="competitorGridPane" GridPane.columnIndex="1" GridPane.rowIndex="0"
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="5">
+                <padding><Insets top="20"/></padding>
+                <Label> Competitors</Label>
+                <TextField fx:id="competitorNameTF" promptText="Competitor name"/>
+                <TextField fx:id="competitorPriceTF" promptText="Competitor Price"/>
+                <TextField fx:id="competitorSales" promptText="Competitor Sales"/>
+                <Label alignment="CENTER" fx:id="sliderTitle"></Label>
+                <Slider orientation="HORIZONTAL"  majorTickUnit="10" showTickMarks="true"
+                        fx:id="competitorQualitySlider" minorTickCount="0"/>
+                <VBox spacing="5">
+                    <Button onAction="#addCompetitorBtnClick">
+                        Add
+                    </Button>
+                    <Button onAction="#competitorComparisonBtnClick" alignment="CENTER_RIGHT">
+                        Market position comparison
+                    </Button>
+                    <Button onAction="#priceIndexComparison" alignment="CENTER_RIGHT">
+                        Price index comparison
+                    </Button>
+                </VBox>
+            </VBox>
+
+            <GridPane fx:id="competitorGridPane" GridPane.columnIndex="0" GridPane.rowIndex="1"
                       hgap="10" vgap="10">
-                <padding><Insets left="40" top="40"/></padding>
+                <padding><Insets top="40" left="20"/></padding>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
                     List of Competitors
                 </Label>
 
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
-                    Competitor Name
+                    Competitor name
                 </Label>
+
                 <Label GridPane.columnIndex="1" GridPane.rowIndex="1">
-                    Price of Competitor's product
+                    Price of competitor's product
+                </Label>
+
+                <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    Competitor sales
+                </Label>
+
+                <Label GridPane.columnIndex="3" GridPane.rowIndex="1">
+                    Competitor Quality Points
                 </Label>
             </GridPane>
-
-            <!-- Group 4 -->
-
-            <VBox GridPane.columnIndex="2" GridPane.rowIndex="0" spacing="20">
-                <padding><Insets top="40"/></padding>
-                <Label> Competitors</Label>
-                <TextField fx:id="competitorNameTF" promptText="Competitor name"/>
-                <TextField fx:id="competitorPriceTF" promptText="Competitor Price"/>
-                <Button onAction="#addCompetitorBtnClick">
-                    Add a competitor
-                </Button>
-            </VBox>
 
         </GridPane>
     </left>
