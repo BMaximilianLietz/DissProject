@@ -1,9 +1,6 @@
 package Controllers;
 
-import Data.CompetitorConnector;
-import Data.ProductConnector;
-import Data.ProjectConnector;
-import Data.SubsidyConnector;
+import Data.*;
 import Misc.HelperMethods;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
@@ -18,6 +15,7 @@ import javafx.scene.layout.HBox;
 import javafx.stage.Stage;
 
 import java.sql.Date;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ProductController {
@@ -62,8 +60,13 @@ public class ProductController {
     public void addProductBtnClick(ActionEvent actionEvent) {
 
         ArrayList<Object> queryResults = ProductConnector.insertIntoProduct((Integer) activeProject.get(0),
-                productNameTF.getText(), productDescriptionTF.getText(), null, null,
-                null, productVersionTF.getText());
+                productNameTF.getText(), productDescriptionTF.getText(), Date.valueOf(LocalDate.now()), 0.0,
+                0.0, productVersionTF.getText(), Boolean.valueOf(null), Boolean.valueOf(null), 0.0);
+
+        ProductPricingConnector.insertAllProductPricing((Integer) queryResults.get(0), "", 0.0,
+                "", "", "", "", "","",
+                "", "",0, "", "", "",
+                0.0, 0.0, 0.0, 0.0, 0);
 
         addProduct(queryResults, gridPaneLeft);
     }
@@ -134,12 +137,13 @@ public class ProductController {
                 ProductConnector.updateProductById((Integer) productCopy.get(0),
                         productCopy.get(2).toString(),
                         productCopy.get(3).toString(),
-                        null,
+                        Date.valueOf(LocalDate.now()),
                         (Double) productCopy.get(5),
                         (Double) productCopy.get(6),
                         (String) productCopy.get(7),
                         (Integer)productCopy.get(1),
-                        false, true);
+                        false, true,
+                        (Double) productCopy.get(10));
                 SubsidyConnector.insertIntoSubsidies((Integer) productCopy.get(0), null,
                         (Integer) activeProject.get(0));
             });
@@ -150,12 +154,13 @@ public class ProductController {
                 ProductConnector.updateProductById((Integer) productCopy.get(0),
                         productCopy.get(2).toString(),
                         productCopy.get(3).toString(),
-                        null,
+                        Date.valueOf(LocalDate.now()),
                         (Double) productCopy.get(5),
                         (Double) productCopy.get(6),
                         (String) productCopy.get(7),
                         (Integer)productCopy.get(1),
-                        true, false);
+                        true, false,
+                        (Double) productCopy.get(10));
 
                 ArrayList<ArrayList<Object>> check =
                         SubsidyConnector.getSubsidizerByProjectId((Integer) activeProject.get(0));

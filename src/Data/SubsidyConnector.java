@@ -8,9 +8,9 @@ import java.util.ArrayList;
 
 public class SubsidyConnector {
 
-    public static ArrayList<ArrayList<Object>> getSubsidizerByProductId(Integer productId) {
+    public static ArrayList<ArrayList<Integer>> getSubsidizerByProductId(Integer productId) {
         Connection c = null;
-        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> queryResults = new ArrayList<>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -29,12 +29,11 @@ public class SubsidyConnector {
             ResultSet rs = sql.getResultSet();
 
             while ( rs.next() ) {
-                ArrayList<Object> temp = new ArrayList<>();
+                ArrayList<Integer> temp = new ArrayList<>();
                 queryResults.add(temp);
                 temp.add(rs.getInt(1));
-                temp.add(rs.getString(2));
-                temp.add(rs.getDouble(3));
-                temp.add(rs.getInt(4));
+                temp.add(rs.getInt(2));
+                temp.add(rs.getInt(3));
             }
 
             c.commit();

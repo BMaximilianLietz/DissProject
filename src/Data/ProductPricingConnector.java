@@ -15,7 +15,7 @@ public class ProductPricingConnector {
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully (for Product table alteration)");
+            System.out.println("Opened database successfully (for insert Product Commoditization)");
 
             try {
                 stmt = c.createStatement();
@@ -40,13 +40,14 @@ public class ProductPricingConnector {
         System.out.println("Records created successfully");
     }
 
-    public static void insertAllProductPricing(Integer projectId, String preferredPricingStrategy,
+    public static void insertAllProductPricing(Integer productId, String preferredPricingStrategy,
                                                Double desiredMargin, String target, String industryPriceClustering,
                                                String itemQualityImportance, String marketSaturation,
                                                String marketSegmentation, String brandValue, String distributionChannel,
                                                String priceElasticity, Integer numberCustomers, String preProcessing,
                                                String itemImitability, String degreePriceCompetition,
-                                               Double desiredMarkup, Double allowedVariance) {
+                                               Double desiredMarkup, Double allowedVariance, Double priceRangeLow,
+                                               Double priceRangeHigh, Integer subsidizationDegree) {
         Connection c = null;
         Statement stmt = null;
 
@@ -64,9 +65,10 @@ public class ProductPricingConnector {
                         "(\"productId\",\"pricingStrategy\",\"desiredMargin\", \"target\", \"priceClustering\", " +
                         "\"itemQuality\", \"marketSaturation\", \"isMarketSegmented\", \"brandValue\", " +
                         "\"distributionChannel\", \"priceElasticity\", \"numberCustomers\", \"preProcessing\", \"itemImitability\", " +
-                        "\"degreePriceCompetition\", \"desiredMarkup\", \"allowedVariance\") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
-                sql.setInt(1, projectId);
+                        "\"degreePriceCompetition\", \"desiredMarkup\", \"allowedVariance\", " +
+                        "\"priceRangeLow\", \"priceRangeHigh\", \"subsidizationDegree\") " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);
                 sql.setDouble(3, desiredMargin);
                 sql.setString(4, target);
@@ -83,6 +85,9 @@ public class ProductPricingConnector {
                 sql.setString(15, degreePriceCompetition);
                 sql.setDouble(16, desiredMarkup);
                 sql.setDouble(17, allowedVariance);
+                sql.setDouble(18, priceRangeLow);
+                sql.setDouble(19, priceRangeHigh);
+                sql.setInt(20, subsidizationDegree);
 
                 sql.execute();
             } catch (Exception e) {
@@ -134,6 +139,9 @@ public class ProductPricingConnector {
                 queryResults.add(rs.getString(15));
                 queryResults.add(rs.getDouble(16));
                 queryResults.add(rs.getDouble(17));
+                queryResults.add(rs.getDouble(18));
+                queryResults.add(rs.getDouble(19));
+                queryResults.add(rs.getInt(20));
             }
             ResultSetMetaData rsmd = rs.getMetaData();
             ArrayList<String> columnNames = new ArrayList<>();
@@ -148,7 +156,7 @@ public class ProductPricingConnector {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        System.out.println("Operation getAllByProductNameAndProject done successfully");
+        System.out.println("Operation getAllProductPricingByProductId done successfully");
         return queryResults;
     }
 
@@ -158,7 +166,9 @@ public class ProductPricingConnector {
                                             String marketSegmentation, String brandValue, String distributionChannel,
                                             String priceElasticity, Integer numberCustomers, String preProcessing,
                                             String itemImitability, String degreePriceCompetition,
-                                            Double desiredMarkup, Double allowedVariance) {
+                                            Double desiredMarkup, Double allowedVariance,
+                                            Double priceRangeLow, Double priceRangeHigh,
+                                            Integer subsidizationDegree) {
 
         Connection c = null;
         Statement stmt = null;
@@ -189,6 +199,9 @@ public class ProductPricingConnector {
                         ", \"degreePriceCompetition\" = ?" +
                         ", \"desiredMarkup\" = ?" +
                         ", \"allowedVariance\" = ?" +
+                        ", \"priceRangeLow\" = ?" +
+                        ", \"priceRangeHigh\" = ?" +
+                        ", \"subsidizationDegree\" = ?" +
                         "WHERE \"productId\" = ?;");
                 sql.setString(1, preferredPricingStrategy);
                 sql.setDouble(2, desiredMargin);
@@ -206,7 +219,10 @@ public class ProductPricingConnector {
                 sql.setString(14, degreePriceCompetition);
                 sql.setDouble(15, desiredMarkup);
                 sql.setDouble(16, allowedVariance);
-                sql.setInt(17, productId);
+                sql.setDouble(17, desiredMarkup);
+                sql.setDouble(18, allowedVariance);
+                sql.setInt(19, subsidizationDegree);
+                sql.setInt(20, productId);
 
                 sql.execute();
             } catch (Exception e) {

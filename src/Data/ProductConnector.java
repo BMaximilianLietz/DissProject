@@ -1,15 +1,16 @@
 package Data;
 
 import java.sql.*;
+import java.time.LocalDate;
 import java.util.ArrayList;
 
 public class ProductConnector {
 
     public static ArrayList<Object> insertIntoProduct(int projectId, String productName,
                                          String productDescription, Date creationDate, Double productCosts,
-                                         Double productPrice, String productVersion) {
+                                         Double productPrice, String productVersion, Boolean isSubsidized,
+                                                      Boolean isSubsidizing, Double runningCosts) {
         Connection c = null;
-        Statement stmt = null;
         ArrayList<Object> queryResults = new ArrayList<>();
         try {
             Class.forName("org.postgresql.Driver");
@@ -17,21 +18,27 @@ public class ProductConnector {
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully (for Product table alteration)");
+            System.out.println("Opened database successfully (for insertIntoProduct)");
 
             try {
-                stmt = c.createStatement();
-                String sql = "INSERT INTO public.\"Products\" " +
+                PreparedStatement sql = c.prepareStatement("INSERT INTO public.\"Products\" " +
                         "(\"projectId\",\"productName\",\"productDescription\"," +
-                        "\"creationDate\",\"productCosts\",\"productPrice\",\"version\") "
-                        + "VALUES (" + projectId + ", '" + productName +"', '" + productDescription +"', " +
-                        "" + creationDate + ", " + productCosts + ", " + productPrice + ", '" + productVersion + "') " +
-                        "RETURNING \"productId\",\"projectId\",\"productName\",\"productDescription\"," +
-                        "\"creationDate\",\"productCosts\",\"productPrice\",\"version\";";
+                        "\"creationDate\",\"productCosts\",\"productPrice\",\"version\", " +
+                        "\"isSubsidized\",\"isSubsidizing\",\"productRunningCosts\") " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?) RETURNING *;");
+                sql.setInt(1, projectId);
+                sql.setString(2, productName);
+                sql.setString(3, productDescription);
+                sql.setDate(4, creationDate);
+                sql.setDouble(5, productCosts);
+                sql.setDouble(6, productPrice);
+                sql.setString(7, productVersion);
+                sql.setBoolean(8, isSubsidized);
+                sql.setBoolean(9, isSubsidizing);
+                sql.setDouble(10, runningCosts);
+                sql.execute();
 
-                stmt.execute(sql);
-
-                ResultSet returnedProductId = stmt.getResultSet();
+                ResultSet returnedProductId = sql.getResultSet();
                 returnedProductId.next();
 
                 queryResults.add(returnedProductId.getInt(1));
@@ -42,13 +49,17 @@ public class ProductConnector {
                 queryResults.add(returnedProductId.getDouble(6));
                 queryResults.add(returnedProductId.getDouble(7));
                 queryResults.add(returnedProductId.getString(8));
+                queryResults.add(returnedProductId.getBoolean(9));
+                queryResults.add(returnedProductId.getBoolean(10));
+                queryResults.add(returnedProductId.getDouble(11));
+                System.out.println("Debug 4");
+                sql.close();
 
             } catch (Exception e) {
                 System.err.println( e.getClass().getName()+": "+ e.getMessage() );
                 System.exit(0);
             }
 
-            stmt.close();
             c.commit();
             c.close();
 
@@ -71,7 +82,7 @@ public class ProductConnector {
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully - Product Select by product name and project");
+            System.out.println("Opened database successfully - Product Select All by project ID");
 
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery( "SELECT * FROM public.\"Products\"" +
@@ -90,6 +101,7 @@ public class ProductConnector {
                 temp.add(rs.getString(8));
                 temp.add(rs.getBoolean(9));
                 temp.add(rs.getBoolean(10));
+                temp.add(rs.getDouble(11));
             }
             rs.close();
             stmt.close();
@@ -98,7 +110,7 @@ public class ProductConnector {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        System.out.println("Operation getAllByProductNameAndProject done successfully");
+        System.out.println("Operation getAllByProjectId done successfully");
         return queryResults;
     }
 
@@ -129,6 +141,7 @@ public class ProductConnector {
                 queryResults.add(rs.getString(8));
                 queryResults.add(rs.getBoolean(9));
                 queryResults.add(rs.getBoolean(10));
+                queryResults.add(rs.getDouble(11));
             }
             rs.close();
             stmt.close();
@@ -137,14 +150,15 @@ public class ProductConnector {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
-        System.out.println("Operation getAllByProductNameAndProject done successfully");
+        System.out.println("Operation getProductByProjectAndProduct done successfully");
         return queryResults;
     }
 
     public static ArrayList<Object> updateProductById(int productId, String productName,
                                                       String productDescription, Date creationDate, Double productCosts,
                                                       Double productPrice, String productVersion, int projectId,
-                                                      Boolean isSubsidized, Boolean isSubsidizing) {
+                                                      Boolean isSubsidized, Boolean isSubsidizing,
+                                                      Double runningCosts) {
         Connection c = null;
         ArrayList<Object> queryResults = new ArrayList<>();
         try {
@@ -165,11 +179,9 @@ public class ProductConnector {
                     ",\"version\" = ?" +
                     ",\"isSubsidized\" = ?" +
                     ",\"isSubsidizing\" = ?" +
+                    ",\"productRunningCosts\" = ?" +
                     " WHERE \"productId\" = ? " +
-                    "RETURNING \"productId\", \"projectId\", \"productName\",\"productDescription\"," +
-                    "\"creationDate\", \"productCosts\", \"productPrice\", \"version\", " +
-                    "\"isSubsidized\", \"isSubsidizing\";");
-            System.out.println(sql);
+                    "RETURNING *;");
             sql.setInt(1, projectId);
             sql.setString(2, productName);
             sql.setString(3, productDescription);
@@ -179,8 +191,9 @@ public class ProductConnector {
             sql.setString(7, productVersion);
             sql.setBoolean(8, isSubsidized);
             sql.setBoolean(9, isSubsidizing);
-            sql.setInt(10, productId);
-            System.out.println(sql);
+            sql.setBoolean(9, isSubsidizing);
+            sql.setDouble(10, runningCosts);
+            sql.setInt(11, productId);
             sql.execute();
 
             ResultSet returnedProduct = sql.getResultSet();
@@ -203,7 +216,50 @@ public class ProductConnector {
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
         }
-        System.out.println("Operation getAllByProductNameAndProject done successfully");
+        System.out.println("Operation updateProductById done successfully");
+        return queryResults;
+    }
+
+    public static ArrayList<Object> getProductByProductId(int productId) {
+        Connection c = null;
+        ArrayList<Object> queryResults = new ArrayList<>();
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully - Product Select by product by product ID");
+
+            PreparedStatement sql = c.prepareStatement(
+                    "SELECT * FROM public.\"Products\" WHERE " +
+                            "\"productId\" = ?");
+            sql.setInt(1, productId);
+            sql.execute();
+
+            ResultSet rs = sql.getResultSet();
+
+            while ( rs.next() ) {
+                queryResults.add(rs.getInt(1));
+                queryResults.add(rs.getInt(2));
+                queryResults.add(rs.getString(3));
+                queryResults.add(rs.getString(4));
+                queryResults.add(rs.getDate(5));
+                queryResults.add(rs.getDouble(6));
+                queryResults.add(rs.getDouble(7));
+                queryResults.add(rs.getString(8));
+                queryResults.add(rs.getBoolean(9));
+                queryResults.add(rs.getBoolean(10));
+                queryResults.add(rs.getDouble(11));
+            }
+            rs.close();
+            sql.close();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Operation getProductByProductId done successfully");
         return queryResults;
     }
 }
