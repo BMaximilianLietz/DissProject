@@ -1,11 +1,8 @@
 package Controllers;
 
 import javafx.scene.Scene;
-import javafx.scene.chart.BubbleChart;
-import javafx.scene.chart.LineChart;
-import javafx.scene.chart.XYChart;
+import javafx.scene.chart.*;
 import javafx.stage.Stage;
-import javafx.scene.chart.NumberAxis;
 
 import java.util.ArrayList;
 
@@ -14,18 +11,18 @@ public class GraphController {
     // TODO rename
 
     private final NumberAxis xAxis = new NumberAxis();
+    private final CategoryAxis  barXAxis = new CategoryAxis();
     private final NumberAxis yAxis = new NumberAxis();
     private final LineChart<Number,Number> lineChart =
             new LineChart<Number,Number>(xAxis,yAxis);
     private final BubbleChart<Number,Number> bubbleChart = new
             BubbleChart<Number,Number>(xAxis,yAxis);
+    private final BarChart<String,Number> barChart =
+            new BarChart<String,Number>(barXAxis,yAxis);
 
+    //region Line chart functionality
+    //region
     public void setAxes(String yAxisLabel, String xAxisLabel) {
-        yAxis.setLabel(yAxisLabel);
-        xAxis.setLabel(xAxisLabel);
-    }
-
-    public void setBubbleChartAxes(String yAxisLabel, String xAxisLabel, int divisor, String unit) {
         yAxis.setLabel(yAxisLabel);
         xAxis.setLabel(xAxisLabel);
     }
@@ -40,6 +37,25 @@ public class GraphController {
             series.getData().add(new XYChart.Data(x, y));
         }
         lineChart.getData().add(series);
+    }
+
+    public LineChart<Number, Number> getLineChart() {
+        return lineChart;
+    }
+
+    public void showLineChart() {
+        Stage stage = new Stage();
+        Scene scene = new Scene(lineChart);
+        stage.setScene(scene);
+        stage.show();
+    }
+    //endregion
+
+    //region Bubble chart functionality
+    //region
+    public void setBubbleChartAxes(String yAxisLabel, String xAxisLabel, String unit) {
+        yAxis.setLabel(yAxisLabel + unit);
+        xAxis.setLabel(xAxisLabel);
     }
 
     public void setBubbleChartData(String seriesName, ArrayList<Double> graphPoints,
@@ -58,19 +74,8 @@ public class GraphController {
         bubbleChart.getData().add(series);
     }
 
-    public LineChart<Number, Number> getLineChart() {
-        return lineChart;
-    }
-
     public BubbleChart<Number, Number> getBubbleChart() {
         return bubbleChart;
-    }
-
-    public void showLineChart() {
-        Stage stage = new Stage();
-        Scene scene = new Scene(lineChart);
-        stage.setScene(scene);
-        stage.show();
     }
 
     public void showBubbleChart() {
@@ -79,4 +84,34 @@ public class GraphController {
         stage.setScene(scene);
         stage.show();
     }
+    //endregion
+
+    //region Bar chart functionality
+    //region
+    public void setBarChartAxes(String yAxisLabel, String xAxisLabel) {
+        yAxis.setLabel(yAxisLabel);
+        barXAxis.setLabel(xAxisLabel);
+    }
+
+    public void setBarChartData(String seriesName, ArrayList<ArrayList<String>> graphPoints, String barChartTitle) {
+        XYChart.Series series = new XYChart.Series();
+        series.setName(seriesName);
+        barChart.setTitle(barChartTitle);
+        for (int i = 0; i < graphPoints.size(); i++) {
+            String x = graphPoints.get(i).get(0);
+            Double y = Double.parseDouble(graphPoints.get(i).get(1));
+            series.getData().add(new XYChart.Data(x, y));
+        }
+        barChart.getData().add(series);
+    }
+
+    public void showBarChart() {
+        Stage stage = new Stage();
+        Scene scene = new Scene(barChart);
+        stage.setScene(scene);
+        stage.show();
+    }
+    //endregion
+
+
 }

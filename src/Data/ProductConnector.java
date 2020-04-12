@@ -154,9 +154,9 @@ public class ProductConnector {
         return queryResults;
     }
 
-    public static ArrayList<Object> updateProductById(int productId, String productName,
+    public static ArrayList<Object> updateProductById(Integer productId, String productName,
                                                       String productDescription, Date creationDate, Double productCosts,
-                                                      Double productPrice, String productVersion, int projectId,
+                                                      Double productPrice, String productVersion, Integer projectId,
                                                       Boolean isSubsidized, Boolean isSubsidizing,
                                                       Double runningCosts) {
         Connection c = null;
@@ -185,7 +185,7 @@ public class ProductConnector {
             sql.setInt(1, projectId);
             sql.setString(2, productName);
             sql.setString(3, productDescription);
-            sql.setDate(4, new Date(1585846482429L));
+            sql.setDate(4, creationDate);
             sql.setDouble(5, productCosts);
             sql.setDouble(6, productPrice);
             sql.setString(7, productVersion);

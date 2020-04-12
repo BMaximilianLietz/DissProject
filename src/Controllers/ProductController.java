@@ -76,7 +76,7 @@ public class ProductController {
                 "", "", "", "", "","",
                 "", "",0, "", "", "",
                 0.0, 0.0, 0.0, 0.0, 0,
-                0.0, 0.0, 0.0);
+                0.0, 0.0, 0.0, "");
 
         addProduct(queryResults, gridPaneLeft);
     }
@@ -259,7 +259,6 @@ public class ProductController {
         GraphController competitorGraph = new GraphController();
         competitorGraph.setBubbleChartAxes("Product Quality Points",
                 "Product Prices",
-                divisor,
                 unit);
 
         ArrayList<ArrayList<Object>> init = ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
@@ -301,6 +300,7 @@ public class ProductController {
                 ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
         ArrayList<ArrayList<Object>> competitorQueryResults =
                 CompetitorConnector.getCompetitorsByProjectId((Integer) activeProject.get(0));
+        ArrayList<ArrayList<String>> barChartData = new ArrayList<>();
 
         // price index formula: (competitor price / your price) * 100
         // for the market: priceIndex1 + priceIndex2 + ... + priceIndexN / number of competitors
@@ -309,16 +309,30 @@ public class ProductController {
             Double ownProductPrice = (Double) init.get(i).get(6);
             if (ownProductPrice != 0) {
                 for (int j = 0; j < competitorQueryResults.size(); j++) {
+                    ArrayList<String> barChartTemp = new ArrayList<>();
+                    barChartData.add(barChartTemp);
+                    barChartTemp.add((String)competitorQueryResults.get(j).get(1));
                     priceIndexCurrentProduct.add(
                             (((Double)competitorQueryResults.get(j).get(2))/ownProductPrice)*100);
-                    System.out.println(competitorQueryResults.get(j).get(1));
-                    System.out.println("Individual price Index: " + priceIndexCurrentProduct.get(j));
+                    barChartTemp.add(priceIndexCurrentProduct.get(j).toString());
+                    System.out.println("Index: " + competitorQueryResults.get(j).get(1) + " " + priceIndexCurrentProduct.get(j));
                 }
                 Double sumPriceIndices = 0.0;
                 for (int j = 0; j < priceIndexCurrentProduct.size(); j++) {
-                    sumPriceIndices += priceIndexCurrentProduct.get(0);
+                    sumPriceIndices += priceIndexCurrentProduct.get(j);
                 }
                 Double indexResult = sumPriceIndices/competitorQueryResults.size();
+                ArrayList<String> barChartTemp = new ArrayList<>();
+                barChartData.add(barChartTemp);
+                barChartTemp.add("Average");
+                barChartTemp.add(indexResult.toString());
+
+                GraphController barChart = new GraphController();
+                barChart.setBarChartAxes("Price Index", "Product/Competitor Name");
+                barChart.setBarChartData("lorem", barChartData,
+                        "Price Index Comparison for " + init.get(i).get(2));
+                barChart.showBarChart();
+
                 System.out.println("Final price Index: " + indexResult);
             }
         }

@@ -1,5 +1,6 @@
 package Controllers;
 
+import Data.CompetitorConnector;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Data.SubsidyConnector;
@@ -17,6 +18,7 @@ import java.sql.Date;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 public class PriceSettingController {
 
@@ -63,10 +65,13 @@ public class PriceSettingController {
     public GridPane gridPaneGraph;
     public GridPane gridPaneMeta;
     public Slider itemQualitySl;
+    public ComboBox competitorOrientationCB;
+    public TextField customerHighestPriceTF;
 
     private ArrayList<Object> activeProject;
     private ArrayList<Object> activeProduct;
     private Double modifiedProductCost;
+    private Double priceIndex;
 
 //    TODO remove or put somewhere else
     ArrayList<ArrayList<Object>> graphData = new ArrayList<>();
@@ -104,10 +109,32 @@ public class PriceSettingController {
 //            System.out.println(newValue);
         });
 
+        ArrayList<ArrayList<Object>> competitorQueryResults =
+                CompetitorConnector.getCompetitorsByProjectId((Integer) activeProject.get(0));
+
+        //region individual price index calculation for current product
+        // region
+        ArrayList<Double> priceIndexCurrentProduct = new ArrayList<>();
+        Double ownProductPrice = (Double) activeProduct.get(6);
+        if (ownProductPrice != 0) {
+            for (int j = 0; j < competitorQueryResults.size(); j++) {
+                priceIndexCurrentProduct.add(
+                        (((Double)competitorQueryResults.get(j).get(2))/ownProductPrice)*100);
+            }
+            Double sumPriceIndices = 0.0;
+            for (int j = 0; j < priceIndexCurrentProduct.size(); j++) {
+                sumPriceIndices += priceIndexCurrentProduct.get(j);
+            }
+            Double indexResult = sumPriceIndices/competitorQueryResults.size();
+            priceIndex = indexResult;
+            System.out.println("Final price Index (price setting): " + priceIndex);
+        }
+        //endregion
+
         Object[] nodeArray = {pricingStrategyCB, desiredMarginTF, targetCB, priceClusteringCB, itemQualityCB,
                 marketSaturationCB, isMarketSegmentedCB, brandValueCB, distributionChannelCB, priceElasticityCB,
                 numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
-                allowedVarianceTF};
+                allowedVarianceTF, competitorOrientationCB};
 
         ArrayList<Object> queryResults =
                 ProductPricingConnector.getAllProductPricingByProductId(Integer.parseInt(activeProduct.get(0).toString()));
@@ -125,6 +152,9 @@ public class PriceSettingController {
                         ((ComboBox)nodeArray[i]).getSelectionModel().select(queryItem);
                         if ((i<10)||(i>13)) {
                             addVariableInit((ComboBox)nodeArray[i]);
+                        }
+                        if (i == 16) {
+                            competitorOrientationCB.getSelectionModel().select((String) queryResults.get(23));
                         }
                     } else {
                         ((TextField)nodeArray[i]).setText(queryItem);
@@ -243,79 +273,64 @@ public class PriceSettingController {
                 subsidizationDegrees = Integer.parseInt(subsidizationDegreesTF.getText());
             } catch (Exception e) {
                 System.out.println(e.getMessage());
-                System.out.println(e.getStackTrace());
+                System.out.println(Arrays.toString(e.getStackTrace()));
+                System.out.println("Failed to set subsidization degrees");
             }
 
-            if (isInsert) {
-                // TODO remove hardcoded price ranges
-                // TODO remove hardcoded highest price & item quality slider
-                ProductPricingConnector.insertAllProductPricing((Integer)activeProduct.get(0),
-                        String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
-                        Double.parseDouble(desiredMarginTF.getText()),
-                        String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
-                        Integer.parseInt(numberCustomersTF.getText()),
-                        String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
-                        String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
-                        String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
-                        Double.parseDouble(desiredMarkupTF.getText()),
-                        Double.parseDouble(allowedVarianceTF.getText()),
-                        0.0, 0.0,
-                        subsidizationDegrees, 0.0,0.0, 0.0);
+            Double priceRangeLow = 0.0;
+            Double priceRangeHigh = 0.0;
 
-                activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
-                        activeProduct.get(2).toString(),
-                        activeProduct.get(3).toString(),
-                        Date.valueOf(LocalDate.now()),
-                        (Double) activeProduct.get(5),
-                        Double.parseDouble(proposedPricePerCustomer.getText()),
-                        activeProduct.get(7).toString(),
-                        (Integer)activeProduct.get(1),
-                        (Boolean) activeProduct.get(8),
-                        (Boolean) activeProduct.get(9),
-                        (Double) activeProduct.get(10));
-            } else {
-                // TODO remove hardcoded price ranges
-                ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
-                        java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
-                        Double.parseDouble(desiredMarginTF.getText()),
-                        java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
-                        Integer.parseInt(numberCustomersTF.getText()),
-                        java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
-                        java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
-                        java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
-                        Double.parseDouble(desiredMarkupTF.getText()),
-                        Double.parseDouble(allowedVarianceTF.getText()),
-                        0.0, 0.0,
-                        subsidizationDegrees, 0.0, 0.0, 0.0);
-
-//                System.out.println(activeProduct);
-                activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
-                        activeProduct.get(2).toString(),
-                        activeProduct.get(3).toString(),
-                        Date.valueOf(LocalDate.now()),
-                        Double.parseDouble(activeProduct.get(5).toString()),
-                        Double.parseDouble(proposedPricePerCustomer.getText()),
-                        activeProduct.get(7).toString(),
-                        Integer.parseInt(activeProduct.get(1).toString()),
-                        (Boolean) activeProduct.get(8),
-                        (Boolean) activeProduct.get(9),
-                        (Double) activeProduct.get(10));
-//                System.out.println(activeProduct);
+            try {
+                TextField rangeLowTF = (TextField) gridPane.getScene().lookup("#rangeLowTF");
+                TextField rangeHighTF = (TextField) gridPane.getScene().lookup("#rangeLowTF");
+                priceRangeLow = Double.parseDouble(rangeLowTF.getText());
+                priceRangeHigh = Double.parseDouble(rangeHighTF.getText());
+            } catch (Exception e) {
+                System.out.println("Failed to set ranges");
+                System.out.println(e.getMessage());
+                System.out.println(Arrays.toString(e.getStackTrace()));
             }
+
+            // TODO remove hardcoded price ranges
+            ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
+                    java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
+                    Double.parseDouble(desiredMarginTF.getText()),
+                    java.lang.String.valueOf(targetCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(priceClusteringCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(itemQualityCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(marketSaturationCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(isMarketSegmentedCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(brandValueCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(distributionChannelCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(priceElasticityCB.getSelectionModel().getSelectedItem()),
+                    Integer.parseInt(numberCustomersTF.getText()),
+                    java.lang.String.valueOf(preProcessingCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(itemImitabilityCB.getSelectionModel().getSelectedIndex()),
+                    java.lang.String.valueOf(degreePriceCompetitionCB.getSelectionModel().getSelectedItem()),
+                    Double.parseDouble(desiredMarkupTF.getText()),
+                    Double.parseDouble(allowedVarianceTF.getText()),
+                    priceRangeLow,
+                    priceRangeHigh,
+                    subsidizationDegrees,
+                    itemQualitySl.getValue(),
+                    Double.parseDouble(customerHighestPriceTF.getText()),
+                    priceIndex,
+                    String.valueOf(competitorOrientationCB.getSelectionModel().getSelectedItem()));
+
+//                System.out.println(activeProduct);
+            System.out.println(activeProduct);
+            activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
+                    (String) activeProduct.get(2),
+                    (String) activeProduct.get(3),
+                    (Date) activeProduct.get(4),
+                    (Double) activeProduct.get(5),
+                    Double.parseDouble(proposedPricePerCustomer.getText()),
+                    (String) activeProduct.get(7),
+                    (Integer) activeProduct.get(1),
+                    (Boolean) activeProduct.get(8),
+                    (Boolean) activeProduct.get(9),
+                    (Double) activeProduct.get(10));
+//                System.out.println(activeProduct);
         }
         //priceSettingFLM.evaluate();
     }
@@ -429,13 +444,15 @@ public class PriceSettingController {
         if (comboBox.getId().equals("priceClusteringCB")) {
             if (priceClusteringCB.getSelectionModel().getSelectedItem().equals("Yes")) {
                 Label clusteringRanges = new Label("Clustering Ranges:");
-                clusteringRanges.setPadding(new Insets(0,0,0,40));
+                clusteringRanges.setPadding(new Insets(0,0,0,20));
 
                 TextField rangeLow = new TextField();
                 rangeLow.setPromptText("Lower price range");
+                rangeLow.setId("rangeLowTF");
 
                 TextField rangeHigh = new TextField();
                 rangeHigh.setPromptText("Upper price Range");
+                rangeHigh.setId("rangeHighTF");
 
                 HBox hBox = new HBox(rangeLow, rangeHigh);
                 int clusterRow = gridPane.getRowIndex(priceClusteringCB);
@@ -547,5 +564,17 @@ public class PriceSettingController {
         System.out.println(pricing.getLineChart().getData());
 
         gridPaneGraph.add(pricing.getLineChart(), 0,0);
+    }
+
+    // TODO move to helper methods, as it is required at several various points
+    public void priceIndexComparison(ActionEvent actionEvent) {
+
+    }
+
+    public void competitorOrientationComboBoxChange(ActionEvent actionEvent) {
+        if (competitorOrientationCB.getSelectionModel().getSelectedIndex() > 0) {
+
+            // TODO add update product pricing
+        }
     }
 }

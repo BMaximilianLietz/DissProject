@@ -23,6 +23,8 @@ VAR_INPUT				// Define input variables
 	distributionChannel : REAL;
 	priceDetermination : REAL;
 	priceElasticity : REAL;
+	priceIndex : REAL;
+	competitorOrientation : REAL;
 	//delete
 	target : REAL;
 	priceClustering : REAL;
@@ -90,9 +92,24 @@ FUZZIFY priceElasticity			// Fuzzify input variable 'food': { 'rancid', 'delicio
 	TERM absoluteInelastic := (2,0) (3,1) (4,0);
 END_FUZZIFY
 
+FUZZIFY priceIndex			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM veryHigh := (0, 1) (50, 0);
+	TERM high := (0,0) (50,1) (75,0);
+	TERM medHigh := (50,0) (75,1) (100,0);
+	TERM average := (90,0) (100,1) (110,0);
+	TERM medLow := (100,0) (125,1) (150,0);
+	TERM low := (125,0) (150,1) (175,0);
+	TERM veryLow := (150,0) (175,1);
+END_FUZZIFY
+
+FUZZIFY competitorOrientation			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM differentiation := 0;
+	TERM competition := 1;
+	TERM both := 2;
+END_FUZZIFY
+
 //Still missing
     // product line and bundling
-    // competition(?)
 
 // how to import the price from the actual program?
 // more importantly, once imported, how to actually change it?
@@ -101,7 +118,7 @@ TERM priceLow := (0.0, 0) (0.0, 1) (0.0, 0);
 TERM priceMedium := (0.0, 0) (0.0, 1) (0.0, 0);
 TERM priceHigh := (0.0, 0) (0.0, 1) (0.0, 0);
 METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
-DEFAULT := 69;		// Default value is 0 (if no rule activates defuzzifier)
+DEFAULT := 69.420;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
 RULEBLOCK No1
