@@ -107,23 +107,80 @@ public class ProductController {
         Button productPricingButton = new Button("Pricing");
         productPricingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), activeProject, productCopy,"priceSetting.fxml");
+            SceneController.openView(scene, getClass(), activeProject, product,"priceSetting.fxml");
         });
         Button productCostingButton = new Button("Costing");
         productCostingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), activeProject, productCopy, "costingView.fxml");
+            SceneController.openView(scene, getClass(), activeProject, product, "costingView.fxml");
+        });
+
+        Button productCopyButton = new Button("Clone");
+        productCopyButton.onActionProperty().setValue(actionEvent1 -> {
+
+            ArrayList<Object> productClone = new ArrayList<>(product);
+            productClone.set(2, (String) productClone.get(2) + " Copy");
+
+            ArrayList<Object> queryResults = ProductConnector.insertIntoProduct((Integer) activeProject.get(0),
+                    (String) productClone.get(2),
+                    (String) productClone.get(3),
+                    Date.valueOf(LocalDate.now()),
+                    (Double) productClone.get(5),
+                    (Double) productClone.get(6),
+                    (String) productClone.get(7),
+                    Boolean.valueOf(null), Boolean.valueOf(null),
+                    (Double) productClone.get(10));
+
+            ArrayList<Object> productPricingCopy = ProductPricingConnector.getAllProductPricingByProductId(
+                    (Integer) product.get(0)
+            );
+
+            ProductPricingConnector.insertAllProductPricing((Integer) queryResults.get(0),
+                    (String)productPricingCopy.get(1),
+                    (Double)productPricingCopy.get(2),
+                    (String)productPricingCopy.get(3),
+                    (String)productPricingCopy.get(4),
+                    (String)productPricingCopy.get(5),
+                    (String)productPricingCopy.get(6),
+                    (String)productPricingCopy.get(7),
+                    (String)productPricingCopy.get(8),
+                    (String)productPricingCopy.get(9),
+                    (String)productPricingCopy.get(10),
+                    (Integer)productPricingCopy.get(11),
+                    (String)productPricingCopy.get(12),
+                    (String)productPricingCopy.get(13),
+                    (String)productPricingCopy.get(14),
+                    (Double)productPricingCopy.get(15),
+                    (Double)productPricingCopy.get(16),
+                    (Double)productPricingCopy.get(17),
+                    (Double)productPricingCopy.get(18),
+                    (Integer)productPricingCopy.get(19),
+                    (Double)productPricingCopy.get(20),
+                    (Double)productPricingCopy.get(21),
+                    (Double)productPricingCopy.get(22),
+                    (String)productPricingCopy.get(23));
+
+            addProduct(queryResults, gridPaneLeft);
+        });
+
+        Button productDeleteButton = new Button("Delete");
+        productDeleteButton.onActionProperty().setValue(actionEvent1 -> {
+            ProductConnector.deleteProductByProductId((Integer) product.get(0));
+//            gridPaneChosen.getChildren().remove()
         });
 
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
         HBox hbox = new HBox(productPricingButton, productCostingButton);
+        HBox hBox2 = new HBox(productCopyButton, productDeleteButton);
+        VBox vBox = new VBox(hbox, hBox2);
+
         gridPaneChosen.add(productNameLb, 0, rowIndex);
         gridPaneChosen.add(productDescriptionLb, 1, rowIndex);
         gridPaneChosen.add(productPriceLb, 2, rowIndex);
         gridPaneChosen.add(productCostsLb,3, rowIndex);
         gridPaneChosen.add(productVersionLb, 4, rowIndex);
-        gridPaneChosen.add(hbox, 5, rowIndex);
+        gridPaneChosen.add(vBox, 5, rowIndex);
 
         if ((((String)activeProject.get(4)).equals("Bait & Hook"))||
                 (((String)activeProject.get(4)).equals("Multi-platform"))) {

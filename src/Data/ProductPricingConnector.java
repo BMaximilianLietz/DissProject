@@ -71,7 +71,7 @@ public class ProductPricingConnector {
                         "\"priceRangeLow\", \"priceRangeHigh\", \"subsidizationDegree\", " +
                         "\"itemQualitySlider\", \"customerHighestPrice\", \"priceIndex\", " +
                         "\"competitorOrientation\") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);
                 sql.setDouble(3, desiredMargin);

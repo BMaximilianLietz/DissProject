@@ -262,4 +262,54 @@ public class ProductConnector {
         System.out.println("Operation getProductByProductId done successfully");
         return queryResults;
     }
+
+    public static void deleteProductByProductId(Integer productId) {
+        Connection c = null;
+        ArrayList<Object> queryResults = new ArrayList<>();
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully - Product Update");
+
+            PreparedStatement productSql = c.prepareStatement("DELETE FROM public.\"Products\" " +
+                    " WHERE \"productId\" = ?;");
+            productSql.setInt(1, productId);
+            productSql.execute();
+            productSql.close();
+
+            PreparedStatement pricingSql = c.prepareStatement("DELETE FROM public.\"ProductPricing\" " +
+                    " WHERE \"productId\" = ?;");
+            pricingSql.setInt(1, productId);
+            pricingSql.execute();
+            pricingSql.close();
+
+            PreparedStatement costingSql = c.prepareStatement("DELETE FROM public.\"ProductCosting\" " +
+                    " WHERE \"productId\" = ?;");
+            costingSql.setInt(1, productId);
+            costingSql.execute();
+            costingSql.close();
+
+            PreparedStatement userStorySql = c.prepareStatement("DELETE FROM public.\"UserStories\" " +
+                    " WHERE \"productId\" = ?;");
+            userStorySql.setInt(1, productId);
+            userStorySql.execute();
+            userStorySql.close();
+
+            PreparedStatement equipmentSql = c.prepareStatement("DELETE FROM public.\"Equipment\" " +
+                    " WHERE \"productId\" = ?;");
+            equipmentSql.setInt(1, productId);
+            equipmentSql.execute();
+            equipmentSql.close();
+
+
+            c.commit();
+            c.close();
+        } catch ( Exception e ) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+        }
+        System.out.println("Operation deleteProductById done successfully");
+    }
 }
