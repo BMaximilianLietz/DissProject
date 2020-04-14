@@ -86,7 +86,7 @@ public class ProductConnector {
 
             stmt = c.createStatement();
             ResultSet rs = stmt.executeQuery( "SELECT * FROM public.\"Products\"" +
-                    "WHERE \"projectId\"=" + projectId + ";" );
+                    "WHERE \"projectId\"=" + projectId + " ORDER BY \"productId\" ASC;" );
 
             while ( rs.next() ) {
                 ArrayList<Object> temp = new ArrayList<>();
@@ -154,9 +154,9 @@ public class ProductConnector {
         return queryResults;
     }
 
-    public static ArrayList<Object> updateProductById(Integer productId, String productName,
+    public static ArrayList<Object> updateProductById(Integer productId, Integer projectId, String productName,
                                                       String productDescription, Date creationDate, Double productCosts,
-                                                      Double productPrice, String productVersion, Integer projectId,
+                                                      Double productPrice, String productVersion,
                                                       Boolean isSubsidized, Boolean isSubsidizing,
                                                       Double runningCosts) {
         Connection c = null;

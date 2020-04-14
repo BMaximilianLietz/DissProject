@@ -49,7 +49,8 @@ public class ProductPricingConnector {
                                                Double desiredMarkup, Double allowedVariance, Double priceRangeLow,
                                                Double priceRangeHigh, Integer subsidizationDegree,
                                                Double itemQualitySlider, Double customerHighestPrice,
-                                               Double priceIndex, String competitorOrientation) {
+                                               Double priceIndex, String competitorOrientation, Double customersMaxPrice,
+                                               Double clusteringImportance) {
         Connection c = null;
         Statement stmt = null;
 
@@ -70,8 +71,8 @@ public class ProductPricingConnector {
                         "\"degreePriceCompetition\", \"desiredMarkup\", \"allowedVariance\", " +
                         "\"priceRangeLow\", \"priceRangeHigh\", \"subsidizationDegree\", " +
                         "\"itemQualitySlider\", \"customerHighestPrice\", \"priceIndex\", " +
-                        "\"competitorOrientation\") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                        "\"competitorOrientation\", \"customersMaxPrice\", \"clusteringImportance\") " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);
                 sql.setDouble(3, desiredMargin);
@@ -96,6 +97,8 @@ public class ProductPricingConnector {
                 sql.setDouble(22, customerHighestPrice);
                 sql.setDouble(23, priceIndex);
                 sql.setString(24, competitorOrientation);
+                sql.setDouble(25, customersMaxPrice);
+                sql.setDouble(26, clusteringImportance);
 
                 sql.execute();
             } catch (Exception e) {
@@ -154,6 +157,8 @@ public class ProductPricingConnector {
                 queryResults.add(rs.getDouble(22));
                 queryResults.add(rs.getDouble(23));
                 queryResults.add(rs.getString(24));
+                queryResults.add(rs.getDouble(25));
+                queryResults.add(rs.getDouble(26));
             }
             ResultSetMetaData rsmd = rs.getMetaData();
             ArrayList<String> columnNames = new ArrayList<>();
@@ -181,7 +186,8 @@ public class ProductPricingConnector {
                                             Double desiredMarkup, Double allowedVariance,
                                             Double priceRangeLow, Double priceRangeHigh, Integer subsidizationDegree,
                                             Double itemQualitySlider, Double customerHighestPrice,
-                                            Double priceIndex, String competitorOrientation) {
+                                            Double priceIndex, String competitorOrientation, Double customerMaxPrice,
+                                            Double clusteringImportance) {
 
         Connection c = null;
         Statement stmt = null;
@@ -219,6 +225,8 @@ public class ProductPricingConnector {
                         ", \"customerHighestPrice\" = ?" +
                         ", \"priceIndex\" = ?" +
                         ", \"competitorOrientation\" = ?" +
+                        ", \"customersMaxPrice\" = ?" +
+                        ", \"clusteringImportance\" = ?" +
                         "WHERE \"productId\" = ?;");
                 sql.setString(1, preferredPricingStrategy);
                 sql.setDouble(2, desiredMargin);
@@ -243,7 +251,9 @@ public class ProductPricingConnector {
                 sql.setDouble(21, customerHighestPrice);
                 sql.setDouble(22, priceIndex);
                 sql.setString(23, competitorOrientation);
-                sql.setInt(24, productId);
+                sql.setDouble(24, customerMaxPrice);
+                sql.setDouble(25, clusteringImportance);
+                sql.setInt(26, productId);
 
                 sql.execute();
             } catch (Exception e) {

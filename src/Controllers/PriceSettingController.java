@@ -66,15 +66,17 @@ public class PriceSettingController {
     public Slider itemQualitySl;
     public ComboBox competitorOrientationCB;
     public TextField customerHighestPriceTF;
+    public TextField numberCustomersMaxPriceTF;
 
     private ArrayList<Object> activeProject;
     private ArrayList<Object> activeProduct;
+    private Double activeProductCost;
     private Double modifiedProductCost;
     private Double priceIndex;
     private Double priceClusterFLOutput = -99.0;
 
     // Fuzzy logic variables
-    public FuzzyLogic priceSettingFLM;
+//    public FuzzyLogic priceSettingFLM;
     public FuzzyLogic priceDevelopmentFLM;
     public FuzzyLogic commoditizationFLM;
     public FuzzyLogic clusteringRangeFLM;
@@ -93,8 +95,8 @@ public class PriceSettingController {
 
         modifiedProductCost  = (Double) activeProduct.get(5);
 
-        priceSettingFLM = new FuzzyLogic();
-        priceSettingFLM.init("pricingFB");
+//        priceSettingFLM = new FuzzyLogic();
+//        priceSettingFLM.init("pricingFB");
 
         commoditizationFLM = new FuzzyLogic();
         commoditizationFLM.init("commoditizationFB");
@@ -125,6 +127,9 @@ public class PriceSettingController {
         // region
         ArrayList<Double> priceIndexCurrentProduct = new ArrayList<>();
         Double ownProductPrice = (Double) activeProduct.get(6);
+        if (ownProductPrice == 0.0) {
+            ownProductPrice = 100.0;
+        }
         if (ownProductPrice != 0) {
             for (int j = 0; j < competitorQueryResults.size(); j++) {
                 priceIndexCurrentProduct.add(
@@ -136,6 +141,9 @@ public class PriceSettingController {
             }
             Double indexResult = sumPriceIndices/competitorQueryResults.size();
             priceIndex = indexResult;
+            if (ownProductPrice == 100.0) {
+                priceIndex = 100.0;
+            }
             System.out.println("Final price Index (price setting): " + priceIndex);
         }
         //endregion
@@ -247,7 +255,7 @@ public class PriceSettingController {
 
     public void comboBoxItemChange(ActionEvent actionEvent) {
 //        System.out.println(comboBox1.getSelectionModel().getSelectedItem().toString() + " " + actionEvent.getSource());
-        addVariableInit((Control) actionEvent.getSource());
+        //addVariableInit((Control) actionEvent.getSource());
 
         priceClusteringCheck((ComboBox) actionEvent.getSource());
     }
@@ -258,9 +266,54 @@ public class PriceSettingController {
         if (commoditizationValueForm.getText().equals("Please fill out form")) {
             HelperMethods.throwAlert(gridPane.getScene(), "Please get the commoditization value first");
         } else {
+            FuzzyLogic priceSettingFLM = new FuzzyLogic();
+            priceSettingFLM.init("pricingFB");
 
             double commValue = Double.parseDouble(commoditizationValueForm.getText());
             priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
+
+            // preferred pricing strategy
+            String preferredPricingStrategyCB = pricingStrategyCB.getId().substring(0, pricingStrategyCB.getId().length()-2);
+            int pricingStrategyCBIndex = pricingStrategyCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(preferredPricingStrategyCB, Double.valueOf(pricingStrategyCBIndex));
+
+            // item quality CB
+            String itemQualityTempCB = itemQualityCB.getId().substring(0, itemQualityCB.getId().length()-2);
+            int itemQualityTempCBIndex = pricingStrategyCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(itemQualityTempCB, Double.valueOf(itemQualityTempCBIndex));
+
+            // item quality slider
+            String itemQualityTempSl = itemQualitySl.getId().substring(0, itemQualitySl.getId().length()-2);
+            Double itemQualitySliderValue = itemQualitySl.getValue();
+            priceSettingFLM.functionBlockSetVariable(itemQualityTempSl, itemQualitySliderValue);
+
+            // market saturation
+            String marketSaturationTempCB = marketSaturationCB.getId().substring(0, marketSaturationCB.getId().length()-2);
+            Integer marketSaturationIndex = marketSaturationCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(marketSaturationTempCB, Double.valueOf(marketSaturationIndex));
+
+            // market saturation
+            String brandValueTempCB = brandValueCB.getId().substring(0, brandValueCB.getId().length()-2);
+            Integer brandValueCBIndex = brandValueCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(brandValueTempCB, Double.valueOf(brandValueCBIndex));
+
+            // market saturation
+            String distributionChannelTempCB = distributionChannelCB.getId().substring(0, distributionChannelCB.getId().length()-2);
+            Integer distributionChannelCBIndex = distributionChannelCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(distributionChannelTempCB, Double.valueOf(distributionChannelCBIndex));
+
+            // market saturation
+            String priceElasticityTempCB = priceElasticityCB.getId().substring(0, priceElasticityCB.getId().length()-2);
+            Integer priceElasticityCBIndex = priceElasticityCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(priceElasticityTempCB, Double.valueOf(priceElasticityCBIndex));
+
+            // price index - competitor comparison
+            priceSettingFLM.functionBlockSetVariable("priceIndex", priceIndex);
+
+            // competitor Orientation
+            String competitorOrientationTempCB = competitorOrientationCB.getId().substring(0, competitorOrientationCB.getId().length()-2);
+            Integer competitorOrientationCBIndex = competitorOrientationCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(competitorOrientationTempCB, Double.valueOf(competitorOrientationCBIndex));
 
             priceSettingFLM.evaluate();
 
@@ -294,6 +347,16 @@ public class PriceSettingController {
                 System.out.println(Arrays.toString(e.getStackTrace()));
             }
 
+            Double clusterImportance = 50.0;
+
+            try {
+                clusterImportance = ((Slider) gridPane.getScene().lookup("#clusterImportanceSL")).getValue();
+            } catch (Exception e) {
+                System.out.println("Failed to set cluster importance");
+                System.out.println(e.getMessage());
+                System.out.println(Arrays.toString(e.getStackTrace()));
+            }
+
             // TODO remove hardcoded price ranges
             ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
                     java.lang.String.valueOf(pricingStrategyCB.getSelectionModel().getSelectedItem()),
@@ -318,24 +381,58 @@ public class PriceSettingController {
                     itemQualitySl.getValue(),
                     Double.parseDouble(customerHighestPriceTF.getText()),
                     priceIndex,
-                    String.valueOf(competitorOrientationCB.getSelectionModel().getSelectedItem()));
+                    String.valueOf(competitorOrientationCB.getSelectionModel().getSelectedItem()),
+                    Double.parseDouble(numberCustomersMaxPriceTF.getText()),
+                    clusterImportance);
 
 //                System.out.println(activeProduct);
             System.out.println(activeProduct);
             activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
+                    (Integer) activeProduct.get(1),
                     (String) activeProduct.get(2),
                     (String) activeProduct.get(3),
                     (Date) activeProduct.get(4),
                     (Double) activeProduct.get(5),
                     Double.parseDouble(proposedPricePerCustomer.getText()),
                     (String) activeProduct.get(7),
-                    (Integer) activeProduct.get(1),
                     (Boolean) activeProduct.get(8),
                     (Boolean) activeProduct.get(9),
                     (Double) activeProduct.get(10));
 //                System.out.println(activeProduct);
         }
         //priceSettingFLM.evaluate();
+    }
+
+    public void calculatePriceButtonClick(ActionEvent actionEvent) {
+
+        Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
+        Double cost = modifiedProductCost/Double.valueOf(numberCustomersTF.getText());
+        Double margin = Double.valueOf(desiredMarginTF.getText())/100;
+        Double appliedMargin = cost * (1+margin);
+        Double markup = Double.valueOf(desiredMarkupTF.getText())/100;
+        Double appliedMarkup = cost * (1+markup);
+
+        String priceLow = "(" + (cost*((1-margin)*(1-allowedVariance))) + ", 0) (" + (cost*(1-margin)) + ", 1) (" +
+                (cost*(1+margin*(1-allowedVariance))) + ", 0)";
+        FuzzyLogic.replacePriceTerm(1, priceLow);
+        String priceMed = "(" + (cost * ((1 + margin)*(1-allowedVariance))) + ", 0) (" + cost * (1+margin) + ", 1) (" +
+                cost * ((1+margin)*(allowedVariance+1)) + ", 0)";
+        FuzzyLogic.replacePriceTerm(2, priceMed);
+        String priceHigh = "(" + (cost * (1+markup*(1-allowedVariance))) + ", 0) (" + (cost * (1+markup)) + ", 1) (" +
+                (cost * ((1+markup)*(1+allowedVariance))) + ", 0)";
+        FuzzyLogic.replacePriceTerm(3, priceHigh);
+    }
+
+    public void addVariableInit(Control source) {
+        /*
+        String element = source.getId();
+        element = element.substring(0, element.length()-2);
+        //String value = ((ComboBox)actionEvent.getSource()).getSelectionModel().getSelectedItem().toString().replaceAll("\\s+", "");;
+        int selectedIndex = ((ComboBox)source).getSelectionModel().getSelectedIndex();
+
+        priceSettingFLM.functionBlockSetVariable(element, (double) selectedIndex);
+
+         */
     }
 
     public void commoditizationButtonClick(ActionEvent actionEvent) {
@@ -362,35 +459,6 @@ public class PriceSettingController {
 
         //System.out.println(commoditizationFLM.getFunctionBlock());
         commoditizationValueForm.setText(String.valueOf(commoditizationFLM.getFunctionBlock().getVariable("commoditizationOutputValue").getValue()));
-    }
-
-    public void calculatePriceButtonClick(ActionEvent actionEvent) {
-
-        Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
-        Double cost = modifiedProductCost/Double.valueOf(numberCustomersTF.getText());
-        Double margin = Double.valueOf(desiredMarginTF.getText())/100;
-        Double appliedMargin = cost * (1+margin);
-        Double markup = Double.valueOf(desiredMarkupTF.getText())/100;
-        Double appliedMarkup = cost * (1+markup);
-
-        String priceLow = "(" + (cost*((1-margin)*(1-allowedVariance))) + ", 0) (" + (cost*(1-margin)) + ", 1) (" +
-                (cost*(1+margin*(1-allowedVariance))) + ", 0)";
-        FuzzyLogic.replacePriceTerm(1, priceLow);
-        String priceMed = "(" + (cost * ((1 + margin)*(1-allowedVariance))) + ", 0) (" + cost * (1+margin) + ", 1) (" +
-                cost * ((1+margin)*(allowedVariance+1)) + ", 0)";
-        FuzzyLogic.replacePriceTerm(2, priceMed);
-        String priceHigh = "(" + (cost * (1+markup*(1-allowedVariance))) + ", 0) (" + (cost * (1+markup)) + ", 1) (" +
-                (cost * ((1+markup)*(1+allowedVariance))) + ", 0)";
-        FuzzyLogic.replacePriceTerm(3, priceHigh);
-    }
-
-    public void addVariableInit(Control source) {
-        String element = source.getId();
-        element = element.substring(0, element.length()-2);
-        //String value = ((ComboBox)actionEvent.getSource()).getSelectionModel().getSelectedItem().toString().replaceAll("\\s+", "");;
-        int selectedIndex = ((ComboBox)source).getSelectionModel().getSelectedIndex();
-
-        priceSettingFLM.functionBlockSetVariable(element, (double) selectedIndex);
     }
 
     public void openProjectViewMenuItemClick(ActionEvent actionEvent) {
@@ -609,61 +677,17 @@ public class PriceSettingController {
         TextField rangeHighTF = (TextField) scene.lookup("#rangeHighTF");
 
         if ((rangeLowTF.getText().equals(""))||(rangeHighTF.getText().equals(""))) {
-            HelperMethods.throwAlert(gridPane.getScene(),"No empty ranges allowed");
+            HelperMethods.throwAlert(scene,"No empty ranges allowed");
             return;
         }
 
         Double rangeLow = Double.parseDouble(rangeLowTF.getText());
         Double rangeHigh = Double.parseDouble(rangeHighTF.getText());
         Slider clusterImportanceSL = (Slider) scene.lookup("#clusterImportanceSL");
-        Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
-        Double average = (rangeLow + rangeHigh)/2;
-        Double averageDistance = rangeHigh - average;
-        Double currentPrice = (Double) activeProduct.get(6);
 
-        String tooLow = "(0, 1) (" + (rangeLow-(rangeLow*allowedVariance)) + ", 1) (" + rangeLow + ", 0)";
-        String lowerBorder = "sigm -" + (rangeLow*(allowedVariance)) + " " + rangeLow;
-        String acceptablePriceRange = "gbell 1 " + averageDistance +  " " + average;
-        String upperBorder = "sigm " + (rangeHigh*(allowedVariance)) + " " + rangeHigh;
-        String tooHigh = "(" + rangeHigh + ", 0) (" + (rangeHigh*(1+allowedVariance)) + ", 1)";
-
-        FuzzyLogic.replaceClusteringTerm(1, tooLow);
-        FuzzyLogic.replaceClusteringTerm(2, lowerBorder);
-        FuzzyLogic.replaceClusteringTerm(3, acceptablePriceRange);
-        FuzzyLogic.replaceClusteringTerm(4, upperBorder);
-        FuzzyLogic.replaceClusteringTerm(5, tooHigh);
-
-        String decreaseStrongly;
-        String increaseStrongly;
-        String povChange = "(" + rangeLow/currentPrice + " ,0) (" + average/currentPrice + ",1) " +
-                " (" + rangeHigh/currentPrice + ",0)";
-
-        if (currentPrice < rangeLow) {
-            decreaseStrongly = "(0,1) (0.9, 1)";
-            increaseStrongly = povChange;
-        } else if (currentPrice > rangeHigh) {
-            increaseStrongly = "(0,1) (0.9, 1)";
-            decreaseStrongly = povChange;
-        } else {
-            increaseStrongly = "(0.9,0) (0.95,1) (1,0)";
-            decreaseStrongly = "(1,0) (1.05, 1) (1.1,0)";
-        }
-
-        FuzzyLogic.replaceClusteringTerm(6, decreaseStrongly);
-        FuzzyLogic.replaceClusteringTerm(7, increaseStrongly);
-
-        FuzzyLogic.replacePriceTerm(6, decreaseStrongly);
-        FuzzyLogic.replacePriceTerm(7, increaseStrongly);
-
-        clusteringRangeFLM.functionBlockSetVariable("currentPrice", currentPrice);
-        clusteringRangeFLM.functionBlockSetVariable("rangeImportance", clusterImportanceSL.getValue());
-
-        clusteringRangeFLM.getChartFunctionBlock();
-        clusteringRangeFLM.evaluate();
-
-        System.out.println(String.valueOf(clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue()));
-        priceClusterFLOutput = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();
-        System.out.println("priceClusterFLOutput: " + priceClusterFLOutput );
+        priceClusterFLOutput = HelperMethods.priceClusteringChange((Double) activeProduct.get(6),
+                scene, Double.parseDouble(allowedVarianceTF.getText()), clusteringRangeFLM,
+                rangeLow, rangeHigh, clusterImportanceSL.getValue());
 
     }
 }

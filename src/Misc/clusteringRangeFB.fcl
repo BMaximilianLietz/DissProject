@@ -19,19 +19,19 @@ FUZZIFY rangeImportance			// Fuzzify input variable 'service': {'poor', 'good' ,
 END_FUZZIFY
 
 FUZZIFY currentPrice			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-TERM tooLow := (0, 1) (59.5, 1) (70.0, 0);
-TERM lowerBorder := sigm -10.5 70.0;
-TERM acceptablePriceRange := gbell 1 2.5 72.5;
-TERM upperBorder := sigm 11.25 75.0;
-TERM tooHigh := (75.0, 0) (86.25, 1);
+TERM tooLow := (0, 1) (2975.0, 1) (3500.0, 0);
+TERM lowerBorder := sigm -525.0 3500.0;
+TERM acceptablePriceRange := (3500.0, 0) (4000.0, 1) (4500.0, 0);
+TERM upperBorder := sigm 675.0 4500.0;
+TERM tooHigh := (4500.0, 0) (5175.0, 1);
 END_FUZZIFY
 
 DEFUZZIFY clusteringReaction			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-TERM decreaseStrongly := (0,1) (0.9, 1);
+TERM decreaseStrongly := (0.7025450484840913 ,0) (0.8029086268389615,1)  (0.9032722051938317,0);
     TERM decreaseSlightly := (0.95,0) (0.975,1) (1,0);
     TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
     TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);
-TERM increaseStrongly := (1.0083549409392105 ,0) (1.0443676174013252,1)  (1.08038029386344,0);
+TERM increaseStrongly := (0,1) (0.9, 1);
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 	DEFAULT := 1;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY

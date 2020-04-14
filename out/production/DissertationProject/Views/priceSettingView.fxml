@@ -70,12 +70,18 @@
             <TextField fx:id="numberCustomersTF" GridPane.columnIndex="1" GridPane.rowIndex="2">
             </TextField>
 
-            <!-- Row 2  -->
-
-            <Label text="Does the product require&#10;pre-processing" GridPane.columnIndex="0" GridPane.rowIndex="3">
+            <Label text="Number of customers&#10;at maximum price (see right):" GridPane.columnIndex="0" GridPane.rowIndex="3">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="preProcessingCB" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            <TextField fx:id="numberCustomersMaxPriceTF" GridPane.columnIndex="1" GridPane.rowIndex="3">
+            </TextField>
+
+            <!-- Row 2  -->
+
+            <Label text="Does the product require&#10;pre-processing" GridPane.columnIndex="0" GridPane.rowIndex="4">
+                <padding><Insets left="20"/></padding>
+            </Label>
+            <ComboBox fx:id="preProcessingCB" GridPane.columnIndex="1" GridPane.rowIndex="4">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Yes"/>
@@ -86,10 +92,10 @@
 
             <!-- Row 3  -->
 
-            <Label text="Item imitability:" GridPane.columnIndex="0" GridPane.rowIndex="4">
+            <Label text="Item imitability:" GridPane.columnIndex="0" GridPane.rowIndex="5">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="itemImitabilityCB" GridPane.columnIndex="1" GridPane.rowIndex="4">
+            <ComboBox fx:id="itemImitabilityCB" GridPane.columnIndex="1" GridPane.rowIndex="5">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Easy replication"/>
@@ -99,10 +105,10 @@
                 </items>
             </ComboBox>
 
-            <Label text="Degree of price&#10;competition:" GridPane.columnIndex="0" GridPane.rowIndex="5">
+            <Label text="Degree of price&#10;competition:" GridPane.columnIndex="0" GridPane.rowIndex="6">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="degreePriceCompetitionCB" GridPane.columnIndex="1" GridPane.rowIndex="5">
+            <ComboBox fx:id="degreePriceCompetitionCB" GridPane.columnIndex="1" GridPane.rowIndex="6">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Perfect Price Competition"/>
@@ -113,13 +119,13 @@
                 </items>
             </ComboBox>
 
-            <Label text="Commoditization Value:" GridPane.columnIndex="0" GridPane.rowIndex="6">
+            <Label text="Commoditization Value:" GridPane.columnIndex="0" GridPane.rowIndex="7">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <Label text="Please fill out form" GridPane.columnIndex="1" GridPane.rowIndex="6" fx:id="commoditizationValueForm">
+            <Label text="Please fill out form" GridPane.columnIndex="1" GridPane.rowIndex="7" fx:id="commoditizationValueForm">
             </Label>
 
-            <Button GridPane.columnIndex="0" GridPane.rowIndex="7" GridPane.columnSpan="2"
+            <Button GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"
                     onAction="#commoditizationButtonClick">
                 Get commoditization value
             </Button>

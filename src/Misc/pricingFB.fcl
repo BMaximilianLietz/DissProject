@@ -15,6 +15,7 @@ FUNCTION_BLOCK pricingFB	// Block definition (there may be more than one block p
 VAR_INPUT				// Define input variables
 	commoditization : REAL;
 	itemQuality : REAL;
+	itemQualityImportance : REAL;
 	customerExpectations : REAL;
 	marketSaturation : REAL;
 	pricingStrategy : REAL;
@@ -43,16 +44,31 @@ FUZZIFY commoditization			// Fuzzify input variable 'service': {'poor', 'good' ,
     TERM high := (0.67,0) (1,1);
 END_FUZZIFY
 
+FUZZIFY pricingStrategy			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM costBased := 0;
+    TERM valueDriven := 1;
+    TERM targetDriven := 2;
+    TERM competitionBased := 3;
+END_FUZZIFY
+
 FUZZIFY itemQuality			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM insignificant := (0, 1) (1, 0);
-    TERM medium := (0, 0) (1,1) (2,0);
-    TERM significant := (1, 0) (2, 1) (3,0);
+	TERM insignificant := 0;
+    TERM medium := 1;
+    TERM significant := 2;
+END_FUZZIFY
+
+FUZZIFY itemQualityImportance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM null := (0, 1) (25, 0);
+	TERM low := (0, 0) (25, 1) (50, 0);
+    TERM med := (25, 0) (50, 1) (75, 0);
+    TERM high := (50, 0) (75, 1) (100, 0);
+    TERM full := (75, 0) (100, 1);
 END_FUZZIFY
 
 FUZZIFY marketSaturation			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-	TERM saturated := (0, 0) (1, 1) (2, 0);
-	TERM mediumSaturation := (1, 0) (2, 1) (3, 0);
-	TERM growing := (2, 0) (3, 1) (4, 0);
+	TERM saturated := 0;
+	TERM mediumSaturation := 1;
+	TERM growing := 2;
 END_FUZZIFY
 
 FUZZIFY priceDiscrimination			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
@@ -109,11 +125,11 @@ FUZZIFY competitorOrientation			// Fuzzify input variable 'food': { 'rancid', 'd
 END_FUZZIFY
 
 FUZZIFY priceClustering			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-TERM decreaseStrongly := (0,1) (0.9, 1);
+TERM decreaseStrongly := (0.7025450484840913 ,0) (0.8029086268389615,1)  (0.9032722051938317,0);
     TERM decreaseSlightly := (0.925,0) (0.975,1) (1,0);
     TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
     TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);
-TERM increaseStrongly := (1.0083549409392105 ,0) (1.0443676174013252,1)  (1.08038029386344,0);
+TERM increaseStrongly := (0,1) (0.9, 1);
 END_FUZZIFY
 
 //Still missing
@@ -123,8 +139,11 @@ END_FUZZIFY
 // more importantly, once imported, how to actually change it?
 DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
 TERM priceLow := (0.0, 0) (0.0, 1) (0.0, 0);
+TERM priceCompetition := (0.0, 0) (0.0, 1) (0.0, 0);
 TERM priceMedium := (0.0, 0) (0.0, 1) (0.0, 0);
 TERM priceHigh := (0.0, 0) (0.0, 1) (0.0, 0);
+TERM priceValueAdded := (0.0, 0) (0.0, 1) (0.0, 0);
+TERM priceMax := (0.0, 0) (0.0, 1) (0.0, 0);
 METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 DEFAULT := 69.420;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -139,35 +158,53 @@ RULEBLOCK No1
 	RULE 1 : IF commoditization IS low THEN price IS priceLow;
 	RULE 2 : IF commoditization IS medium THEN price IS priceMedium;
 	RULE 3 : IF commoditization IS high THEN price IS priceHigh;
-	RULE 4 : IF itemQuality IS insignificant THEN price IS priceLow;
-	RULE 5 : IF itemQuality IS medium THEN price IS priceMedium;
-	RULE 6 : IF itemQuality IS significant THEN price IS priceHigh;
-	RULE 7 : IF marketSaturation IS saturated THEN price IS priceLow;
-	RULE 8 : IF marketSaturation IS mediumSaturation THEN price IS priceMedium;
-	RULE 9 : IF marketSaturation IS growing THEN price IS priceHigh;
-	RULE 10 : IF brandValue IS lowImportance THEN price IS priceLow;
-	RULE 11 : IF brandValue IS renownedBrand THEN price IS priceMedium;
-	RULE 12 : IF brandValue IS uniqueSellingProposition THEN price IS priceHigh;
-   	RULE 13 : IF priceElasticity IS absoluteElastic THEN price IS priceLow;
-    RULE 14 : IF priceElasticity IS elastic THEN price IS priceMedium;
-    RULE 15 : IF priceElasticity IS inelastic THEN price IS priceMedium;
-    RULE 16 : IF priceElasticity IS absoluteInelastic THEN price IS priceHigh;
-    RULE 17 : IF distributionChannel IS online THEN price IS priceLow;
-    RULE 18 : IF distributionChannel IS other THEN price IS priceMedium;
-    //RULE 26 : IF
-    //RULE 27 : IF
-    //RULE 28 : IF
-    //RULE 29 : IF
-	//RULE 30 : IF
-    //RULE 31 : IF
-    //RULE 32 : IF
-    //RULE 33 : IF
-    //RULE 34 : IF
-    //RULE 35 : IF
-    //RULE 36 : IF
-    //RULE 37 : IF
-    //RULE 38 : IF
-    //RULE 39 : IF
+	RULE 4 : IF itemQuality IS insignificant AND itemQualityImportance is null THEN price IS priceLow;
+	RULE 5 : IF itemQuality IS insignificant AND itemQualityImportance is low THEN price IS priceLow;
+	RULE 6 : IF itemQuality IS insignificant AND itemQualityImportance is med THEN price IS priceMedium;
+	RULE 7 : IF itemQuality IS insignificant AND itemQualityImportance is high THEN price IS priceMedium;
+	RULE 8 : IF itemQuality IS insignificant AND itemQualityImportance is full THEN price IS priceHigh;
+	RULE 9 : IF itemQuality IS medium AND itemQualityImportance is null THEN price IS priceLow;
+	RULE 10 : IF itemQuality IS medium AND itemQualityImportance is low THEN price IS priceLow;
+	RULE 11 : IF itemQuality IS medium AND itemQualityImportance is med THEN price IS priceMedium;
+	RULE 12 : IF itemQuality IS medium AND itemQualityImportance is high THEN price IS priceHigh;
+	RULE 13: IF itemQuality IS medium AND itemQualityImportance is full THEN price IS priceHigh;
+	RULE 14 : IF itemQuality IS significant AND itemQualityImportance null Lorem THEN price IS priceLow;
+	RULE 15 : IF itemQuality IS significant AND itemQualityImportance low Lorem THEN price IS priceMedium;
+	RULE 16 : IF itemQuality IS significant AND itemQualityImportance med Lorem THEN price IS priceHigh;
+	RULE 17 : IF itemQuality IS significant AND itemQualityImportance high Lorem THEN price IS priceMax;
+	RULE 18 : IF itemQuality IS significant AND itemQualityImportance full Lorem THEN price IS priceMax;
+	RULE 19 : IF pricingStrategy IS costBased THEN price IS priceMedium;
+    RULE 20 : IF pricingStrategy IS valueDriven THEN price IS priceValueAdded;
+    //RULE 9 : IF pricingStrategy IS targetDriven THEN price IS priceHigh;
+    RULE 21 : IF pricingStrategy IS competitionBased THEN price IS priceCompetition;
+	RULE 22 : IF marketSaturation IS saturated THEN price IS priceLow;
+	RULE 23 : IF marketSaturation IS mediumSaturation THEN price IS priceCompetitive;
+	RULE 24 : IF marketSaturation IS growing THEN price IS priceHigh;
+	RULE 25 : IF brandValue IS lowImportance THEN price IS priceLow;
+	RULE 26 : IF brandValue IS renownedBrand THEN price IS priceMedium;
+	RULE 27 : IF brandValue IS uniqueSellingProposition THEN price IS priceHigh;
+   	RULE 28 : IF priceElasticity IS absoluteElastic THEN price IS priceLow;
+    RULE 29 : IF priceElasticity IS elastic THEN price IS priceMedium;
+    RULE 30 : IF priceElasticity IS inelastic THEN price IS priceMedium;
+    RULE 31 : IF priceElasticity IS absoluteInelastic THEN price IS priceHigh;
+    RULE 32 : IF distributionChannel IS online THEN price IS priceLow;
+    RULE 33 : IF distributionChannel IS other THEN price IS priceMedium;
+    RULE 34 : IF priceIndex IS veryHigh THEN price IS priceLow;
+    RULE 35 : IF priceIndex IS high THEN price IS priceCompetition;
+    RULE 36 : IF priceIndex IS medHigh THEN price IS priceCompetition;
+    RULE 38 : IF priceIndex IS average THEN price IS priceMedium;
+    RULE 39 : IF priceIndex IS medLow THEN price IS priceMedium;
+    RULE 40 : IF priceIndex IS low THEN price IS priceHigh;
+    RULE 41 : IF priceIndex IS veryLow THEN price IS priceMax;
+    RULE 42 : IF competitorOrientation IS differentiation THEN price IS priceValueAdded;
+    RULE 43 : IF competitorOrientation IS competition THEN price IS priceCompetition;
+    RULE 44 : IF competitorOrientation IS both price IS priceMedium;
+
+    //RULE 18 : IF priceClustering IS decreaseStrongly THEN price IS priceMax;
+    //RULE 18 : IF priceClustering IS decreaseSlightly THEN price IS priceMax;
+    //RULE 18 : IF priceClustering IS doNothing THEN price IS priceMax;
+    //RULE 18 : IF priceClustering IS increaseSlightly THEN price IS priceMax;
+    //RULE 18 : IF priceClustering IS increaseStrongly THEN price IS priceMax;
 
 END_RULEBLOCK
 

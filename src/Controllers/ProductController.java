@@ -2,8 +2,10 @@ package Controllers;
 
 import Data.*;
 import Misc.HelperMethods;
+import Models.FuzzyLogic;
 import com.sun.glass.ui.GlassRobot;
 import javafx.application.Application;
+import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
@@ -20,6 +22,8 @@ import javafx.stage.Stage;
 import java.sql.Date;
 import java.time.LocalDate;
 import java.util.ArrayList;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class ProductController {
     public Label projectName;
@@ -79,7 +83,8 @@ public class ProductController {
                 "", "", "", "", "","",
                 "", "",0, "", "", "",
                 0.0, 0.0, 0.0, 0.0, 0,
-                0.0, 0.0, 0.0, "");
+                0.0, 0.0, 0.0, "", 0.0,
+                0.0);
 
         addProduct(queryResults, gridPaneLeft);
     }
@@ -88,7 +93,7 @@ public class ProductController {
         Label productNameLb = new Label((String)product.get(2));
         Label productDescriptionLb = new Label((String)product.get(3));
         Label productVersionLb = new Label((String)product.get(7));
-        Label productCostsLb;
+        TextField productCostsTF;
         Label productPriceLb;
 
         try {
@@ -99,11 +104,39 @@ public class ProductController {
         }
 
         try {
-            productCostsLb = new Label(String.valueOf(((Double)product.get(5))));
+            productCostsTF = new TextField(String.valueOf(((Double)product.get(5))));
         } catch (Exception e) {
-            productCostsLb = new Label("Product Costing Required");
+            productCostsTF = new TextField("Product Costing Required");
             System.out.println(e.getMessage() + " " + e.getStackTrace());
         }
+
+        productCostsTF.setId("costId" + (Integer) product.get(0));
+        productCostsTF.textProperty().addListener((observable, oldValue, newValue) -> {
+            Timer timer = new Timer();
+            timer.schedule(new TimerTask() {
+                @Override
+                public void run() {
+                    Double newCost = Double.parseDouble(newValue);
+
+                    ProductConnector.updateProductById((Integer) product.get(0),
+                            (Integer) product.get(1),
+                            (String) product.get(2),
+                            (String) product.get(3),
+                            (Date) product.get(4),
+                            newCost,
+                            (Double) product.get(6),
+                            (String) product.get(7),
+                            (Boolean) product.get(8),
+                            (Boolean) product.get(9),
+                            (Double) product.get(10));
+                    /*
+                    System.out.println("Hellooo");
+                    System.out.println(newValue);
+
+                     */
+                }
+            }, 1);
+        });
 
         ArrayList<Object> productCopy = new ArrayList<>(product);
 
@@ -161,7 +194,9 @@ public class ProductController {
                     (Double)productPricingCopy.get(20),
                     (Double)productPricingCopy.get(21),
                     (Double)productPricingCopy.get(22),
-                    (String)productPricingCopy.get(23));
+                    (String)productPricingCopy.get(23),
+                    (Double)productPricingCopy.get(24),
+                    (Double)productPricingCopy.get(25));
 
             addProduct(queryResults, gridPaneLeft);
         });
@@ -172,16 +207,23 @@ public class ProductController {
 //            gridPaneChosen.getChildren().remove()
         });
 
+        Button productSaveButton = new Button("Save");
+        productSaveButton.onActionProperty().setValue(actionEvent1 -> {
+            System.out.println("Save button clicked - see what happens ");
+            System.out.println(product);
+
+        });
+
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
         HBox hbox = new HBox(productPricingButton, productCostingButton);
-        HBox hBox2 = new HBox(productCopyButton, productDeleteButton);
+        HBox hBox2 = new HBox(productCopyButton, productDeleteButton, productSaveButton);
         VBox vBox = new VBox(hbox, hBox2);
 
         gridPaneChosen.add(productNameLb, 0, rowIndex);
         gridPaneChosen.add(productDescriptionLb, 1, rowIndex);
         gridPaneChosen.add(productPriceLb, 2, rowIndex);
-        gridPaneChosen.add(productCostsLb,3, rowIndex);
+        gridPaneChosen.add(productCostsTF,3, rowIndex);
         gridPaneChosen.add(productVersionLb, 4, rowIndex);
         gridPaneChosen.add(vBox, 5, rowIndex);
 
@@ -205,13 +247,13 @@ public class ProductController {
                 subsidized.selectedProperty().setValue(false);
 
                 ProductConnector.updateProductById((Integer) productCopy.get(0),
+                        (Integer)productCopy.get(1),
                         productCopy.get(2).toString(),
                         productCopy.get(3).toString(),
                         Date.valueOf(LocalDate.now()),
                         (Double) productCopy.get(5),
                         (Double) productCopy.get(6),
                         (String) productCopy.get(7),
-                        (Integer)productCopy.get(1),
                         false, true,
                         (Double) productCopy.get(10));
                 SubsidyConnector.insertIntoSubsidies((Integer) productCopy.get(0), null,
@@ -222,13 +264,13 @@ public class ProductController {
                 subsidizing.selectedProperty().setValue(false);
 
                 ProductConnector.updateProductById((Integer) productCopy.get(0),
+                        (Integer)productCopy.get(1),
                         productCopy.get(2).toString(),
                         productCopy.get(3).toString(),
                         Date.valueOf(LocalDate.now()),
                         (Double) productCopy.get(5),
                         (Double) productCopy.get(6),
                         (String) productCopy.get(7),
-                        (Integer)productCopy.get(1),
                         true, false,
                         (Double) productCopy.get(10));
 
@@ -255,19 +297,34 @@ public class ProductController {
 
             gridPaneChosen.add(subsidizingTitleLbl, 6, 2);
             gridPaneChosen.add(subsidyHBox, 6, rowIndex);
+        }
 
-            numberOfProducts++;
-            if (numberOfProducts > 1) {
-                if (!productRelationExists) {
-                    ComboBox productRelationCB = new ComboBox();
-                    productRelationCB.setId("productRelationCBId");
-                    productRelationCB.getItems().add("Select product relationship");
-                    productRelationCB.getItems().add("Complements");
-                    productRelationCB.getItems().add("Substitutes");
-                    productRelationCB.getItems().add("Unrelated");
-                    productRelationCB.setOnAction(e -> productRelationCBChange());
-                    gridPaneChosen.add(productRelationCB, 2, 0);
-                }
+        numberOfProducts++;
+        if (numberOfProducts > 1) {
+            if (!productRelationExists) {
+                ComboBox productRelationCB = new ComboBox();
+                productRelationCB.setId("productRelationCBId");
+                productRelationCB.getItems().add("Select product relationship");
+                productRelationCB.getItems().add("Complements");
+                productRelationCB.getItems().add("Substitutes");
+                productRelationCB.getItems().add("Unrelated");
+                productRelationCB.setOnAction(e -> productRelationCBChange());
+                productRelationCB.getSelectionModel().select(0);
+                gridPaneChosen.add(productRelationCB, 1, 1);
+
+                ComboBox strengthProductRelation = new ComboBox();
+                strengthProductRelation.setId("strengthProductRelation");
+                strengthProductRelation.getItems().add("Weak");
+                strengthProductRelation.getItems().add("Medium");
+                strengthProductRelation.getItems().add("Strong");
+                gridPaneChosen.add(strengthProductRelation, 2, 1);
+
+                Button updateProductRelation = new Button();
+                gridPaneChosen.add(updateProductRelation, 3, 1);
+                updateProductRelation.setText("Update");
+                updateProductRelation.onActionProperty().setValue(actionEvent -> {
+                    updateButtonClick();
+                });
             }
         }
     }
@@ -416,5 +473,101 @@ public class ProductController {
         }
 
         // TODO add update product pricing
+    }
+
+    public void updateButtonClick() {
+        int sign = 1;
+        int index = ((ComboBox) gridPaneLeft.getScene().lookup("#productRelationCBId")).getSelectionModel().getSelectedIndex();
+        if (index == 1) {
+            sign = 1;
+        } else if (index == 2){
+            sign = -1;
+        } else if (index == 3) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(), "Nothing to update");
+        }
+
+        int indexStrength = ((ComboBox) gridPaneLeft.getScene().lookup("#strengthProductRelation")).getSelectionModel().getSelectedIndex();
+        ArrayList<ArrayList<Object>> productList = ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
+        Double crossPriceElasticity = 1.0;
+        if (indexStrength == 0) {
+            crossPriceElasticity = 0.001;
+        } else if (indexStrength == 1) {
+            crossPriceElasticity = 0.45;
+        } else if (indexStrength == 2) {
+            crossPriceElasticity = 0.9;
+        }
+
+        // P1 = (2a0 + b0 + 1.5c)/3
+        // P2 = (2b0 + a0 + 1.5c)/3
+//        ArrayList<Object> respectiveProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(0).get(0));
+//        Integer a = (Integer) respectiveProductPricing.get(11);
+        ArrayList<Object> respectiveProductPricingB = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(1).get(0));
+        Integer b = (Integer) respectiveProductPricingB.get(11);
+        // Marginal costs - ignored for now
+        Double mc = 1.0;
+        // get substitutes or complement combobox
+
+        System.out.println(productList);
+        for (int i = 0; i < productList.size(); i++) {
+            System.out.println("i " + i);
+            ArrayList<Object> respectiveProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(i).get(0));
+            Double currentPrice = (Double) productList.get(i).get(6);
+            Double maxPrice = (Double) respectiveProductPricing.get(21);
+            Integer currentCustomers = (Integer) respectiveProductPricing.get(11);
+            Double maxPriceCustomers = (Double) respectiveProductPricing.get(24);
+            Double percentageChangePrice = Math.abs(100 - ((currentPrice/maxPrice)*100));
+            Double percentageChangeCustomers = Math.abs(100 - (currentCustomers/maxPriceCustomers*100));
+            Double selfPriceElasticity = percentageChangeCustomers/percentageChangePrice;
+            Double test = 0.0;
+            for (int j = 1; j < productList.size(); j++) {
+                System.out.println("j: " + j);
+                ArrayList<Object> tempProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(j).get(0));
+                Integer salesQuantity = (Integer) tempProductPricing.get(11);
+                // TODO consider what to do with tbd
+                Integer tbd = 1 * sign;
+//                Double crossPriceElasticity = (currentPrice/salesQuantity)*tbd;
+                crossPriceElasticity *= tbd;
+                Double priceB = (Double) productList.get(j).get(6);
+                Double returnValue = (crossPriceElasticity/(1+selfPriceElasticity))*((salesQuantity*(priceB-mc))/currentCustomers);
+//                System.out.println("2nd part: " + (crossPriceElasticity/(1+selfPriceElasticity)));
+//                System.out.println("3rd part: " + ((salesQuantity*(priceB-mc))/currentCustomers));
+//                System.out.println("salesQuantity: " + salesQuantity);
+//                System.out.println("priceB: " + priceB);
+//                System.out.println("mc: " + mc);
+//                System.out.println("currentCustomers: " + currentCustomers);
+                test += returnValue;
+            }
+//            System.out.println("1st part: " + (selfPriceElasticity/(selfPriceElasticity+1)) * mc);
+            Double newPrice = Math.abs((selfPriceElasticity/(selfPriceElasticity+1)) * mc - test);
+//            System.out.println("selfPriceElasticity: " + selfPriceElasticity);
+            FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
+            FuzzyLogic clusteringRangeFLMCopy = new FuzzyLogic();
+            clusteringRangeFLM.init("clusteringRangeFB");
+
+//            HelperMethods.priceClusteringChange();
+            System.out.println("newPrice " + (currentPrice + newPrice));
+
+            Double priceClusterFLOutput = HelperMethods.priceClusteringChange(currentPrice,
+                    gridPaneLeft.getScene(),
+                    (Double) respectiveProductPricing.get(16),
+                    clusteringRangeFLM,
+                    (Double) respectiveProductPricing.get(17),
+                    (Double) respectiveProductPricing.get(18),
+                    (Double) respectiveProductPricing.get(25));
+            System.out.println("priceClusterFLOutput " + priceClusterFLOutput);
+
+            Double priceClusterFLOutputCopy = HelperMethods.priceClusteringChange(currentPrice + newPrice,
+                    gridPaneLeft.getScene(),
+                    (Double) respectiveProductPricing.get(16),
+                    clusteringRangeFLM,
+                    (Double) respectiveProductPricing.get(17),
+                    (Double) respectiveProductPricing.get(18),
+                    (Double) respectiveProductPricing.get(25));
+
+            System.out.println("priceClusterFLOutputCopy " + priceClusterFLOutputCopy);
+            //priceClusterFLOutput = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();
+
+            System.out.println("-------------------- ROUND " + i + " OVER --------------------");
+        }
     }
 }
