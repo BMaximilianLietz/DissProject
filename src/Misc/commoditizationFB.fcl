@@ -1,0 +1,89 @@
+FUNCTION_BLOCK commoditizationFB
+
+VAR_INPUT				// Define input variables
+	numberCustomers : REAL;
+	preProcessing : REAL;
+	itemImitability : REAL;
+	degreePriceCompetition : REAL;
+END_VAR
+
+// probs gotta add suggested strategy at some point and add it as an output variable
+VAR_OUTPUT				// Define output variable
+	commoditizationOutputValue : REAL;
+END_VAR
+
+FUZZIFY preProcessing			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM yes := (0, 1) (1, 0);
+	TERM no := (0, 0) (1,1);
+END_FUZZIFY
+
+// This should be an output variable at some point as well
+// Also this needs heavy rework
+FUZZIFY pricingStrategy			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM shareMax := (0, 0) (1, 1) (2, 0);
+	TERM none := (1, 0) (2, 1) (3, 0);
+	TERM skimming := (2, 0) (3, 1) (4, 0);
+	TERM revenueMax := (3, 0) (4, 1) (5, 0);
+END_FUZZIFY
+
+FUZZIFY customerExpectations			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM easyReplication := (0, 1) (1, 0);
+	TERM mediumReplication := (0, 0) (1,1) (2,0);
+	TERM difficultReplication := (1, 0) (2, 1) (3,0);
+END_FUZZIFY
+
+FUZZIFY itemImitability			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM easyReplication := (0, 1) (1, 0);
+	TERM mediumReplicationEffort := (0, 0) (1,1) (2,0);
+	TERM difficultReplication := (1, 0) (2, 1) (3,0);
+END_FUZZIFY
+
+// try to get some data into why these borders are set, e.g. average numbers of customers for businesses
+FUZZIFY numberCustomers			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM vLow := (0, 1) (3, 1) (5,0);
+    TERM low := (3, 0) (10, 1) (17,0);
+    TERM medium := (10, 0) (50, 1) (90,0);
+    TERM high := (50,0) (500,1) (1000,0);
+    Term vHigh := (500,0) (10000,1);
+END_FUZZIFY
+
+FUZZIFY degreePriceCompetition
+    TERM perfectPriceCompetition := (0, 1) (1,0);
+    TERM priceCompetition := (0, 0) (1, 1) (2,0);
+    TERM differentiatedCompetition := (1, 0) (2, 1) (3,0);
+    TERM perfectDifferentiationCompetition := (2, 0) (3, 1);
+END_FUZZIFY
+
+DEFUZZIFY commoditizationOutputValue			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+	TERM low := (0, 0) (0.33, 1) (0.67,0);
+    TERM medium := (0.33,0) (0.67,1) (1,0);
+    TERM high := (0.67,0) (1,1);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 0;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF numberCustomers IS vLow THEN commoditizationOutputValue IS low;
+	RULE 2 : IF numberCustomers IS low THEN commoditizationOutputValue IS low;
+	RULE 3 : IF numberCustomers IS medium THEN commoditizationOutputValue IS low;
+	RULE 4 : IF numberCustomers IS high THEN commoditizationOutputValue IS medium;
+	RULE 5 : IF numberCustomers IS vHigh THEN commoditizationOutputValue IS high;
+	Rule 6 : IF preProcessing IS no AND itemImitability IS easyReplication THEN commoditizationOutputValue IS high;
+	Rule 7 : IF preProcessing IS no AND itemImitability IS mediumReplicationEffort THEN commoditizationOutputValue IS high;
+	Rule 8 : IF preProcessing IS no AND itemImitability IS difficultReplication THEN commoditizationOutputValue IS medium;
+	Rule 9 : IF preProcessing IS yes AND itemImitability IS easyReplication THEN commoditizationOutputValue IS medium;
+    Rule 10 : IF preProcessing IS yes AND itemImitability IS mediumReplicationEffort THEN commoditizationOutputValue IS medium;
+    Rule 11 : IF preProcessing IS yes AND itemImitability IS difficultReplication THEN commoditizationOutputValue IS low;
+    Rule 12 : IF degreePriceCompetition IS perfectDifferentiationCompetition THEN commoditizationOutputValue IS low;
+    Rule 13 : IF degreePriceCompetition IS differentiatedCompetition THEN commoditizationOutputValue IS medium;
+    Rule 14 : IF degreePriceCompetition IS priceCompetition THEN commoditizationOutputValue IS medium;
+    Rule 15 : IF degreePriceCompetition IS perfectPriceCompetition THEN commoditizationOutputValue IS high;
+
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

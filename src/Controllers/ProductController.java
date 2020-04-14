@@ -29,8 +29,6 @@ public class ProductController {
     public TextField productDescriptionTF;
     public TextField productCostsTF;
 
-    public String activeProjectName;
-    public ArrayList<Object> activeProject;
     public TextField productVersionTF;
     public TextField competitorPriceTF;
     public TextField competitorNameTF;
@@ -38,6 +36,11 @@ public class ProductController {
     public TextField competitorSales;
     public Slider competitorQualitySlider;
     public Label sliderTitle;
+
+    public ArrayList<Object> activeProject;
+    private Integer numberOfProducts = 0;
+    private Boolean productRelationExists = false;
+
 
     public void initialize() {
         activeProject = SceneController.activeProject;
@@ -107,7 +110,7 @@ public class ProductController {
         Button productPricingButton = new Button("Pricing");
         productPricingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), activeProject, product,"priceSetting.fxml");
+            SceneController.openView(scene, getClass(), activeProject, product,"priceSettingView.fxml");
         });
         Button productCostingButton = new Button("Costing");
         productCostingButton.onActionProperty().setValue(actionEvent1 -> {
@@ -252,7 +255,25 @@ public class ProductController {
 
             gridPaneChosen.add(subsidizingTitleLbl, 6, 2);
             gridPaneChosen.add(subsidyHBox, 6, rowIndex);
+
+            numberOfProducts++;
+            if (numberOfProducts > 1) {
+                if (!productRelationExists) {
+                    ComboBox productRelationCB = new ComboBox();
+                    productRelationCB.setId("productRelationCBId");
+                    productRelationCB.getItems().add("Select product relationship");
+                    productRelationCB.getItems().add("Complements");
+                    productRelationCB.getItems().add("Substitutes");
+                    productRelationCB.getItems().add("Unrelated");
+                    productRelationCB.setOnAction(e -> productRelationCBChange());
+                    gridPaneChosen.add(productRelationCB, 2, 0);
+                }
+            }
         }
+    }
+
+    public void productRelationCBChange() {
+        System.out.println("Test");
     }
 
     // Navigation

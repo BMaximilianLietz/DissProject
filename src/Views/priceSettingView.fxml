@@ -16,6 +16,8 @@
 <?import java.lang.String?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.control.Slider?>
+<?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Text?>
 <BorderPane xmlns:fx="http://javafx.com/fxml" fx:controller="Controllers.PriceSettingController" >
     <top>
         <MenuBar fx:id="menuBar" GridPane.columnIndex="0" GridPane.rowIndex="0" GridPane.columnSpan="2" prefWidth="1920">
@@ -217,9 +219,22 @@
                 </items>
             </ComboBox>
 
-            <Button GridPane.columnIndex="0" GridPane.rowIndex="15" onAction="#priceDevelopmentBtnClick">
+            <Label text="Competition pressure related price
+             &#10;reductions:" GridPane.columnIndex="0" GridPane.rowIndex="15">
+                <padding><Insets left="20"/></padding>
+            </Label>
+            <TextField fx:id="minimumPricePDTF" GridPane.columnIndex="1" GridPane.rowIndex="15"/>
+
+            <Button GridPane.columnIndex="0" GridPane.rowIndex="16" onAction="#priceDevelopmentBtnClick">
                 Price development
             </Button>
+
+            <VBox GridPane.columnIndex="0" GridPane.rowIndex="18" GridPane.rowSpan="4" GridPane.columnSpan="2">
+                <padding><Insets left="20"/></padding>
+                <Label text="Help Box" />
+                <Text fx:id="helpBoxTXT"/>
+            </VBox>
+
 
             <!-- COLUMNS 2 & 3 -->
 
@@ -425,18 +440,21 @@
                 </items>
             </ComboBox>
 
-            <Label GridPane.columnIndex="2" GridPane.rowIndex="18">Proposed Price per customer:</Label>
-            <Label fx:id="proposedPricePerCustomer" GridPane.columnIndex="3" GridPane.rowIndex="18"/>
+            <Label GridPane.columnIndex="4" GridPane.rowIndex="1">Proposed Price per customer:</Label>
+            <Label fx:id="proposedPricePerCustomer" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
 
             <!-- Row 13  -->
-            <Button GridPane.columnIndex="2" GridPane.rowIndex="19" onAction="#calculatePriceButtonClick">
+            <Button GridPane.columnIndex="4" GridPane.rowIndex="2" onAction="#calculatePriceButtonClick">
                 Calculate Price
             </Button>
-            <Button GridPane.columnIndex="3" GridPane.rowIndex="19" onAction="#priceSettingSubmitBtnClick">
+            <Button GridPane.columnIndex="4" GridPane.rowIndex="3" onAction="#priceSettingSubmitBtnClick">
                 Submit Price Setting
             </Button>
-            <Button GridPane.columnIndex="3" GridPane.rowIndex="20" onAction="#testSubscription">
+            <Button GridPane.columnIndex="4" GridPane.rowIndex="4" onAction="#testSubscription">
                 Test subscription
+            </Button>
+            <Button GridPane.columnIndex="4" GridPane.rowIndex="5" onAction="#priceClusteringChange">
+                Test clustering
             </Button>
 
             <!--

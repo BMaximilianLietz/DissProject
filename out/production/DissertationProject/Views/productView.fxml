@@ -31,7 +31,7 @@
             <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
                 <padding><Insets left="20" top="40"/></padding>
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Product Name:</Label>
-                <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"></Label>
+                <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
 
                 <!-- Group 1 -->
                 <Label GridPane.columnIndex="0" GridPane.rowIndex="1">

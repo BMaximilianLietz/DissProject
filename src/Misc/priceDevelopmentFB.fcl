@@ -12,7 +12,7 @@
 
 // -------------------- NEW FUNCTION BLOCK FOR LONG TERM PRICE DEVELOPMENT ------------------ \\
 
-FUNCTION_BLOCK priceDevelopmentBlock
+FUNCTION_BLOCK priceDevelopmentFB
 
 VAR_INPUT				// Define input variables
 	pricingGoal : REAL;
@@ -34,7 +34,7 @@ FUZZIFY pricingGoal			// Fuzzify input variable 'service': {'poor', 'good' , 'ex
 	TERM revenueMaximization := (1,0) (2,1) (2,0);
 END_FUZZIFY
 
-//change to sigmoid function
+//change to sigmoid function?
 FUZZIFY depreciation			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM low := (0, 1) (25, 0);
 	TERM medLow := (25, 0) (50,1) (75,0);
@@ -90,9 +90,9 @@ RULEBLOCK No1
     Rule 10 : IF customerExpectations IS significant AND customerExpectationImportance IS medium THEN priceDevelopment IS medHigh;
     Rule 11 : IF customerExpectations IS medium AND customerExpectationImportance IS medium THEN priceDevelopment IS medLow;
     Rule 12 : IF customerExpectations IS low AND customerExpectationImportance IS medium THEN priceDevelopment IS low;
-	Rule 13: IF customerExpectations IS no AND customerExpectationImportance IS medium THEN priceDevelopment IS none;
-	Rule 14: IF customerExpectations IS significant AND customerExpectationImportance IS insignificant THEN priceDevelopment IS medLow;
-	Rule 15: IF customerExpectations IS medium AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
+	Rule 13 : IF customerExpectations IS no AND customerExpectationImportance IS medium THEN priceDevelopment IS none;
+	Rule 14 : IF customerExpectations IS significant AND customerExpectationImportance IS insignificant THEN priceDevelopment IS medLow;
+	Rule 15 : IF customerExpectations IS medium AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
     Rule 16 : IF customerExpectations IS low AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
     Rule 17 : IF customerExpectations IS no AND customerExpectationImportance IS insignificant THEN priceDevelopment IS none;
     Rule 18 : IF competitionRelatedPriceReduction IS significant THEN priceDevelopment IS high;

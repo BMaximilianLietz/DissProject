@@ -4,6 +4,7 @@ import Data.CompetitorConnector;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Data.SubsidyConnector;
+import Misc.HelperMethods;
 import Models.FuzzyLogic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -13,6 +14,7 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
+import javafx.scene.text.Text;
 
 import java.sql.Date;
 import java.text.DecimalFormat;
@@ -43,9 +45,6 @@ public class PriceSettingController {
     public ComboBox brandValueCB;
     public ComboBox distributionChannelCB;
     public ComboBox priceElasticityCB;
-    public FuzzyLogic priceSettingFLM;
-    public FuzzyLogic priceDevelopmentFLM;
-    public FuzzyLogic commoditizationFLM;
     public Label commoditizationValueForm;
 
     public Label projectName;
@@ -72,6 +71,13 @@ public class PriceSettingController {
     private ArrayList<Object> activeProduct;
     private Double modifiedProductCost;
     private Double priceIndex;
+    private Double priceClusterFLOutput = -99.0;
+
+    // Fuzzy logic variables
+    public FuzzyLogic priceSettingFLM;
+    public FuzzyLogic priceDevelopmentFLM;
+    public FuzzyLogic commoditizationFLM;
+    public FuzzyLogic clusteringRangeFLM;
 
 //    TODO remove or put somewhere else
     ArrayList<ArrayList<Object>> graphData = new ArrayList<>();
@@ -88,13 +94,16 @@ public class PriceSettingController {
         modifiedProductCost  = (Double) activeProduct.get(5);
 
         priceSettingFLM = new FuzzyLogic();
-        priceSettingFLM.init("pricing");
+        priceSettingFLM.init("pricingFB");
 
         commoditizationFLM = new FuzzyLogic();
-        commoditizationFLM.init("commoditizationOutput");
+        commoditizationFLM.init("commoditizationFB");
 
         priceDevelopmentFLM = new FuzzyLogic();
-        priceDevelopmentFLM.initPD("priceDevelopmentBlock");
+        priceDevelopmentFLM.init("priceDevelopmentFB");
+
+        clusteringRangeFLM = new FuzzyLogic();
+        clusteringRangeFLM.init("clusteringRangeFB");
 
         numberCustomersTF.textProperty().addListener((observable, oldValue, newValue) -> {
 //            System.out.println(newValue);
@@ -247,13 +256,7 @@ public class PriceSettingController {
         // TODO implement check that every combobox/input field has a value
 //        System.out.println(commoditizationValueForm.getText());
         if (commoditizationValueForm.getText().equals("Please fill out form")) {
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error");
-            alert.setContentText("Please get the commoditization value first");
-            alert.initOwner(((Node)actionEvent.getTarget()).getScene().getWindow());
-            alert.showAndWait();
-            return;
+            HelperMethods.throwAlert(gridPane.getScene(), "Please get the commoditization value first");
         } else {
 
             double commValue = Double.parseDouble(commoditizationValueForm.getText());
@@ -444,23 +447,39 @@ public class PriceSettingController {
         if (comboBox.getId().equals("priceClusteringCB")) {
             if (priceClusteringCB.getSelectionModel().getSelectedItem().equals("Yes")) {
                 Label clusteringRanges = new Label("Clustering Ranges:");
+                Label clusteringImportance = new Label("Clustering Importance\n(from low to high):");
                 clusteringRanges.setPadding(new Insets(0,0,0,20));
 
                 TextField rangeLow = new TextField();
-                rangeLow.setPromptText("Lower price range");
+                rangeLow.setPromptText("Lower bound");
                 rangeLow.setId("rangeLowTF");
+                rangeLow.prefWidth(75);
+                rangeLow.setMaxWidth(75);
+//                rangeLow.setMinWidth(60);
 
                 TextField rangeHigh = new TextField();
-                rangeHigh.setPromptText("Upper price Range");
+                rangeHigh.setPromptText("Upper bound");
                 rangeHigh.setId("rangeHighTF");
+                rangeHigh.setPrefWidth(75);
+                rangeHigh.setMaxWidth(75);
+//                rangeHigh.setMinWidth(60);
 
                 HBox hBox = new HBox(rangeLow, rangeHigh);
                 int clusterRow = gridPane.getRowIndex(priceClusteringCB);
+                moveGridpPaneChildrenDown(gridPane, clusterRow, 2);
                 moveGridpPaneChildrenDown(gridPane, clusterRow, 2);
 
                 gridPane.add(clusteringRanges, 2, clusterRow+1);
                 gridPane.add(hBox, 3,clusterRow+1);
 
+                Slider clusterImportanceSlider = new Slider();
+                clusterImportanceSlider.setId("clusterImportanceSL");
+                clusterImportanceSlider.setMajorTickUnit(10);
+                clusterImportanceSlider.setShowTickMarks(false);
+                clusterImportanceSlider.setMinorTickCount(0);
+
+                gridPane.add(clusteringImportance, 2, clusterRow+2);
+                gridPane.add(clusterImportanceSlider, 3,clusterRow+2);
             }
         }
     }
@@ -480,7 +499,6 @@ public class PriceSettingController {
 
 
     public void priceDevelopmentBtnClick(ActionEvent actionEvent) {
-        // TODO add price clusters
         String depreciationBuffer = depreciationTF.getId().substring(0, depreciationTF.getId().length()-2);
         int depreciationTFIndex = Integer.parseInt(depreciationTF.getText());
         priceDevelopmentFLM.functionBlockSetVariable(depreciationBuffer, (double) depreciationTFIndex);
@@ -501,6 +519,11 @@ public class PriceSettingController {
         int competitionRelatedPriceReductionCBIndex = competitionRelatedPriceReductionCB.getSelectionModel().getSelectedIndex();
         priceDevelopmentFLM.functionBlockSetVariable(competitionRelatedPriceReductionCBBBuffer, (double) competitionRelatedPriceReductionCBIndex);
 
+        // TODO add price clusters
+//        String competitionRelatedPriceReductionCBBBuffer = competitionRelatedPriceReductionCB.getId().substring(0, competitionRelatedPriceReductionCB.getId().length()-2);
+//        int competitionRelatedPriceReductionCBIndex = competitionRelatedPriceReductionCB.getSelectionModel().getSelectedIndex();
+//        priceDevelopmentFLM.functionBlockSetVariable(competitionRelatedPriceReductionCBBBuffer, (double) competitionRelatedPriceReductionCBIndex);
+
         priceDevelopmentFLM.evaluate();
 
         graphData.clear();
@@ -511,6 +534,7 @@ public class PriceSettingController {
 
         Double tempRemove = test * 1;
         Double tempRemove2 = priceDevelopmentFLM.getFunctionBlock().getVariable("priceDevelopment").getValue();
+
         // TODO make it so that the loop re-evaluate the proposed price over and over instead of reusing the same result
         int timePeriodIndex = timePeriodCB.getSelectionModel().getSelectedIndex();
         ArrayList<Object> tempRemove3 = new ArrayList<>();
@@ -560,6 +584,7 @@ public class PriceSettingController {
         pricing.setAxes("Number of Months",
                 "Proposed Price Development");
         pricing.setLineChartData("Lorem ipsum", graphData, "Price in Pounds");
+        pricing.showLineChart();
         System.out.println(graphData);
         System.out.println(pricing.getLineChart().getData());
 
@@ -576,5 +601,69 @@ public class PriceSettingController {
 
             // TODO add update product pricing
         }
+    }
+
+    public void priceClusteringChange() {
+        Scene scene = gridPane.getScene();
+        TextField rangeLowTF = (TextField) scene.lookup("#rangeLowTF");
+        TextField rangeHighTF = (TextField) scene.lookup("#rangeHighTF");
+
+        if ((rangeLowTF.getText().equals(""))||(rangeHighTF.getText().equals(""))) {
+            HelperMethods.throwAlert(gridPane.getScene(),"No empty ranges allowed");
+            return;
+        }
+
+        Double rangeLow = Double.parseDouble(rangeLowTF.getText());
+        Double rangeHigh = Double.parseDouble(rangeHighTF.getText());
+        Slider clusterImportanceSL = (Slider) scene.lookup("#clusterImportanceSL");
+        Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
+        Double average = (rangeLow + rangeHigh)/2;
+        Double averageDistance = rangeHigh - average;
+        Double currentPrice = (Double) activeProduct.get(6);
+
+        String tooLow = "(0, 1) (" + (rangeLow-(rangeLow*allowedVariance)) + ", 1) (" + rangeLow + ", 0)";
+        String lowerBorder = "sigm -" + (rangeLow*(allowedVariance)) + " " + rangeLow;
+        String acceptablePriceRange = "gbell 1 " + averageDistance +  " " + average;
+        String upperBorder = "sigm " + (rangeHigh*(allowedVariance)) + " " + rangeHigh;
+        String tooHigh = "(" + rangeHigh + ", 0) (" + (rangeHigh*(1+allowedVariance)) + ", 1)";
+
+        FuzzyLogic.replaceClusteringTerm(1, tooLow);
+        FuzzyLogic.replaceClusteringTerm(2, lowerBorder);
+        FuzzyLogic.replaceClusteringTerm(3, acceptablePriceRange);
+        FuzzyLogic.replaceClusteringTerm(4, upperBorder);
+        FuzzyLogic.replaceClusteringTerm(5, tooHigh);
+
+        String decreaseStrongly;
+        String increaseStrongly;
+        String povChange = "(" + rangeLow/currentPrice + " ,0) (" + average/currentPrice + ",1) " +
+                " (" + rangeHigh/currentPrice + ",0)";
+
+        if (currentPrice < rangeLow) {
+            decreaseStrongly = "(0,1) (0.9, 1)";
+            increaseStrongly = povChange;
+        } else if (currentPrice > rangeHigh) {
+            increaseStrongly = "(0,1) (0.9, 1)";
+            decreaseStrongly = povChange;
+        } else {
+            increaseStrongly = "(0.9,0) (0.95,1) (1,0)";
+            decreaseStrongly = "(1,0) (1.05, 1) (1.1,0)";
+        }
+
+        FuzzyLogic.replaceClusteringTerm(6, decreaseStrongly);
+        FuzzyLogic.replaceClusteringTerm(7, increaseStrongly);
+
+        FuzzyLogic.replacePriceTerm(6, decreaseStrongly);
+        FuzzyLogic.replacePriceTerm(7, increaseStrongly);
+
+        clusteringRangeFLM.functionBlockSetVariable("currentPrice", currentPrice);
+        clusteringRangeFLM.functionBlockSetVariable("rangeImportance", clusterImportanceSL.getValue());
+
+        clusteringRangeFLM.getChartFunctionBlock();
+        clusteringRangeFLM.evaluate();
+
+        System.out.println(String.valueOf(clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue()));
+        priceClusterFLOutput = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();
+        System.out.println("priceClusterFLOutput: " + priceClusterFLOutput );
+
     }
 }

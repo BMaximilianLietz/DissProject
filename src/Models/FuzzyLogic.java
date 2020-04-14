@@ -14,17 +14,8 @@ public class FuzzyLogic {
     public FunctionBlock functionBlock;
 
     public void init(String selectedFunctionBlock) {
-        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\ruleBase.fcl";
-        FIS fis = FIS.load(fileName, true);
-        if (fis == null) {
-            System.err.println("Can't load file: '" + fileName + "'");
-            return;
-        }
-        functionBlock = fis.getFunctionBlock(selectedFunctionBlock);
-    }
-
-    public void initPD(String selectedFunctionBlock) {
-        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\priceDevelopmentRules.fcl";
+        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\"
+                + selectedFunctionBlock + ".fcl";
         FIS fis = FIS.load(fileName, true);
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
@@ -60,14 +51,24 @@ public class FuzzyLogic {
     }
 
     public static void replacePriceTerm(int index, String ranges) {
-        File log= new File("C:/Users/maxim/IdeaProjects/DissertationProject/src/Misc/ruleBase.fcl");
+        File log= new File("C:/Users/maxim/IdeaProjects/DissertationProject/src/Misc/pricingFB.fcl");
         String term;
         if (index == 1) {
             term = "TERM priceLow";
         } else if (index == 2) {
             term = "TERM priceMedium";
-        } else {
+        } else if (index == 3) {
+            term = "TERM price";
+        } else if (index == 4) {
             term = "TERM priceHigh";
+        } else if (index == 5) {
+            term = "// eh...";
+        } else if (index == 6) {
+            term = "TERM decreaseStrongly";
+        } else if (index == 7) {
+            term = "TERM increaseStrongly";
+        } else {
+            term = "// eh...";
         }
         try {
             FileReader fr = new FileReader(log);
@@ -91,10 +92,51 @@ public class FuzzyLogic {
         }
     }
 
+    public static void replaceClusteringTerm(int index, String ranges) {
+        File log= new File("C:/Users/maxim/IdeaProjects/DissertationProject/src/Misc/clusteringRangeFB.fcl");
+        String term;
+        if (index == 1) {
+            term = "TERM tooLow";
+        } else if (index == 2) {
+            term = "TERM lowerBorder";
+        } else if (index == 3) {
+            term = "TERM acceptablePriceRange";
+        } else if (index == 4) {
+            term = "TERM upperBorder";
+        } else if (index == 5) {
+            term = "TERM tooHigh";
+        } else if (index == 6) {
+            term = "TERM decreaseStrongly";
+        } else if (index == 7) {
+            term = "TERM increaseStrongly";
+        } else {
+            term = "// eh...";
+        }
+        try {
+            FileReader fr = new FileReader(log);
+            String s;
+            String totalStr = "";
+            try (BufferedReader br = new BufferedReader(fr)) {
+                while ((s = br.readLine()) != null) {
+                    if (s.contains(term)) {
+                        totalStr += term + " := " + ranges + ";" +"\n" ;
+                    } else {
+                        totalStr += s +"\n";
+                    }
+                }
+                FileWriter fw = new FileWriter(log);
+                fw.write(totalStr);
+                fw.close();
+            }
+        } catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+
     public void chart() {}
 
     public void test() {
-        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\ruleBase.fcl";
+        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\pricingFB.fcl";
         FIS fis = FIS.load(fileName, true);
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
