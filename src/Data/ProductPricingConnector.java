@@ -50,7 +50,10 @@ public class ProductPricingConnector {
                                                Double priceRangeHigh, Integer subsidizationDegree,
                                                Double itemQualitySlider, Double customerHighestPrice,
                                                Double priceIndex, String competitorOrientation, Double customersMaxPrice,
-                                               Double clusteringImportance) {
+                                               Double clusteringImportance, Integer pricingGoal, Integer timePeriod,
+                                               Double depreciation, Integer customerPriceExpectation,
+                                               Integer customerExpectationImportance, Integer competitionPriceReduction,
+                                               Double minimumPrice, Double valueAdded) {
         Connection c = null;
         Statement stmt = null;
 
@@ -71,8 +74,11 @@ public class ProductPricingConnector {
                         "\"degreePriceCompetition\", \"desiredMarkup\", \"allowedVariance\", " +
                         "\"priceRangeLow\", \"priceRangeHigh\", \"subsidizationDegree\", " +
                         "\"itemQualitySlider\", \"customerHighestPrice\", \"priceIndex\", " +
-                        "\"competitorOrientation\", \"customersMaxPrice\", \"clusteringImportance\") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                        "\"competitorOrientation\", \"customersMaxPrice\", \"clusteringImportance\", " +
+                        "\"pricingGoal\", \"timePeriod\", \"depreciation\", \"customerPriceExpectation\", " +
+                        "\"customerExpectationImportance\", \"competitionPriceReduction\", " +
+                        "\"minimumPrice\", \"valueAdded\") " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);
                 sql.setDouble(3, desiredMargin);
@@ -99,6 +105,14 @@ public class ProductPricingConnector {
                 sql.setString(24, competitorOrientation);
                 sql.setDouble(25, customersMaxPrice);
                 sql.setDouble(26, clusteringImportance);
+                sql.setInt(27, pricingGoal);
+                sql.setInt(28, timePeriod);
+                sql.setDouble(29, depreciation);
+                sql.setInt(30, customerPriceExpectation);
+                sql.setInt(31, customerExpectationImportance);
+                sql.setInt(32, competitionPriceReduction);
+                sql.setDouble(33, minimumPrice);
+                sql.setDouble(34, valueAdded);
 
                 sql.execute();
             } catch (Exception e) {
@@ -159,6 +173,14 @@ public class ProductPricingConnector {
                 queryResults.add(rs.getString(24));
                 queryResults.add(rs.getDouble(25));
                 queryResults.add(rs.getDouble(26));
+                queryResults.add(rs.getInt(27));
+                queryResults.add(rs.getInt(28));
+                queryResults.add(rs.getDouble(29));
+                queryResults.add(rs.getInt(30));
+                queryResults.add(rs.getInt(31));
+                queryResults.add(rs.getInt(32));
+                queryResults.add(rs.getDouble(33));
+                queryResults.add(rs.getDouble(34));
             }
             ResultSetMetaData rsmd = rs.getMetaData();
             ArrayList<String> columnNames = new ArrayList<>();
@@ -187,7 +209,10 @@ public class ProductPricingConnector {
                                             Double priceRangeLow, Double priceRangeHigh, Integer subsidizationDegree,
                                             Double itemQualitySlider, Double customerHighestPrice,
                                             Double priceIndex, String competitorOrientation, Double customerMaxPrice,
-                                            Double clusteringImportance) {
+                                            Double clusteringImportance, Integer pricingGoal, Integer timePeriod,
+                                            Double depreciation, Integer customerPriceExpectation,
+                                            Integer customerExpectationImportance, Integer competitionPriceReduction,
+                                            Double minimumPrice, Double valueAdded) {
 
         Connection c = null;
         Statement stmt = null;
@@ -227,7 +252,16 @@ public class ProductPricingConnector {
                         ", \"competitorOrientation\" = ?" +
                         ", \"customersMaxPrice\" = ?" +
                         ", \"clusteringImportance\" = ?" +
+                        ", \"pricingGoal\" = ?" +
+                        ", \"timePeriod\" = ?" +
+                        ", \"depreciation\" = ?" +
+                        ", \"customerPriceExpectation\" = ?" +
+                        ", \"customerExpectationImportance\" = ?" +
+                        ", \"competitionPriceReduction\" = ?" +
+                        ", \"minimumPrice\" = ?" +
+                        ", \"valueAdded\" = ?" +
                         "WHERE \"productId\" = ?;");
+
                 sql.setString(1, preferredPricingStrategy);
                 sql.setDouble(2, desiredMargin);
                 sql.setString(3, target);
@@ -253,7 +287,15 @@ public class ProductPricingConnector {
                 sql.setString(23, competitorOrientation);
                 sql.setDouble(24, customerMaxPrice);
                 sql.setDouble(25, clusteringImportance);
-                sql.setInt(26, productId);
+                sql.setInt(26, pricingGoal);
+                sql.setInt(27, timePeriod);
+                sql.setDouble(28, depreciation);
+                sql.setInt(29, customerPriceExpectation);
+                sql.setInt(30, customerExpectationImportance);
+                sql.setInt(31, competitionPriceReduction);
+                sql.setDouble(32, minimumPrice);
+                sql.setDouble(33, valueAdded);
+                sql.setInt(34, productId);
 
                 sql.execute();
             } catch (Exception e) {

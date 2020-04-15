@@ -5,6 +5,8 @@ VAR_INPUT				// Define input variables
 	preProcessing : REAL;
 	itemImitability : REAL;
 	degreePriceCompetition : REAL;
+	pricingStrategy : REAL;
+	customerExpectations : REAL;
 END_VAR
 
 // probs gotta add suggested strategy at some point and add it as an output variable

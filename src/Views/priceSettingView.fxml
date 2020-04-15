@@ -225,8 +225,7 @@
                 </items>
             </ComboBox>
 
-            <Label text="Competition pressure related price
-             &#10;reductions:" GridPane.columnIndex="0" GridPane.rowIndex="15">
+            <Label text="Minimum price:" GridPane.columnIndex="0" GridPane.rowIndex="15">
                 <padding><Insets left="20"/></padding>
             </Label>
             <TextField fx:id="minimumPricePDTF" GridPane.columnIndex="1" GridPane.rowIndex="15"/>
@@ -440,6 +439,7 @@
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Absolute elasticity"/>
                         <String fx:value="Elastic"/>
+                        <String fx:value="Neither"/>
                         <String fx:value="Inelastic"/>
                         <String fx:value="Absolute Inelastic"/>
                     </FXCollections>
@@ -450,9 +450,6 @@
             <Label fx:id="proposedPricePerCustomer" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
 
             <!-- Row 13  -->
-            <Button GridPane.columnIndex="4" GridPane.rowIndex="2" onAction="#calculatePriceButtonClick">
-                Calculate Price
-            </Button>
             <Button GridPane.columnIndex="4" GridPane.rowIndex="3" onAction="#priceSettingSubmitBtnClick">
                 Submit Price Setting
             </Button>

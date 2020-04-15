@@ -84,7 +84,8 @@ public class ProductController {
                 "", "",0, "", "", "",
                 0.0, 0.0, 0.0, 0.0, 0,
                 0.0, 0.0, 0.0, "", 0.0,
-                0.0);
+                0.0, 0,0,0.0,0,
+                0,0,0.0, 0.0);
 
         addProduct(queryResults, gridPaneLeft);
     }
@@ -196,7 +197,15 @@ public class ProductController {
                     (Double)productPricingCopy.get(22),
                     (String)productPricingCopy.get(23),
                     (Double)productPricingCopy.get(24),
-                    (Double)productPricingCopy.get(25));
+                    (Double)productPricingCopy.get(25),
+                    (Integer) productPricingCopy.get(26),
+                    (Integer)productPricingCopy.get(27),
+                    (Double)productPricingCopy.get(28),
+                    (Integer) productPricingCopy.get(29),
+                    (Integer) productPricingCopy.get(30),
+                    (Integer) productPricingCopy.get(31),
+                    (Double)productPricingCopy.get(32),
+                    (Double)productPricingCopy.get(33));
 
             addProduct(queryResults, gridPaneLeft);
         });
@@ -490,7 +499,7 @@ public class ProductController {
         ArrayList<ArrayList<Object>> productList = ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
         Double crossPriceElasticity = 1.0;
         if (indexStrength == 0) {
-            crossPriceElasticity = 0.001;
+            crossPriceElasticity = 0.15;
         } else if (indexStrength == 1) {
             crossPriceElasticity = 0.45;
         } else if (indexStrength == 2) {

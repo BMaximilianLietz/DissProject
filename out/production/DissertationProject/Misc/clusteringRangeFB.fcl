@@ -19,15 +19,15 @@ FUZZIFY rangeImportance			// Fuzzify input variable 'service': {'poor', 'good' ,
 END_FUZZIFY
 
 FUZZIFY currentPrice			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
-TERM tooLow := (0, 1) (2975.0, 1) (3500.0, 0);
-TERM lowerBorder := sigm -525.0 3500.0;
-TERM acceptablePriceRange := (3500.0, 0) (4000.0, 1) (4500.0, 0);
-TERM upperBorder := sigm 675.0 4500.0;
-TERM tooHigh := (4500.0, 0) (5175.0, 1);
+TERM tooLow := (0, 1) (0.0, 1) (0.0, 0);
+TERM lowerBorder := (0.0,0) (0.0,1) (0.0,0);
+TERM acceptablePriceRange := (0.0, 0) (0.0, 1) (0.0, 0);
+TERM upperBorder := (0.0,0) (0.0,1) (0.0,0);
+TERM tooHigh := (0.0, 0) (0.0, 1);
 END_FUZZIFY
 
 DEFUZZIFY clusteringReaction			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-TERM decreaseStrongly := (0.7025450484840913 ,0) (0.8029086268389615,1)  (0.9032722051938317,0);
+TERM decreaseStrongly := (0.0 ,0) (0.0,1)  (0.0,0);
     TERM decreaseSlightly := (0.95,0) (0.975,1) (1,0);
     TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
     TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);

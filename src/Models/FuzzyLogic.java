@@ -58,19 +58,17 @@ public class FuzzyLogic {
         } else if (index == 2) {
             term = "TERM priceMedium";
         } else if (index == 3) {
-            term = "TERM price";
+            term = "TERM priceMax";
         } else if (index == 4) {
             term = "TERM priceHigh";
-        } else if (index == 6) {
+        } else if (index == 5) {
             term = "TERM priceCompetition";
         } else if (index == 6) {
             term = "TERM decreaseStrongly";
         } else if (index == 7) {
             term = "TERM increaseStrongly";
-        }else if (index == 8) {
+        } else if (index == 8) {
             term = "TERM priceValueAdded";
-        } else if (index == 9) {
-            term = "TERM priceMax";
         } else {
             term = "// eh...";
         }

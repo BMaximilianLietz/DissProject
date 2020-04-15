@@ -26,10 +26,12 @@ public class HelperMethods {
 //        Double currentPrice = (Double) activeProduct.get(6);
 
         String tooLow = "(0, 1) (" + (rangeLow-(rangeLow*allowedVariance)) + ", 1) (" + rangeLow + ", 0)";
-        String lowerBorder = "sigm -" + (rangeLow*(allowedVariance)) + " " + rangeLow;
+        String lowerBorder = "(" + (rangeLow*(1-allowedVariance)) + ",0) (" + rangeLow + ",1) " +
+                "(" + (rangeLow*(1+allowedVariance)) +",0)";
 //        String acceptablePriceRange = "gbell 1 " + averageDistance +  " " + average;
         String acceptablePriceRange = "(" + rangeLow + ", 0) ("+ average + ", 1) (" + rangeHigh + ", 0)";
-        String upperBorder = "sigm " + (rangeHigh*(allowedVariance)) + " " + rangeHigh;
+        String upperBorder = "(" + (rangeHigh*(1-allowedVariance)) + ",0) (" + rangeHigh + ",1) " +
+                "(" + (rangeHigh*(1+allowedVariance)) +",0)";
         String tooHigh = "(" + rangeHigh + ", 0) (" + (rangeHigh*(1+allowedVariance)) + ", 1)";
 
         FuzzyLogic.replaceClusteringTerm(1, tooLow);
