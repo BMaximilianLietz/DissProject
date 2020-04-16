@@ -52,7 +52,7 @@
                 <Label GridPane.columnIndex="4" GridPane.rowIndex="2">
                     Product Version
                 </Label>
-                <Label GridPane.columnIndex="5" GridPane.rowIndex="2">
+                <Label GridPane.columnIndex="6" GridPane.rowIndex="2">
                     Options
                 </Label>
             </GridPane>

@@ -72,6 +72,7 @@ public class PriceSettingController {
     public TextField numberCustomersMaxPriceTF;
     public TextField minimumPricePDTF;
     public Text proposedStrategyTX;
+    private Double subsidizationPercentage = null;
 
     private ArrayList<Object> activeProject;
     private ArrayList<Object> activeProduct;
@@ -79,11 +80,12 @@ public class PriceSettingController {
     private Double modifiedProductCost;
     private Double priceClusterFLOutput = -99.0;
     private Boolean isSubscription = false;
+    private Boolean isSubsidized = false;
 
     // Fuzzy logic variables
 //    public FuzzyLogic priceSettingFLM;
-    public FuzzyLogic priceDevelopmentFLM;
-    public FuzzyLogic commoditizationFLM;
+//    public FuzzyLogic priceDevelopmentFLM;
+//    public FuzzyLogic commoditizationFLM;
 //    public FuzzyLogic clusteringRangeFLM;
 
 //    TODO remove or put somewhere else
@@ -100,16 +102,12 @@ public class PriceSettingController {
         activeProduct = ProductConnector.getProductByProductId(productIdPassed);
         proposedPricePerCustomer = (Double) activeProduct.get(6);
 
+        System.out.println(activeProduct);
+
         modifiedProductCost  = (Double) activeProduct.get(5);
 
 //        priceSettingFLM = new FuzzyLogic();
 //        priceSettingFLM.init("pricingFB");
-
-        commoditizationFLM = new FuzzyLogic();
-        commoditizationFLM.init("commoditizationFB");
-
-        priceDevelopmentFLM = new FuzzyLogic();
-        priceDevelopmentFLM.init("priceDevelopmentFB");
 
         numberCustomersTF.textProperty().addListener((observable, oldValue, newValue) -> {
 //            System.out.println(newValue);
@@ -192,6 +190,7 @@ public class PriceSettingController {
         // TODO add something for when it is subsidizing
         System.out.println(activeProduct);
         if ((Boolean)activeProduct.get(8)) {
+            isSubsidized = true;
             // TODO - make other change value depending on this?
             Label degree_of_subsidizationLbl = new Label("Degree of Subsidization in %");
             degree_of_subsidizationLbl.setPadding(new Insets(0,0,0,20));
@@ -204,19 +203,44 @@ public class PriceSettingController {
             gridPane.add(degree_of_subsidizationLbl, 2, 2);
             gridPane.add(subsidizationDegreesTF, 3,2);
 
+            subsidizationDegreesTF.textProperty().addListener((observable, oldValue, newValue) -> {
+                if (newValue.equals("")) {
+                    return;
+                }
+                try {
+                    Double subsidizationValue = Double.parseDouble(newValue);
+                    if (subsidizationValue > 100) {
+                        subsidizationValue = 100.0;
+                        HelperMethods.throwAlert(gridPane.getScene(), "Subsidization cannot be bigger than 100%");
+                        subsidizationDegreesTF.setText("100");
+                    }
+                    modifiedProductCost = (Double)activeProduct.get(5);
+                    modifiedProductCost -= modifiedProductCost*subsidizationValue/100;
+                    productCost.setText(modifiedProductCost.toString());
+                    ProductPricingConnector.updateProductSubsidizationDegree((Integer)activeProduct.get(0),
+                            subsidizationValue);
+                } catch (Exception e) {
+                    HelperMethods.throwAlert(gridPane.getScene(), "Please insert a number");
+                }
+            });
+
         } else if ((Boolean)activeProduct.get(9)) {
+            System.out.println("Hellllooooooooo");
             // TODO add running costs
             ArrayList<ArrayList<Integer>> subsidiesQueryResult =
                     SubsidyConnector.getSubsidizerByProductId((Integer) activeProduct.get(0));
+            System.out.println(subsidiesQueryResult);
             for (int i = 0; i < subsidiesQueryResult.size(); i++) {
                 ArrayList<Object> subsidizedProduct = ProductConnector.getProductByProductId(
                         (Integer)subsidiesQueryResult.get(i).get(1)
                 );
+                System.out.println(subsidizedProduct);
                 Double subsidizedProductCost = (Double) subsidizedProduct.get(5);
                 Integer subsidizationDegreeInt = (Integer) ProductPricingConnector.getAllProductPricingByProductId(
                         (Integer) subsidizedProduct.get(0))
                         .get(19);
                 Double subsidizationDegree = Double.valueOf(subsidizationDegreeInt);
+                System.out.println(subsidizationDegree);
                 if (subsidizationDegree != 0) {
                     subsidizationDegree /= 100;
                     Double addedCost = (subsidizationDegree) * subsidizedProductCost;
@@ -285,12 +309,19 @@ public class PriceSettingController {
                 utiliseSubscription();
             }
 
+            if ((allowedVarianceTF.getText().equals("") || (numberCustomersTF.getText().equals("")) ||
+                    (desiredMarginTF.getText().equals(""))||(desiredMarkupTF.getText().equals("")))) {
+                HelperMethods.throwAlert(gridPane.getScene(), "Please fill out the allowed variance, " +
+                        "the number of customers, the desired margin, and the desired markup.");
+                return;
+            }
+
             Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
             Double cost = modifiedProductCost/Double.valueOf(numberCustomersTF.getText());
             Double margin = Double.valueOf(desiredMarginTF.getText())/100;
             Double markup = Double.valueOf(desiredMarkupTF.getText())/100;
             Double valueAdded = Double.parseDouble(valueAddedTF.getText());
-            Double priceMax = Double.parseDouble(customerHighestPriceTF.getText());
+
             ArrayList<Double> priceCompetitionList = calculatePriceIndex();
 
             String priceLow = "(" + (cost*(1-allowedVariance)) + ", 0) (" + cost + ", 1) (" +
@@ -301,13 +332,19 @@ public class PriceSettingController {
                     cost * ((1+margin)*(allowedVariance+1)) + ", 0)";
             FuzzyLogic.replacePriceTerm(2, priceMed);
 
-            String priceMaxString = "(" + (cost * (1+margin)) + ", 0) (" + (priceMax*(1-allowedVariance)) + ", 1) (" +
-                    (priceMax) + ", 0)";
-            FuzzyLogic.replacePriceTerm(3, priceMaxString);
-
             String priceHigh = "(" + (cost * (1+markup*(1-allowedVariance))) + ", 0) (" + (cost * (1+markup)) + ", 1) (" +
                     (cost * ((1+markup)*(1+allowedVariance))) + ", 0)";
             FuzzyLogic.replacePriceTerm(4, priceHigh);
+
+            String priceMaxString;
+            if (customerHighestPriceTF.getText().equals("")) {
+                priceMaxString = priceHigh;
+            } else {
+                Double priceMax = Double.parseDouble(customerHighestPriceTF.getText());
+                priceMaxString = "(" + (cost * (1+margin)) + ", 0) (" + (priceMax*(1-allowedVariance)) + ", 1) (" +
+                        (priceMax) + ", 0)";
+            }
+            FuzzyLogic.replacePriceTerm(3, priceMaxString);
 
             if (priceCompetitionList != null) {
                 String priceCompetition = "(" + priceCompetitionList.get(0) + ",0) (" + priceCompetitionList.get(1) + ",1)" +
@@ -425,7 +462,7 @@ public class PriceSettingController {
             DecimalFormat df = new DecimalFormat("#.##");
 
             proposedPricePerCustomerLB.setText(df.format(proposedPricePerCustomer));
-            HelperMethods.throwAlert(gridPane.getScene(), String.valueOf(proposedPricePerCustomer));
+//            HelperMethods.throwAlert(gridPane.getScene(), String.valueOf(proposedPricePerCustomer));
 
             // TODO remove hardcoded price ranges
             ProductPricingConnector.updateProductPricing((Integer)activeProduct.get(0),
@@ -496,6 +533,9 @@ public class PriceSettingController {
     }
 
     public Double commoditizationCalculation() {
+        FuzzyLogic commoditizationFLM = new FuzzyLogic();
+        commoditizationFLM.init("commoditizationFB");
+
         String numberCustomersTFBuffer = numberCustomersTF.getId().substring(0, numberCustomersTF.getId().length()-2);
         int numberCustomersTFIndex = Integer.parseInt(numberCustomersTF.getText());
         commoditizationFLM.functionBlockSetVariable(numberCustomersTFBuffer, (double) numberCustomersTFIndex);
@@ -627,12 +667,15 @@ public class PriceSettingController {
         if (element.equals("timePeriod")) {
             // TODO for loop for the time period
         } else {
-            priceDevelopmentFLM.functionBlockSetVariable(element, (double) selectedIndex);
+//            priceDevelopmentFLM.functionBlockSetVariable(element, (double) selectedIndex);
         }
     }
 
 
     public void priceDevelopmentBtnClick(ActionEvent actionEvent) {
+        FuzzyLogic priceDevelopmentFLM = new FuzzyLogic();
+        priceDevelopmentFLM.init("priceDevelopmentFB");
+
         String depreciationBuffer = depreciationTF.getId().substring(0, depreciationTF.getId().length()-2);
         Double depreciationTFIndex = Double.parseDouble(depreciationTF.getText());
         priceDevelopmentFLM.functionBlockSetVariable(depreciationBuffer, (double) depreciationTFIndex);

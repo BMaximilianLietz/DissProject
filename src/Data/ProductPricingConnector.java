@@ -313,6 +313,8 @@ public class ProductPricingConnector {
 
     }
 
+
+
     public static void updateProductPriceIndex(Integer productId, Double priceIndex) {
 
         Connection c = null;
@@ -329,6 +331,41 @@ public class ProductPricingConnector {
                         "SET \"priceIndex\" = ?" +
                         "WHERE \"productId\" = ?;");
                 sql.setDouble(1, priceIndex);
+                sql.setInt(2, productId);
+
+                sql.execute();
+            } catch (Exception e) {
+                System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+                System.exit(0);
+            }
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+
+    }
+
+    public static void updateProductSubsidizationDegree(Integer productId, Double subsidizationDegree) {
+
+        Connection c = null;
+        try {
+            Integer newSubsidizationDegree = subsidizationDegree.intValue();
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully (for productPricing subsidization degree update)");
+
+            try {
+                PreparedStatement  sql = c.prepareStatement("UPDATE public.\"ProductPricing\" " +
+                        "SET \"subsidizationDegree\" = ?" +
+                        "WHERE \"productId\" = ?;");
+                sql.setDouble(1, subsidizationDegree);
                 sql.setInt(2, productId);
 
                 sql.execute();

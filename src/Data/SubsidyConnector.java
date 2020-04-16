@@ -48,9 +48,9 @@ public class SubsidyConnector {
         return queryResults;
     }
 
-    public static ArrayList<ArrayList<Object>> getSubsidizerByProjectId(Integer projectId) {
+    public static ArrayList<ArrayList<Integer>> getSubsidizerByProjectId(Integer projectId) {
         Connection c = null;
-        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> queryResults = new ArrayList<>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -68,7 +68,7 @@ public class SubsidyConnector {
             ResultSet rs = sql.getResultSet();
 
             while ( rs.next() ) {
-                ArrayList<Object> temp = new ArrayList<>();
+                ArrayList<Integer> temp = new ArrayList<>();
                 queryResults.add(temp);
                 temp.add(rs.getInt(1));
                 temp.add(rs.getInt(2));
@@ -88,9 +88,9 @@ public class SubsidyConnector {
         return queryResults;
     }
 
-    public static ArrayList<ArrayList<Object>> getSubsidizedByProductId(Integer productId) {
+    public static ArrayList<ArrayList<Integer>> getSubsidizedByProductId(Integer productId) {
         Connection c = null;
-        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
+        ArrayList<ArrayList<Integer>> queryResults = new ArrayList<>();
 
         try {
             Class.forName("org.postgresql.Driver");
@@ -109,12 +109,11 @@ public class SubsidyConnector {
             ResultSet rs = sql.getResultSet();
 
             while ( rs.next() ) {
-                ArrayList<Object> temp = new ArrayList<>();
+                ArrayList<Integer> temp = new ArrayList<>();
                 queryResults.add(temp);
                 temp.add(rs.getInt(1));
-                temp.add(rs.getString(2));
-                temp.add(rs.getDouble(3));
-                temp.add(rs.getInt(4));
+                temp.add(rs.getInt(2));
+                temp.add(rs.getInt(3));
             }
 
             c.commit();
@@ -147,6 +146,53 @@ public class SubsidyConnector {
                             "WHERE subsidized_product is null AND " +
                             "\"projectId\" = ? AND subsidizing_product is not null;");
             sql.setInt(1, subsidizingProduct);
+            sql.setInt(2, projectId);
+            System.out.println(sql);
+            sql.execute();
+
+            /*
+            ResultSet rs = sql.getResultSet();
+
+            while ( rs.next() ) {
+                ArrayList<Object> temp = new ArrayList<>();
+                queryResults.add(temp);
+                temp.add(rs.getInt(1));
+                temp.add(rs.getString(2));
+                temp.add(rs.getDouble(3));
+                temp.add(rs.getInt(4));
+            }
+             */
+            sql.close();
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records created successfully");
+
+        return queryResults;
+    }
+
+    public static ArrayList<ArrayList<Object>> updateSubsidizedByProjectId(Integer subsidizedProduct, Integer projectId) {
+        Connection c = null;
+        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully for Competitor SELECT");
+
+            PreparedStatement sql = c.prepareStatement(
+                    "UPDATE public.\"Subsidies\" " +
+                            "SET subsidizing_product = ? " +
+                            "WHERE subsidizing_product is null AND " +
+                            "\"projectId\" = ? AND subsidized_product is not null;");
+            sql.setInt(1, subsidizedProduct);
             sql.setInt(2, projectId);
             System.out.println(sql);
             sql.execute();
@@ -220,6 +266,34 @@ public class SubsidyConnector {
                     "DELETE FROM public.\"Subsidies\" WHERE " +
                             "subsidized_product = ?");
             sql.setInt(1, subsidizedId);
+            sql.execute();
+
+            c.commit();
+            c.close();
+
+        } catch (Exception e) {
+            System.err.println( e.getClass().getName()+": "+ e.getMessage() );
+            System.exit(0);
+        }
+        System.out.println("Records deleted successfully");
+    }
+
+    public static void deleteByProject(Integer projectId)  {
+        Connection c = null;
+        ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
+
+        try {
+            Class.forName("org.postgresql.Driver");
+            c = DriverManager
+                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                            "postgres", "password");
+            c.setAutoCommit(false);
+            System.out.println("Opened database successfully for Subsidy DELETE");
+
+            PreparedStatement sql = c.prepareStatement(
+                    "DELETE FROM public.\"Subsidies\" WHERE " +
+                            "\"projectId\" = ?");
+            sql.setInt(1, projectId);
             sql.execute();
 
             c.commit();

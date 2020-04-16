@@ -20,6 +20,7 @@ import javafx.scene.text.Font;
 import javafx.stage.Stage;
 
 import java.sql.Date;
+import java.text.DecimalFormat;
 import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Timer;
@@ -74,6 +75,14 @@ public class ProductController {
     }
 
     public void addProductBtnClick(ActionEvent actionEvent) {
+        int currentProjectSize = ProductConnector.getAllByProjectId((Integer) activeProject.get(0)).size();
+
+        if ((activeProject.get(4).equals("Multi-platform"))||((activeProject.get(4).equals("Bait & Hook")))||
+                (activeProject.get(4).equals("Freemium"))) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(), activeProject.get(4) + " cannot have more than two " +
+                    "products at the moment.");
+            return;
+        }
         if ((productNameTF.getText().equals(""))||(productDescriptionTF.getText().equals(""))) {
             HelperMethods.throwAlert(gridPaneLeft.getScene(), "Please fill out form");
             return;
@@ -113,6 +122,7 @@ public class ProductController {
             productPriceLb = new Label("Product Pricing Required");
             System.out.println(e.getMessage() + " " + e.getStackTrace());
         }
+        productPriceLb.setId("productPriceLb" + product.get(0));
 
         try {
             productCostsTF = new TextField(String.valueOf(((Double)product.get(5))));
@@ -152,10 +162,15 @@ public class ProductController {
         ArrayList<Object> productCopy = new ArrayList<>(product);
 
         Button productPricingButton = new Button("Pricing");
-        productPricingButton.onActionProperty().setValue(actionEvent1 -> {
-            Scene scene = ((Node)actionEvent1.getTarget()).getScene();
-            SceneController.openView(scene, getClass(), activeProject, product,"priceSettingView.fxml");
-        });
+        productPricingButton.setId("productPricingButton" + product.get(0));
+        if (((Boolean)product.get(8))&&(activeProject.get(4).equals("Freemium"))) {
+            productPricingButton.setDisable(true);
+        } else {
+            productPricingButton.onActionProperty().setValue(actionEvent1 -> {
+                Scene scene = ((Node)actionEvent1.getTarget()).getScene();
+                SceneController.openView(scene, getClass(), activeProject, product,"priceSettingView.fxml");
+            });
+        }
         Button productCostingButton = new Button("Costing");
         productCostingButton.onActionProperty().setValue(actionEvent1 -> {
             Scene scene = ((Node)actionEvent1.getTarget()).getScene();
@@ -236,15 +251,18 @@ public class ProductController {
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
         HBox hbox = new HBox(productPricingButton, productCostingButton);
+        hbox.setSpacing(5);
         HBox hBox2 = new HBox(productCopyButton, productDeleteButton, productSaveButton);
+        hBox2.setSpacing(5);
         VBox vBox = new VBox(hbox, hBox2);
+        vBox.setSpacing(5);
 
         gridPaneChosen.add(productNameLb, 0, rowIndex);
         gridPaneChosen.add(productDescriptionLb, 1, rowIndex);
         gridPaneChosen.add(productPriceLb, 2, rowIndex);
         gridPaneChosen.add(productCostsTF,3, rowIndex);
         gridPaneChosen.add(productVersionLb, 4, rowIndex);
-        gridPaneChosen.add(vBox, 5, rowIndex);
+        gridPaneChosen.add(vBox, 6, rowIndex);
 
         if ((((String)activeProject.get(4)).equals("Bait & Hook"))||
                 (((String)activeProject.get(4)).equals("Multi-platform"))) {
@@ -262,6 +280,7 @@ public class ProductController {
                 subsidizing.selectedProperty().setValue(true);
             }
 
+            subsidizing.setId("subsidizing" + product.get(0));
             subsidizing.onActionProperty().setValue(actionEvent -> {
                 subsidized.selectedProperty().setValue(false);
 
@@ -275,10 +294,59 @@ public class ProductController {
                         (String) productCopy.get(7),
                         false, true,
                         (Double) productCopy.get(10));
-                SubsidyConnector.insertIntoSubsidies((Integer) productCopy.get(0), null,
-                        (Integer) activeProject.get(0));
-            });
 
+                ArrayList<ArrayList<Integer>> check =
+                        SubsidyConnector.getSubsidizerByProjectId((Integer) activeProject.get(0));
+                if (check.size() > 0 ) {
+                    for (int i = 0; i < check.size(); i++) {
+                        if ((check.get(i).get(0) == null)||(Integer.parseInt(check.get(i).get(0).toString()))==0) {
+                            if (Integer.parseInt(check.get(i).get(0).toString()) == (Integer)productCopy.get(1)) {
+                                System.out.println("Can't subsidize itself");
+                            } else {
+                                SubsidyConnector.updateSubsidizedByProjectId((Integer)productCopy.get(0),
+                                        (Integer) activeProject.get(0));
+                            }
+                        } else {
+                            SubsidyConnector.deleteByProject((Integer) activeProject.get(0));
+                            Integer subsidizedId = (Integer)check.get(i).get(0);
+                            SubsidyConnector.insertIntoSubsidies((Integer) productCopy.get(0),
+                                    subsidizedId, (Integer) activeProject.get(0));
+                            HelperMethods.throwAlert(gridPaneChosen.getScene(), "Unfortunately subsidies are a one to one " +
+                                    "relationship at the moment.");
+                            CheckBox subsidizingTick = (CheckBox) gridPaneChosen.getScene().lookup("#subsidizing" + subsidizedId);
+                            subsidizingTick.setSelected(false);
+                            CheckBox subsidizedTick = (CheckBox) gridPaneChosen.getScene().lookup("#subsidized" + subsidizedId);
+                            subsidizedTick.setSelected(true);
+                            ProductConnector.updateProductById((Integer)product.get(0),
+                                    (Integer)product.get(1),
+                                    (String)product.get(2),
+                                    (String)product.get(3),
+                                    (Date)product.get(4),
+                                    (Double) product.get(5),
+                                    (Double) product.get(6),
+                                    (String) product.get(7),
+                                    false,
+                                    true,
+                                    (Double) product.get(10));
+                            ProductConnector.updateProductById(subsidizedId,
+                                    (Integer)product.get(1),
+                                    (String)product.get(2),
+                                    (String)product.get(3),
+                                    (Date)product.get(4),
+                                    (Double) product.get(5),
+                                    (Double) product.get(6),
+                                    (String) product.get(7),
+                                    true,
+                                    false,
+                                    (Double) product.get(10));
+                        }
+                    }
+                } else {
+                    SubsidyConnector.insertIntoSubsidies((Integer) productCopy.get(0), null,
+                            (Integer) activeProject.get(0));
+                }
+            });
+            subsidized.setId("subsidized" + product.get(0));
             subsidized.onActionProperty().setValue(actionEvent -> {
                 subsidizing.selectedProperty().setValue(false);
 
@@ -293,29 +361,143 @@ public class ProductController {
                         true, false,
                         (Double) productCopy.get(10));
 
-                ArrayList<ArrayList<Object>> check =
+                ArrayList<ArrayList<Integer>> check =
                         SubsidyConnector.getSubsidizerByProjectId((Integer) activeProject.get(0));
+                System.out.println("-------------------- subsidized clicked --------------------");
+                System.out.println(check);
                 if (check.size() > 0 ) {
+                    System.out.println("debug subsidizED 1");
                     for (int i = 0; i < check.size(); i++) {
-                        if ((check.get(i).get(1) == null)||(Integer.parseInt(check.get(i).get(1).toString()))==0) {
-                            SubsidyConnector.updateSubsidizerByProjectId((Integer)productCopy.get(0),
-                                    (Integer) activeProject.get(0));
+                        if ((check.get(i).get(1) == null)||(check.get(i).get(1)==0)) {
+                            System.out.println("debug subsidizED 1.2");
+                            if (Integer.parseInt(check.get(i).get(1).toString()) == (Integer)productCopy.get(0)) {
+                                System.out.println("Can't subsidize itself");
+                            } else {
+                                SubsidyConnector.updateSubsidizerByProjectId((Integer)productCopy.get(0),
+                                        (Integer) activeProject.get(0));
+                            }
                         } else {
+                            SubsidyConnector.deleteByProject((Integer) activeProject.get(0));
+                            System.out.println("debug subsidizED 1.2");
                             Integer subsidizingId = (Integer)check.get(i).get(1);
                             SubsidyConnector.insertIntoSubsidies(subsidizingId,
                                     (Integer) productCopy.get(0), (Integer) activeProject.get(0));
+                            HelperMethods.throwAlert(gridPaneChosen.getScene(), "Unfortunately subsidies are a one to one " +
+                                    "relationship at the moment.");
+                            CheckBox subsidizingTick = (CheckBox) gridPaneChosen.getScene().lookup("#subsidized" + subsidizingId);
+                            subsidizingTick.setSelected(false);
+                            CheckBox subsidizedTick = (CheckBox) gridPaneChosen.getScene().lookup("#subsidizing" + subsidizingId);
+                            subsidizedTick.setSelected(true);
+                            ProductConnector.updateProductById((Integer)product.get(0),
+                                    (Integer)product.get(1),
+                                    (String)product.get(2),
+                                    (String)product.get(3),
+                                    (Date)product.get(4),
+                                    (Double) product.get(5),
+                                    (Double) product.get(6),
+                                    (String) product.get(7),
+                                    true,
+                                    false,
+                                    (Double) product.get(10));
+
                         }
                     }
+                } else {
+                    System.out.println("debug subsidizED 2");
+                    SubsidyConnector.insertIntoSubsidies(null,
+                            (Integer) productCopy.get(0), (Integer) activeProject.get(0));
                 }
             });
             SceneController.activeProduct = ProductConnector.getProductByProjectAndProduct((Integer)activeProject.get(0),
                     (String)product.get(2));
 
             HBox subsidyHBox = new HBox(subsidizing, subsidized);
+            System.out.println("########## IDs " + product.get(0) + " ##########");
+            System.out.println(subsidizing.getId());
+            System.out.println(subsidized.getId());
             subsidyHBox.spacingProperty().setValue(15);
 
-            gridPaneChosen.add(subsidizingTitleLbl, 6, 2);
-            gridPaneChosen.add(subsidyHBox, 6, rowIndex);
+            gridPaneChosen.add(subsidizingTitleLbl, 5, 2);
+            gridPaneChosen.add(subsidyHBox, 5, rowIndex);
+
+        } else if (((String)activeProject.get(4)).equals("Freemium")) {
+
+            /*############################################################*/
+            /*                         Holla                              */
+            /*############################################################*/
+
+            CheckBox subsidized = new CheckBox();
+
+            Label subsidizingTitleLbl = new Label("Is Freemium?");
+            if (((Boolean)product.get(8))) {
+                subsidized.selectedProperty().setValue(true);
+            }
+
+            subsidized.setId("Freemium"+product.get(0));
+            subsidized.onActionProperty().setValue(actionEvent -> {
+                productPricingButton.setDisable(true);
+                // TODO replace this with setting other boxes to false
+                //subsidizing.selectedProperty().setValue(false);
+
+                ProductConnector.updateProductById((Integer) productCopy.get(0),
+                        (Integer)productCopy.get(1),
+                        productCopy.get(2).toString(),
+                        productCopy.get(3).toString(),
+                        Date.valueOf(LocalDate.now()),
+                        (Double) productCopy.get(5),
+                        0.0,
+                        (String) productCopy.get(7),
+                        true, false,
+                        (Double) productCopy.get(10));
+
+                ArrayList<ArrayList<Integer>> check =
+                        SubsidyConnector.getSubsidizerByProjectId((Integer) activeProject.get(0));
+
+                if (check.size() > 0){
+                    for (int i = 0; i < check.size(); i++) {
+                        if (check.get(i).get(1) != product.get(0)) {
+                            Integer subsidizingId = (Integer)check.get(i).get(1);
+                            CheckBox subsidizingTick = (CheckBox) gridPaneChosen.getScene().lookup("#Freemium" + subsidizingId);
+                            subsidizingTick.setSelected(false);
+
+                            SubsidyConnector.deleteByProject((Integer) activeProject.get(0));
+                            SubsidyConnector.insertIntoSubsidies(subsidizingId,
+                                    (Integer) productCopy.get(0), (Integer) activeProject.get(0));
+                            HelperMethods.throwAlert(gridPaneChosen.getScene(), "Unfortunately Freemium is a one to one " +
+                                    "relationship at the moment.");
+
+                            ProductPricingConnector.updateProductSubsidizationDegree((Integer) product.get(0),
+                                    100.0);
+                            ProductPricingConnector.updateProductSubsidizationDegree(subsidizingId,
+                                    100.0);
+
+                            ProductConnector.updateProductById(subsidizingId,
+                                    (Integer)product.get(1),
+                                    (String)product.get(2),
+                                    (String)product.get(3),
+                                    (Date)product.get(4),
+                                    (Double) product.get(5),
+                                    (Double) product.get(6),
+                                    (String) product.get(7),
+                                    false,
+                                    true,
+                                    (Double) product.get(10));
+                            ((Button)gridPaneChosen.getScene().lookup("#productPricingButton" + subsidizingId)).setDisable(false);
+                        }
+                    }
+                } else {
+                    SubsidyConnector.insertIntoSubsidies(null,
+                            (Integer) productCopy.get(0), (Integer) activeProject.get(0));
+                }
+            });
+            SceneController.activeProduct = ProductConnector.getProductByProjectAndProduct((Integer)activeProject.get(0),
+                    (String)product.get(2));
+
+            System.out.println("########## IDs " + product.get(0) + " ##########");
+            System.out.println(subsidized.getId());
+
+            gridPaneChosen.add(subsidizingTitleLbl, 5, 2);
+            gridPaneChosen.add(subsidized, 5, rowIndex);
         }
 
         numberOfProducts++;
@@ -331,12 +513,14 @@ public class ProductController {
                 productRelationCB.getSelectionModel().select(0);
                 gridPaneChosen.add(productRelationCB, 1, 1);
 
-                ComboBox strengthProductRelation = new ComboBox();
-                strengthProductRelation.setId("strengthProductRelation");
-                strengthProductRelation.getItems().add("Weak");
-                strengthProductRelation.getItems().add("Medium");
-                strengthProductRelation.getItems().add("Strong");
-                gridPaneChosen.add(strengthProductRelation, 2, 1);
+                if (numberOfProducts > 2) {
+                    ComboBox strengthProductRelation = new ComboBox();
+                    strengthProductRelation.setId("strengthProductRelation");
+                    strengthProductRelation.getItems().add("Weak");
+                    strengthProductRelation.getItems().add("Medium");
+                    strengthProductRelation.getItems().add("Strong");
+                    gridPaneChosen.add(strengthProductRelation, 2, 1);
+                }
 
                 Button updateProductRelation = new Button();
                 gridPaneChosen.add(updateProductRelation, 3, 1);
@@ -515,13 +699,19 @@ public class ProductController {
 
     public void updateButtonClick() {
         int sign = 1;
-        int index = ((ComboBox) gridPaneLeft.getScene().lookup("#productRelationCBId")).getSelectionModel().getSelectedIndex();
+        int index;
+        if (numberOfProducts > 2) {
+            index = 1;
+        } else {
+            index = ((ComboBox) gridPaneLeft.getScene().lookup("#productRelationCBId")).getSelectionModel().getSelectedIndex();
+        }
         if (index == 1) {
             sign = 1;
         } else if (index == 2){
             sign = -1;
         } else if (index == 3) {
             HelperMethods.throwAlert(gridPaneLeft.getScene(), "Nothing to update");
+            return;
         }
 
         int indexStrength = ((ComboBox) gridPaneLeft.getScene().lookup("#strengthProductRelation")).getSelectionModel().getSelectedIndex();
@@ -535,10 +725,6 @@ public class ProductController {
             crossPriceElasticity = 0.9;
         }
 
-        // P1 = (2a0 + b0 + 1.5c)/3
-        // P2 = (2b0 + a0 + 1.5c)/3
-//        ArrayList<Object> respectiveProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(0).get(0));
-//        Integer a = (Integer) respectiveProductPricing.get(11);
         ArrayList<Object> respectiveProductPricingB = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(1).get(0));
         Integer b = (Integer) respectiveProductPricingB.get(11);
         // Marginal costs - ignored for now
@@ -547,9 +733,13 @@ public class ProductController {
 
         System.out.println(productList);
         for (int i = 0; i < productList.size(); i++) {
-            System.out.println("i " + i);
+//            System.out.println("i " + i);
             ArrayList<Object> respectiveProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(i).get(0));
             Double currentPrice = (Double) productList.get(i).get(6);
+            if (currentPrice == 0) {
+                HelperMethods.throwAlert(gridPaneLeft.getScene(), "Product prices have to be set first");
+                return;
+            }
             Double maxPrice = (Double) respectiveProductPricing.get(21);
             Integer currentCustomers = (Integer) respectiveProductPricing.get(11);
             Double maxPriceCustomers = (Double) respectiveProductPricing.get(24);
@@ -558,7 +748,7 @@ public class ProductController {
             Double selfPriceElasticity = percentageChangeCustomers/percentageChangePrice;
             Double test = 0.0;
             for (int j = 1; j < productList.size(); j++) {
-                System.out.println("j: " + j);
+//                System.out.println("j: " + j);
                 ArrayList<Object> tempProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(j).get(0));
                 Integer salesQuantity = (Integer) tempProductPricing.get(11);
                 // TODO consider what to do with tbd
@@ -567,12 +757,7 @@ public class ProductController {
                 crossPriceElasticity *= tbd;
                 Double priceB = (Double) productList.get(j).get(6);
                 Double returnValue = (crossPriceElasticity/(1+selfPriceElasticity))*((salesQuantity*(priceB-mc))/currentCustomers);
-//                System.out.println("2nd part: " + (crossPriceElasticity/(1+selfPriceElasticity)));
-//                System.out.println("3rd part: " + ((salesQuantity*(priceB-mc))/currentCustomers));
-//                System.out.println("salesQuantity: " + salesQuantity);
-//                System.out.println("priceB: " + priceB);
-//                System.out.println("mc: " + mc);
-//                System.out.println("currentCustomers: " + currentCustomers);
+
                 test += returnValue;
             }
 //            System.out.println("1st part: " + (selfPriceElasticity/(selfPriceElasticity+1)) * mc);
@@ -582,26 +767,44 @@ public class ProductController {
             FuzzyLogic clusteringRangeFLMCopy = new FuzzyLogic();
             clusteringRangeFLM.init("clusteringRangeFB");
 
-//            HelperMethods.priceClusteringChange();
-            System.out.println("newPrice " + (currentPrice + newPrice));
+//            System.out.println("priceClusterFLOutput " + priceClusterFLOutput);
+            System.out.println("Suggested new price: " + (currentPrice + newPrice));
+            Double productBundlingPrice = currentPrice + newPrice;
 
             Double priceClusterFLOutput = HelperMethods.returnClusteringReaction(
                     (Double) respectiveProductPricing.get(16),
                     (Double) respectiveProductPricing.get(25),
-                    currentPrice,
+                    productBundlingPrice,
                     (Double) respectiveProductPricing.get(17),
                     (Double) respectiveProductPricing.get(18));
+            productBundlingPrice *= priceClusterFLOutput;
 
-            System.out.println("priceClusterFLOutput " + priceClusterFLOutput);
+            DecimalFormat df = new DecimalFormat("#.##");
+            productBundlingPrice = Double.parseDouble(df.format(productBundlingPrice));
 
-            Double priceClusterFLOutputCopy = HelperMethods.returnClusteringReaction(
-                    (Double) respectiveProductPricing.get(16),
-                    (Double) respectiveProductPricing.get(25),
-                    currentPrice + newPrice,
-                    (Double) respectiveProductPricing.get(17),
-                    (Double) respectiveProductPricing.get(18));
+            try {
+                ProductConnector.updateProductById((Integer) productList.get(i).get(0),
+                        (Integer) productList.get(i).get(1),
+                        (String) productList.get(i).get(2),
+                        (String) productList.get(i).get(3),
+                        (Date) productList.get(i).get(4),
+                        (Double) productList.get(i).get(5),
+                        productBundlingPrice,
+                        (String) productList.get(i).get(7),
+                        (Boolean) productList.get(i).get(8),
+                        (Boolean) productList.get(i).get(9),
+                        (Double) productList.get(i).get(10));
 
-            System.out.println("priceClusterFLOutputCopy " + priceClusterFLOutputCopy);
+                Label productPriceLb = ((Label) gridPaneLeft.getScene().lookup("#productPriceLb" + productList.get(i).get(0)));
+                productPriceLb.setText(df.format(productBundlingPrice));
+            } catch (Exception e) {
+                System.out.println(e.getMessage());
+                System.out.println(e.getStackTrace());
+                System.out.println(e.getCause());
+                HelperMethods.throwAlert(gridPaneLeft.getScene(), "There seems to be an error updating the prices.");
+            }
+
+//            System.out.println("priceClusterFLOutputCopy " + priceClusterFLOutputCopy);
             //priceClusterFLOutput = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();
 
             System.out.println("-------------------- ROUND " + i + " OVER --------------------");

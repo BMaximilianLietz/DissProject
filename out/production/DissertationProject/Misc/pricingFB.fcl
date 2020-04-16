@@ -125,7 +125,7 @@ FUZZIFY competitorOrientation			// Fuzzify input variable 'food': { 'rancid', 'd
 END_FUZZIFY
 
 FUZZIFY priceClustering			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-TERM decreaseStrongly := (0.8390821734428999 ,0) (0.9323135260476666,1)  (1.0,0);
+TERM decreaseStrongly := (0.7388851322785822 ,0) (0.8312457738134049,1)  (1.0,0);
     TERM decreaseSlightly := (0.925,0) (0.975,1) (1,0);
     TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
     TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);

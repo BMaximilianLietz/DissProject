@@ -125,7 +125,7 @@ FUZZIFY competitorOrientation			// Fuzzify input variable 'food': { 'rancid', 'd
 END_FUZZIFY
 
 FUZZIFY priceClustering			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-TERM decreaseStrongly := (0.0 ,0) (0.0,1)  (1.0,0);
+TERM decreaseStrongly := (0.7388848651493708 ,0) (0.8312454732930421,1)  (1.0,0);
     TERM decreaseSlightly := (0.925,0) (0.975,1) (1,0);
     TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
     TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);
@@ -134,12 +134,12 @@ END_FUZZIFY
 
 
 DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-TERM priceLow := (1190.0, 0) (1400.0, 1) (1609.9999999999998, 0);
-TERM priceCompetition := (1071.0, 0) (1400.0, 1) (1519.0, 0);
-TERM priceMedium := (1309.0, 0) (1540.0000000000002, 1) (1770.9999999999998, 0);
-TERM priceHigh := (1995.0, 0) (2100.0, 1) (2415.0, 0);
-TERM priceValueAdded := (0.0, 0) (0.0, 1) (0.0, 0);
-TERM priceMax := (1540.0000000000002, 0) (85000.0, 1) (100000.0, 0);
+TERM priceLow := (3660.3516, 0) (4306.296, 1) (4952.2404, 0);
+TERM priceCompetition := (1000.0,0) (3225.0,1) (5000.0,0);
+TERM priceMedium := (4026.3867600000003, 0) (4736.9256000000005, 1) (5447.46444, 0);
+TERM priceHigh := (6136.4718, 0) (6459.444, 1) (7428.3606, 0);
+TERM priceValueAdded := (4026.3867600000003, 0) (4736.9256000000005, 1) (5447.46444, 0);
+TERM priceMax := (4736.9256000000005, 0) (7905.0, 1) (9300.0, 0);
 METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 DEFAULT := 69.420;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY

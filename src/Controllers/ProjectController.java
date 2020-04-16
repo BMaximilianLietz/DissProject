@@ -89,6 +89,7 @@ public class ProjectController {
         });
 
         HBox hbox = new HBox(projectSelectButton, projectDeleteButton);
+        hbox.setSpacing(5);
 
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
