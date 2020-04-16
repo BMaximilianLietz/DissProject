@@ -52,7 +52,6 @@ public class ProductConnector {
                 queryResults.add(returnedProductId.getBoolean(9));
                 queryResults.add(returnedProductId.getBoolean(10));
                 queryResults.add(returnedProductId.getDouble(11));
-                System.out.println("Debug 4");
                 sql.close();
 
             } catch (Exception e) {
@@ -209,6 +208,7 @@ public class ProductConnector {
             queryResults.add(returnedProduct.getString(8));
             queryResults.add(returnedProduct.getBoolean(9));
             queryResults.add(returnedProduct.getBoolean(10));
+            queryResults.add(returnedProduct.getDouble(11));
 
             sql.close();
             c.commit();

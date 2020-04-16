@@ -3,6 +3,7 @@ package Controllers;
 import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Data.ProjectConnector;
+import Misc.HelperMethods;
 import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -42,15 +43,24 @@ public class ProjectController {
 
     public void addProjectBtnClick(ActionEvent actionEvent) {
 
+        if ((projectNameTF.getText().equals(""))||(projectDescriptionTF.getText().equals(""))) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(), "Please fill out form");
+            return;
+        }
+
         String projectName = projectNameTF.getText();
         Label projectNameLb = new Label(projectName);
         Label projectDescriptionLb = new Label(projectDescriptionTF.getText());
         Label projectCostsLb = new Label("0.0");
-        Label businessModelLB = new Label(businessModelCB.getSelectionModel().getSelectedItem().toString());
-
-        ArrayList<Object> queryResults = ProjectConnector.insertIntoProject(projectName, projectDescriptionLb.getText(),
-                null, businessModelLB.getText());
-        addProject(queryResults, gridPaneLeft);
+        Label businessModelLB;
+        try {
+            businessModelLB = new Label(businessModelCB.getSelectionModel().getSelectedItem().toString());
+            ArrayList<Object> queryResults = ProjectConnector.insertIntoProject(projectName, projectDescriptionLb.getText(),
+                    null, businessModelLB.getText());
+            addProject(queryResults, gridPaneLeft);
+        } catch (Exception e) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(), "Please select a business model");
+        }
     }
 
     public void addProject(ArrayList<Object> project, GridPane gridPaneChosen) {
@@ -75,7 +85,7 @@ public class ProjectController {
         projectDeleteButton.onActionProperty().setValue(actionEvent1 -> {
             gridPaneLeft.getChildren().removeIf(node -> GridPane.getRowIndex(node) ==
                     GridPane.getRowIndex(((Button)actionEvent1.getTarget())));
-            ProjectConnector.deleteProjectByProjectName((String)project.get(1));
+            ProjectConnector.deleteProjectByProjectName((Integer) project.get(0));
         });
 
         HBox hbox = new HBox(projectSelectButton, projectDeleteButton);

@@ -34,7 +34,7 @@ FUZZIFY pricingGoal			// Fuzzify input variable 'service': {'poor', 'good' , 'ex
 END_FUZZIFY
 
 FUZZIFY commoditization
-    TERM low := (0.25, 0) (0.375,0) (0.5,0);
+    TERM low := (0.25, 0) (0.375,1) (0.5,0);
     TERM medLow := (0.375, 0) (0.5, 1) (0.625,0);
     TERM high := (0.5, 0) (0.625, 1) (0.75,0);
     TERM veryHigh := (0.625, 0) (0.75, 1) (0.875, 0);

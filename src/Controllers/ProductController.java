@@ -74,9 +74,19 @@ public class ProductController {
     }
 
     public void addProductBtnClick(ActionEvent actionEvent) {
+        if ((productNameTF.getText().equals(""))||(productDescriptionTF.getText().equals(""))) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(), "Please fill out form");
+            return;
+        }
+        String productDescription;
+        if (productDescriptionTF.getText().equals("")) {
+            productDescription = "-";
+        } else {
+            productDescription = productDescriptionTF.getText();
+        }
 
         ArrayList<Object> queryResults = ProductConnector.insertIntoProduct((Integer) activeProject.get(0),
-                productNameTF.getText(), productDescriptionTF.getText(), Date.valueOf(LocalDate.now()), 0.0,
+                productNameTF.getText(), productDescription, Date.valueOf(LocalDate.now()), 0.0,
                 0.0, productVersionTF.getText(), Boolean.valueOf(null), Boolean.valueOf(null), 0.0);
 
         ProductPricingConnector.insertAllProductPricing((Integer) queryResults.get(0), "", 0.0,
@@ -349,10 +359,20 @@ public class ProductController {
     }
 
     public void addCompetitorBtnClick(ActionEvent actionEvent) {
+        if ((competitorNameTF.getText().equals(""))||(competitorPriceTF.getText().equals("")) ||
+                (competitorSales.getText().equals(""))) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(), "Please fill out form");
+            return;
+        }
+
+        String competitorName = competitorNameTF.getText();
+        Double competitorPrice = Double.parseDouble(competitorPriceTF.getText());
+        Double competitorSalesDouble = Double.parseDouble(competitorSales.getText());
+
         Double competitorQuality = Double.valueOf(Math.round(competitorQualitySlider.getValue()));
-        addCompetitor(competitorNameTF.getText(),
-                Double.parseDouble(competitorPriceTF.getText()),
-                Double.parseDouble(competitorSales.getText()),
+        addCompetitor(competitorName,
+                competitorPrice,
+                competitorSalesDouble,
                 competitorQuality,
                 competitorGridPane);
         CompetitorConnector.insertIntoCompetitors(competitorNameTF.getText(),
@@ -380,6 +400,10 @@ public class ProductController {
     public void competitorComparisonBtnClick(ActionEvent actionEvent) {
         ArrayList<ArrayList<Object>> competitorQueryResults =
                 CompetitorConnector.getCompetitorsByProjectId((Integer) activeProject.get(0));
+        if (competitorQueryResults.size() == 0) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(),"Please add at least one competitor first.");
+            return;
+        }
         Double largestPrice = 0.0;
 
         for (int i = 0; i < competitorQueryResults.size(); i++) {
@@ -445,6 +469,11 @@ public class ProductController {
         ArrayList<ArrayList<Object>> competitorQueryResults =
                 CompetitorConnector.getCompetitorsByProjectId((Integer) activeProject.get(0));
         ArrayList<ArrayList<String>> barChartData = new ArrayList<>();
+
+        if (competitorQueryResults.size() == 0) {
+            HelperMethods.throwAlert(gridPaneLeft.getScene(),"Please add at least one competitor first.");
+            return;
+        }
 
         // price index formula: (competitor price / your price) * 100
         // for the market: priceIndex1 + priceIndex2 + ... + priceIndexN / number of competitors
@@ -556,22 +585,21 @@ public class ProductController {
 //            HelperMethods.priceClusteringChange();
             System.out.println("newPrice " + (currentPrice + newPrice));
 
-            Double priceClusterFLOutput = HelperMethods.priceClusteringChange(currentPrice,
-                    gridPaneLeft.getScene(),
+            Double priceClusterFLOutput = HelperMethods.returnClusteringReaction(
                     (Double) respectiveProductPricing.get(16),
-                    clusteringRangeFLM,
+                    (Double) respectiveProductPricing.get(25),
+                    currentPrice,
                     (Double) respectiveProductPricing.get(17),
-                    (Double) respectiveProductPricing.get(18),
-                    (Double) respectiveProductPricing.get(25));
+                    (Double) respectiveProductPricing.get(18));
+
             System.out.println("priceClusterFLOutput " + priceClusterFLOutput);
 
-            Double priceClusterFLOutputCopy = HelperMethods.priceClusteringChange(currentPrice + newPrice,
-                    gridPaneLeft.getScene(),
+            Double priceClusterFLOutputCopy = HelperMethods.returnClusteringReaction(
                     (Double) respectiveProductPricing.get(16),
-                    clusteringRangeFLM,
+                    (Double) respectiveProductPricing.get(25),
+                    currentPrice + newPrice,
                     (Double) respectiveProductPricing.get(17),
-                    (Double) respectiveProductPricing.get(18),
-                    (Double) respectiveProductPricing.get(25));
+                    (Double) respectiveProductPricing.get(18));
 
             System.out.println("priceClusterFLOutputCopy " + priceClusterFLOutputCopy);
             //priceClusterFLOutput = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();

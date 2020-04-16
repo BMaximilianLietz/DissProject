@@ -10,21 +10,27 @@ import java.util.ArrayList;
 public class GraphController {
     // TODO rename
 
-    private final NumberAxis xAxis = new NumberAxis();
-    private final CategoryAxis  barXAxis = new CategoryAxis();
-    private final NumberAxis yAxis = new NumberAxis();
+    private final NumberAxis lineXAxis = new NumberAxis();
+
+    private final NumberAxis lineYAxis = new NumberAxis();
     private final LineChart<Number,Number> lineChart =
-            new LineChart<Number,Number>(xAxis,yAxis);
+            new LineChart<Number,Number>(lineXAxis,lineYAxis);
+
+    private final NumberAxis bubbleXAxis = new NumberAxis();
+    private final NumberAxis bubbleYAxis = new NumberAxis();
     private final BubbleChart<Number,Number> bubbleChart = new
-            BubbleChart<Number,Number>(xAxis,yAxis);
+            BubbleChart<Number,Number>(bubbleXAxis,bubbleYAxis);
+
+    private final CategoryAxis barXAxis = new CategoryAxis();
+    private final NumberAxis barYAxis = new NumberAxis();
     private final BarChart<String,Number> barChart =
-            new BarChart<String,Number>(barXAxis,yAxis);
+            new BarChart<String,Number>(barXAxis,barYAxis);
 
     //region Line chart functionality
     //region
-    public void setAxes(String yAxisLabel, String xAxisLabel) {
-        yAxis.setLabel(yAxisLabel);
-        xAxis.setLabel(xAxisLabel);
+    public void setAxes(String xAxisLabel, String yAxisLabel) {
+        lineXAxis.setLabel(yAxisLabel);
+        lineYAxis.setLabel(xAxisLabel);
     }
 
     public void setLineChartData(String seriesName, ArrayList<ArrayList<Object>> graphPoints, String lineChartTitle) {
@@ -54,8 +60,8 @@ public class GraphController {
     //region Bubble chart functionality
     //region
     public void setBubbleChartAxes(String yAxisLabel, String xAxisLabel, String unit) {
-        yAxis.setLabel(yAxisLabel + unit);
-        xAxis.setLabel(xAxisLabel);
+        bubbleYAxis.setLabel(yAxisLabel + unit);
+        bubbleXAxis.setLabel(xAxisLabel);
     }
 
     public void setBubbleChartData(String seriesName, ArrayList<Double> graphPoints,
@@ -89,7 +95,7 @@ public class GraphController {
     //region Bar chart functionality
     //region
     public void setBarChartAxes(String yAxisLabel, String xAxisLabel) {
-        yAxis.setLabel(yAxisLabel);
+        barYAxis.setLabel(yAxisLabel);
         barXAxis.setLabel(xAxisLabel);
     }
 

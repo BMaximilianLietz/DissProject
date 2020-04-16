@@ -121,31 +121,36 @@ public class ProjectConnector {
         return queryResults;
     }
 
-    public static void deleteProjectByProjectName(String projectName) {
+    public static void deleteProjectByProjectName(Integer projectId) {
         Connection c = null;
-        Statement stmt = null;
         ArrayList<Object> queryResults = new ArrayList<>();
         Object[] returnArray = new Object[2];
+
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
                     .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
                             "postgres", "password");
             c.setAutoCommit(false);
-            System.out.println("Opened database successfully - Delete by project name");
+            System.out.println("Opened database successfully - Delete by project Id");
 
-            stmt = c.createStatement();
-            ResultSet rs = stmt.executeQuery( "DELETE FROM public.\"Projects\"" +
-                    "WHERE \"projectName\"='" + projectName + "';" );
-//            System.out.println(queryResults);
-            rs.close();
-            stmt.close();
+            PreparedStatement sql = c.prepareStatement(
+                    "DELETE FROM public.\"Projects\" WHERE \"projectId\" = ?");
+            sql.setInt(1, projectId);
+            sql.execute();
+
+            c.commit();
             c.close();
         } catch ( Exception e ) {
             System.err.println( e.getClass().getName()+": "+ e.getMessage() );
             System.exit(0);
         }
         System.out.println("Operation deleteProjectByProjectName done successfully");
+
+        ArrayList<ArrayList<Object>> productsToDelete = ProductConnector.getAllByProjectId(projectId);
+        for (int i = 0; i < productsToDelete.size(); i++) {
+            ProductConnector.deleteProductByProductId((Integer) productsToDelete.get(i).get(0));
+        }
     }
 
 }

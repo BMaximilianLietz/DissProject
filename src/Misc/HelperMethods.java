@@ -17,9 +17,8 @@ public class HelperMethods {
         return;
     }
 
-    public static Double priceClusteringChange(Double currentPrice, Scene scene, Double allowedVariance,
-                                               FuzzyLogic clusteringRangeFLM, Double rangeLow, Double rangeHigh,
-                                               Double clusterImportance) {
+    public static void priceClusteringChange(Double currentPrice, Double allowedVariance,
+                                               Double rangeLow, Double rangeHigh) {
         allowedVariance = allowedVariance/100;
         Double average = (rangeLow + rangeHigh)/2;
         Double averageDistance = rangeHigh - average;
@@ -50,7 +49,8 @@ public class HelperMethods {
             increaseStrongly = povChange;
         } else if (currentPrice > rangeHigh) {
             increaseStrongly = "(0,1) (0.9, 1)";
-            decreaseStrongly = povChange;
+            decreaseStrongly = "(" + average/currentPrice + " ,0) (" + rangeHigh/currentPrice + ",1) " +
+                    " (" + currentPrice/currentPrice + ",0)";
         } else {
             increaseStrongly = "(0.9,0) (0.95,1) (1,0)";
             decreaseStrongly = "(1,0) (1.05, 1) (1.1,0)";
@@ -61,17 +61,21 @@ public class HelperMethods {
 
         FuzzyLogic.replacePriceTerm(6, decreaseStrongly);
         FuzzyLogic.replacePriceTerm(7, increaseStrongly);
+    }
+
+    public static Double returnClusteringReaction(Double allowedVariance, Double clusterImportance, Double currentPrice,
+                                           Double rangeLow, Double rangeHigh) {
+        priceClusteringChange(currentPrice, allowedVariance, rangeLow, rangeHigh);
+
+        FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
+        clusteringRangeFLM.init("clusteringRangeFB");
 
         clusteringRangeFLM.functionBlockSetVariable("currentPrice", currentPrice);
         clusteringRangeFLM.functionBlockSetVariable("rangeImportance", clusterImportance);
 
         clusteringRangeFLM.evaluate();
-        clusteringRangeFLM.getChartFunctionBlock();
 
-        System.out.println(String.valueOf(clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue()));
-        System.out.println("priceClusterFLOutput: " + clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue());
-        Double priceClusterFLOutput = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();
-        return priceClusterFLOutput;
-
+        Double clusteringReaction = clusteringRangeFLM.getFunctionBlock().getVariable("clusteringReaction").getValue();
+        return  clusteringReaction;
     }
 }

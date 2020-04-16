@@ -119,17 +119,6 @@
                 </items>
             </ComboBox>
 
-            <Label text="Commoditization Value:" GridPane.columnIndex="0" GridPane.rowIndex="7">
-                <padding><Insets left="20"/></padding>
-            </Label>
-            <Label text="Please fill out form" GridPane.columnIndex="1" GridPane.rowIndex="7" fx:id="commoditizationValueForm">
-            </Label>
-
-            <Button GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"
-                    onAction="#commoditizationButtonClick">
-                Get commoditization value
-            </Button>
-
             <!-- Former COLUMNS 4 & 5 -->
 
             <!-- Row 1
@@ -234,11 +223,13 @@
                 Price development
             </Button>
 
+            <!--
             <VBox GridPane.columnIndex="0" GridPane.rowIndex="18" GridPane.rowSpan="4" GridPane.columnSpan="2">
                 <padding><Insets left="20"/></padding>
                 <Label text="Help Box" />
                 <Text fx:id="helpBoxTXT"/>
             </VBox>
+            -->
 
 
             <!-- COLUMNS 2 & 3 -->
@@ -447,18 +438,20 @@
             </ComboBox>
 
             <Label GridPane.columnIndex="4" GridPane.rowIndex="1">Proposed Price per customer:</Label>
-            <Label fx:id="proposedPricePerCustomer" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
+            <Label fx:id="proposedPricePerCustomerLB" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
 
             <!-- Row 13  -->
             <Button GridPane.columnIndex="4" GridPane.rowIndex="3" onAction="#priceSettingSubmitBtnClick">
                 Submit Price Setting
             </Button>
+            <!--
             <Button GridPane.columnIndex="4" GridPane.rowIndex="4" onAction="#testSubscription">
                 Test subscription
             </Button>
-            <Button GridPane.columnIndex="4" GridPane.rowIndex="5" onAction="#priceClusteringChange">
-                Test clustering
-            </Button>
+            -->
+
+            <Label GridPane.columnIndex="6" GridPane.rowIndex="1">Proposed Strategy:</Label>
+            <Text fx:id="proposedStrategyTX" GridPane.columnIndex="7" GridPane.rowIndex="1"/>
 
             <!--
                 TODO
