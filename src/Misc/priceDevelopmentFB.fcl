@@ -72,7 +72,7 @@ DEFUZZIFY priceDevelopment			// Defuzzify output variable 'tip' : {'cheap', 'ave
 	TERM none := (1,1);
 
 	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
-	DEFAULT := 420;		// Default value is 0 (if no rule activates defuzzifier)
+	DEFAULT := 1;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
 
 RULEBLOCK No1

@@ -101,6 +101,7 @@ public class PriceSettingController {
         Integer productIdPassed = (Integer) SceneController.activeProduct.get(0);
         activeProduct = ProductConnector.getProductByProductId(productIdPassed);
         proposedPricePerCustomer = (Double) activeProduct.get(6);
+        proposedPricePerCustomerLB.setText(proposedPricePerCustomer.toString());
 
         System.out.println(activeProduct);
 
@@ -723,6 +724,23 @@ public class PriceSettingController {
         graphData.add(tempArray);
         System.out.println("time period: " + timePeriodIndex);
 
+        if (allowedVarianceTF.getText().equals("")) {
+            try {
+                Double checkIfDouble = Double.valueOf(allowedVarianceTF.getText());
+            } catch (Exception e) {
+                HelperMethods.throwAlert(gridPane.getScene(),
+                        "Please insert a number without any signs for the allowed variance.");
+            }
+        }
+        Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
+        Double returnRangesLow = returnRanges().get(0);
+        Double returnRangesHigh = returnRanges().get(1);
+
+        if ((returnRangesLow == 0)||(returnRangesHigh == 0)) {
+            returnRangesLow = proposedPricePerCustomer * (1-allowedVariance);
+            returnRangesHigh = proposedPricePerCustomer * (1+allowedVariance);
+        }
+
         if (timePeriodIndex == 0) {
 
         } else if (timePeriodIndex == 1) {
@@ -731,7 +749,6 @@ public class PriceSettingController {
             Double currentReductionPercentage = (1-pDResult)/12;
 //            Double percentage = tempRemove4/priceDevelopment;
             for (int i = 1; i < n+1; i++) {
-                Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
 
                 ArrayList<Object> temp = new ArrayList<>();
                 temp.add(i);
@@ -741,7 +758,7 @@ public class PriceSettingController {
                 clusteringRangeFLM.init("clusteringRangeFB");
 
                 priceDevelopment *= HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
-                        priceDevelopment,returnRanges().get(0), returnRanges().get(1));
+                        priceDevelopment,returnRangesLow, returnRangesHigh);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -750,7 +767,6 @@ public class PriceSettingController {
                 graphData.add(temp);
             }
         } else if (timePeriodIndex == 2) {
-            Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
             // Result is wrong
             int n = 12;
             Double currentReductionPercentage = (1-pDResult)/12;
@@ -764,7 +780,7 @@ public class PriceSettingController {
                 clusteringRangeFLM.init("clusteringRangeFB");
 
                 priceDevelopment *= HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
-                        priceDevelopment,returnRanges().get(0), returnRanges().get(1));
+                        priceDevelopment,returnRangesLow, returnRangesHigh);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -775,7 +791,6 @@ public class PriceSettingController {
             }
         }
         else if (timePeriodIndex == 3) {
-            Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
             int n = 36;
             Double currentReductionPercentage = (1-pDResult)/12;
 //            Double percentage = tempRemove4/priceDevelopment;
@@ -785,7 +800,7 @@ public class PriceSettingController {
                 priceDevelopment = priceDevelopment - (priceDevelopment*currentReductionPercentage);
 
                 priceDevelopment *= HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
-                        priceDevelopment,returnRanges().get(0), returnRanges().get(1));
+                        priceDevelopment,returnRangesLow, returnRangesHigh);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());

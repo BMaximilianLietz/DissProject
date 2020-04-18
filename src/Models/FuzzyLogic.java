@@ -14,9 +14,9 @@ public class FuzzyLogic {
     public FunctionBlock functionBlock;
 
     public void init(String selectedFunctionBlock) {
-        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\"
-                + selectedFunctionBlock + ".fcl";
-        FIS fis = FIS.load(fileName, true);
+        File fileRelative2 = new File("src/Misc/" + selectedFunctionBlock + ".fcl");
+        String fileName = "src/Misc/" + selectedFunctionBlock + ".fcl";
+        FIS fis = FIS.load(fileRelative2.getAbsolutePath(), true);
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
             return;
@@ -34,7 +34,6 @@ public class FuzzyLogic {
 
     public void functionBlockSetVariable(String variableName, Double variableValue) {
         functionBlock.setVariable(variableName, variableValue);
-        //System.out.println(functionBlock.getVariable(variableName));
     }
 
     public void evaluate() {
@@ -51,7 +50,8 @@ public class FuzzyLogic {
     }
 
     public static void replacePriceTerm(int index, String ranges) {
-        File log= new File("C:/Users/maxim/IdeaProjects/DissertationProject/src/Misc/pricingFB.fcl");
+        File fileRelative2 = new File("src/Misc/pricingFB.fcl");
+        File log= new File(fileRelative2.getAbsolutePath());
         String term;
         if (index == 1) {
             term = "TERM priceLow";
@@ -95,7 +95,8 @@ public class FuzzyLogic {
     }
 
     public static void replaceClusteringTerm(int index, String ranges) {
-        File log= new File("C:/Users/maxim/IdeaProjects/DissertationProject/src/Misc/clusteringRangeFB.fcl");
+        File fileRelative2 = new File("src/Misc/clusteringRangeFB.fcl");
+        File log= new File(fileRelative2.getAbsolutePath());
         String term;
         if (index == 1) {
             term = "TERM tooLow";
@@ -138,7 +139,7 @@ public class FuzzyLogic {
     public void chart() {}
 
     public void test() {
-        String fileName = "C:\\Users\\maxim\\IdeaProjects\\DissertationProject\\src\\Misc\\pricingFB.fcl";
+        String fileName = "../src/Misc/pricingFB.fcl";
         FIS fis = FIS.load(fileName, true);
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
