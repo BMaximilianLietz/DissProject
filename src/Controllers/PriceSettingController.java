@@ -715,6 +715,7 @@ public class PriceSettingController {
 
         Double priceDevelopment = proposedPricePerCustomer * 1;
         Double pDResult = priceDevelopmentFLM.getFunctionBlock().getVariable("priceDevelopment").getValue();
+        System.out.println(pDResult);
 
         // TODO make it so that the loop re-evaluate the proposed price over and over instead of reusing the same result
         int timePeriodIndex = timePeriodCB.getSelectionModel().getSelectedIndex();
@@ -747,18 +748,28 @@ public class PriceSettingController {
             int n = 6;
 
             Double currentReductionPercentage = (1-pDResult)/12;
+            System.out.println(currentReductionPercentage);
 //            Double percentage = tempRemove4/priceDevelopment;
             for (int i = 1; i < n+1; i++) {
 
                 ArrayList<Object> temp = new ArrayList<>();
                 temp.add(i);
                 priceDevelopment -= (priceDevelopment*currentReductionPercentage);
+                System.out.println(priceDevelopment);
 
                 FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
                 clusteringRangeFLM.init("clusteringRangeFB");
 
-                priceDevelopment *= HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
+                Double clusteringOutput = HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
                         priceDevelopment,returnRangesLow, returnRangesHigh);
+                if (clusteringOutput > 1) {
+                    clusteringOutput = 1 + ((clusteringOutput-1)/10);
+                } else {
+                    clusteringOutput = 1 - ((1-clusteringOutput)/10);
+                }
+
+                priceDevelopment *= clusteringOutput;
+                System.out.println("clusteringOutput " + clusteringOutput);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -779,8 +790,15 @@ public class PriceSettingController {
                 FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
                 clusteringRangeFLM.init("clusteringRangeFB");
 
-                priceDevelopment *= HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
+                Double clusteringOutput = HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
                         priceDevelopment,returnRangesLow, returnRangesHigh);
+                if (clusteringOutput > 1) {
+                    clusteringOutput = 1 + ((clusteringOutput-1)/10);
+                } else {
+                    clusteringOutput = 1 - ((1-clusteringOutput)/10);
+                }
+
+                priceDevelopment *= clusteringOutput;
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -799,8 +817,15 @@ public class PriceSettingController {
                 temp.add(i);
                 priceDevelopment = priceDevelopment - (priceDevelopment*currentReductionPercentage);
 
-                priceDevelopment *= HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
+                Double clusteringOutput = HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
                         priceDevelopment,returnRangesLow, returnRangesHigh);
+                if (clusteringOutput > 1) {
+                    clusteringOutput = 1 + ((clusteringOutput-1)/10);
+                } else {
+                    clusteringOutput = 1 - ((1-clusteringOutput)/10);
+                }
+
+                priceDevelopment *= clusteringOutput;
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -943,12 +968,19 @@ public class PriceSettingController {
         try {
             TextField rangeLowTF = (TextField) gridPane.getScene().lookup("#rangeLowTF");
             TextField rangeHighTF = (TextField) gridPane.getScene().lookup("#rangeHighTF");
-            priceRangeLow = Double.parseDouble(rangeLowTF.getText());
-            priceRangeHigh = Double.parseDouble(rangeHighTF.getText());
+            if (rangeLowTF.getText().equals("")) {
+                ArrayList<Object> priceRangeDBCheck = ProductPricingConnector.getAllProductPricingByProductId(
+                        (Integer) activeProduct.get(0));
+                priceRangeLow = (Double) priceRangeDBCheck.get(17);
+                priceRangeHigh = (Double) priceRangeDBCheck.get(18);
+            } else {
+                priceRangeLow = Double.parseDouble(rangeLowTF.getText());
+                priceRangeHigh = Double.parseDouble(rangeHighTF.getText());
+            }
         } catch (Exception e) {
             System.out.println("Failed to set ranges");
-            System.out.println(e.getMessage());
-            System.out.println(Arrays.toString(e.getStackTrace()));
+//            System.out.println(e.getMessage());
+//            System.out.println(Arrays.toString(e.getStackTrace()));
         }
         ArrayList<Double> toReturn = new ArrayList<>();
         toReturn.add(priceRangeLow);

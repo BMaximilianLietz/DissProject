@@ -241,6 +241,7 @@ public class ProductController {
 //            gridPaneChosen.getChildren().remove()
         });
 
+        /*
         Button productSaveButton = new Button("Save");
         productSaveButton.onActionProperty().setValue(actionEvent1 -> {
             System.out.println("Save button clicked - see what happens ");
@@ -248,11 +249,13 @@ public class ProductController {
 
         });
 
+         */
+
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
         HBox hbox = new HBox(productPricingButton, productCostingButton);
         hbox.setSpacing(5);
-        HBox hBox2 = new HBox(productCopyButton, productDeleteButton, productSaveButton);
+        HBox hBox2 = new HBox(productCopyButton, productDeleteButton);
         hBox2.setSpacing(5);
         VBox vBox = new VBox(hbox, hBox2);
         vBox.setSpacing(5);
@@ -513,13 +516,16 @@ public class ProductController {
                 productRelationCB.getSelectionModel().select(0);
                 gridPaneChosen.add(productRelationCB, 1, 1);
 
-                if (numberOfProducts > 2) {
-                    ComboBox strengthProductRelation = new ComboBox();
+                ComboBox strengthProductRelation = new ComboBox();
+                if (numberOfProducts == 2) {
+                    System.out.println("Hello");
                     strengthProductRelation.setId("strengthProductRelation");
                     strengthProductRelation.getItems().add("Weak");
                     strengthProductRelation.getItems().add("Medium");
                     strengthProductRelation.getItems().add("Strong");
                     gridPaneChosen.add(strengthProductRelation, 2, 1);
+                } else {
+//                    ((ComboBox) gridPaneChosen.getScene().lookup("#strengthProductRelation")).getItems().removeAll();
                 }
 
                 Button updateProductRelation = new Button();
@@ -743,8 +749,10 @@ public class ProductController {
             Double maxPrice = (Double) respectiveProductPricing.get(21);
             Integer currentCustomers = (Integer) respectiveProductPricing.get(11);
             Double maxPriceCustomers = (Double) respectiveProductPricing.get(24);
-            Double percentageChangePrice = Math.abs(100 - ((currentPrice/maxPrice)*100));
-            Double percentageChangeCustomers = Math.abs(100 - (currentCustomers/maxPriceCustomers*100));
+//            Double percentageChangePrice = Math.abs(100 - ((currentPrice/maxPrice)*100));
+//            Double percentageChangeCustomers = Math.abs(100 - (currentCustomers/maxPriceCustomers*100));
+            Double percentageChangePrice = 100 - ((currentPrice/maxPrice)*100);
+            Double percentageChangeCustomers = 100 - (currentCustomers/maxPriceCustomers*100);
             Double selfPriceElasticity = percentageChangeCustomers/percentageChangePrice;
             Double test = 0.0;
             for (int j = 1; j < productList.size(); j++) {

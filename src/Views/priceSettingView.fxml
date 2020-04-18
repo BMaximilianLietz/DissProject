@@ -244,7 +244,7 @@
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Cost-based pricing"/>
                         <String fx:value="Value-driven pricing"/>
-                        <String fx:value="Target-driven pricing"/>
+                        <!-- <String fx:value="Target-driven pricing"/> -->
                         <String fx:value="Competition-based pricing"/>
                     </FXCollections>
                 </items>

@@ -15,17 +15,7 @@
             prefHeight="900.0" prefWidth="1920.0">
     <top>
         <MenuBar prefWidth="1920">
-            <Menu text="Menu 1">
-                <MenuItem text="Menu sub-item 1"></MenuItem>
-                <MenuItem text="Menu sub-item 2"></MenuItem>
-                <MenuItem text="Menu sub-item 3"></MenuItem>
-                <MenuItem text="Menu sub-item 4"></MenuItem>
-            </Menu>
-            <Menu text="Menu 2">
-                <MenuItem text="Menu sub-item 1"></MenuItem>
-                <MenuItem text="Menu sub-item 2"></MenuItem>
-                <MenuItem text="Menu sub-item 3"></MenuItem>
-                <MenuItem text="Menu sub-item 4"></MenuItem>
+            <Menu text="Navigation bar">
             </Menu>
         </MenuBar>
     </top>
@@ -69,7 +59,7 @@
                     <items>
                         <FXCollections fx:factory="observableArrayList">
                             <String fx:value="None"/>
-                            <String fx:value="Bait &amp; Hook"/>
+                            <!-- <String fx:value="Bait &amp; Hook"/> -->
                             <String fx:value="Freemium"/>
                             <String fx:value="Multi-platform"/>
                             <String fx:value="Subscription"/>

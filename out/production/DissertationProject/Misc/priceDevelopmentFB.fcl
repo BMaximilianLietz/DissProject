@@ -96,8 +96,8 @@ RULEBLOCK No1
 	Rule 15 : IF customerExpectations IS medium AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
     Rule 16 : IF customerExpectations IS low AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
     Rule 17 : IF customerExpectations IS no AND customerExpectationImportance IS insignificant THEN priceDevelopment IS none;
-    Rule 18 : IF competitionRelatedPriceReduction IS significant THEN priceDevelopment IS high;
-    Rule 19 : IF competitionRelatedPriceReduction IS medium THEN priceDevelopment IS medHigh;
+    Rule 18 : IF competitionRelatedPriceReduction IS significant THEN priceDevelopment IS medLow;
+    Rule 19 : IF competitionRelatedPriceReduction IS medium THEN priceDevelopment IS low;
     Rule 20 : IF competitionRelatedPriceReduction IS unRelevant THEN priceDevelopment IS none;
     Rule 21 : IF depreciation IS null THEN priceDevelopment IS none;
 
