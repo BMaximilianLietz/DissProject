@@ -215,7 +215,7 @@ RULEBLOCK No1
     RULE 50 : IF networkEffects IS significantNetwork THEN price IS priceCompetition;
     RULE 51 : IF interdependencies IS none THEN price IS priceCompetition;
     RULE 52 : IF interdependencies IS existing THEN price IS priceMax;
-    RULE 52 : IF interdependencies IS medium THEN price IS priceValueAdded;
+    RULE 53 : IF interdependencies IS medium THEN price IS priceValueAdded;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK
