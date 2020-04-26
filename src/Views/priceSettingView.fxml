@@ -465,7 +465,8 @@
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="No existing interdependencies"/>
-                        <String fx:value="Interdependencies exist"/>
+                        <String fx:value="Medium interdependencies"/>
+                        <String fx:value="Significant Interdependencies exist"/>
                     </FXCollections>
                 </items>
             </ComboBox>

@@ -6,7 +6,8 @@ import java.util.ArrayList;
 
 public class ProductConnector {
 
-    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+//    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+    private static String connString = "localhost:5432/gdeltBig";
 
     public static ArrayList<Object> insertIntoProduct(int projectId, String productName,
                                          String productDescription, Date creationDate, Double productCosts,
