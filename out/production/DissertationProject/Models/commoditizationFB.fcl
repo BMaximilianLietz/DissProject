@@ -40,6 +40,13 @@ FUZZIFY itemImitability			// Fuzzify input variable 'service': {'poor', 'good' ,
 	TERM difficultReplication := (1, 0) (2, 1) (3,0);
 END_FUZZIFY
 
+FUZZIFY customizability			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM none := (0, 1) (1, 0);
+	TERM minor := (0, 0) (1,1) (2,0);
+	TERM notable := (1, 0) (2, 1) (3,0);
+	TERM significant := (2, 0) (3, 1) (4,0);
+END_FUZZIFY
+
 // try to get some data into why these borders are set, e.g. average numbers of customers for businesses
 FUZZIFY numberCustomers			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM vLow := (0, 1) (3, 1) (5,0);
@@ -84,6 +91,10 @@ RULEBLOCK No1
     Rule 13 : IF degreePriceCompetition IS differentiatedCompetition THEN commoditizationOutputValue IS medium;
     Rule 14 : IF degreePriceCompetition IS priceCompetition THEN commoditizationOutputValue IS medium;
     Rule 15 : IF degreePriceCompetition IS perfectPriceCompetition THEN commoditizationOutputValue IS high;
+    Rule 16 : IF customizability IS none THEN commoditizationOutputValue IS high;
+    Rule 17 : IF customizability IS minor THEN commoditizationOutputValue IS medium;
+    Rule 18 : IF customizability IS notable THEN commoditizationOutputValue IS low;
+    Rule 19 : IF customizability IS significant THEN commoditizationOutputValue IS low;
 
 
 END_RULEBLOCK

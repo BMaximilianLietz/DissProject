@@ -119,11 +119,30 @@
                 </items>
             </ComboBox>
 
+            <Label text="Program customizability:" GridPane.columnIndex="0" GridPane.rowIndex="7">
+                <padding><Insets left="20"/></padding>
+            </Label>
+            <ComboBox fx:id="customizabilityCB" GridPane.columnIndex="1" GridPane.rowIndex="7">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="No customizability"/>
+                        <String fx:value="Minor customizability"/>
+                        <String fx:value="Notable customizability"/>
+                        <String fx:value="Significant customizability"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
             <!-- Former COLUMNS 4 & 5 -->
 
             <!-- Row 1
                     How to calculate revenue maximization and what to do with it?
             -->
+
+            <Label text="Commoditization" GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"
+                   alignment="BASELINE_CENTER" style="-fx-font-weight: bold">
+                <padding><Insets left="20"/></padding>
+            </Label>
 
             <Label text="Pricing Goal" GridPane.columnIndex="0" GridPane.rowIndex="9">
                 <padding><Insets left="20"/></padding>
@@ -290,14 +309,16 @@
 
             <!-- Row 4  -->
 
-            <Label text="Target:" GridPane.columnIndex="2" GridPane.rowIndex="8">
+            <Label text="Network effects:" GridPane.columnIndex="2" GridPane.rowIndex="8">
                 <padding><Insets left="20"/></padding>
             </Label>
             <ComboBox fx:id="targetCB" GridPane.columnIndex="3" GridPane.rowIndex="8" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Revenue"/>
-                        <String fx:value="Sales"/>
+                        <String fx:value="No network effects"/>
+                        <String fx:value="Minor network effects"/>
+                        <String fx:value="Medium network effects"/>
+                        <String fx:value="Strong network effects"/>
                     </FXCollections>
                 </items>
             </ComboBox>
@@ -331,23 +352,23 @@
             <ComboBox fx:id="priceClusteringCB" GridPane.columnIndex="3" GridPane.rowIndex="10" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
-                        <String fx:value="Yes"/>
                         <String fx:value="No"/>
+                        <String fx:value="Yes"/>
                     </FXCollections>
                 </items>
             </ComboBox>
 
-            <Label text="Item quality:" GridPane.columnIndex="2" GridPane.rowIndex="11">
+            <Label text="Item quality:" GridPane.columnIndex="4" GridPane.rowIndex="2">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <Slider GridPane.columnIndex="3" GridPane.rowIndex="11"
+            <Slider GridPane.columnIndex="5" GridPane.rowIndex="2"
                     majorTickUnit="10" showTickMarks="true"
                     fx:id="itemQualitySl" minorTickCount="0"/>
 
-            <Label text="Item quality importance:" GridPane.columnIndex="2" GridPane.rowIndex="12">
+            <Label text="Item quality importance:" GridPane.columnIndex="4" GridPane.rowIndex="3">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="itemQualityCB" GridPane.columnIndex="3" GridPane.rowIndex="12" onAction="#comboBoxItemChange">
+            <ComboBox fx:id="itemQualityCB" GridPane.columnIndex="5" GridPane.rowIndex="3" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Insignificant"/>
@@ -358,10 +379,10 @@
             </ComboBox>
 
             <!-- Row 8  -->
-            <Label text="Market saturation:" GridPane.columnIndex="2" GridPane.rowIndex="13">
+            <Label text="Market saturation:" GridPane.columnIndex="4" GridPane.rowIndex="4">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="marketSaturationCB" GridPane.columnIndex="3" GridPane.rowIndex="13" onAction="#comboBoxItemChange">
+            <ComboBox fx:id="marketSaturationCB" GridPane.columnIndex="5" GridPane.rowIndex="4" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Saturated"/>
@@ -373,10 +394,10 @@
 
             <!-- Row 9  -->
 
-            <Label text="Market segmentation:" GridPane.columnIndex="2" GridPane.rowIndex="14">
+            <Label text="Market segmentation:" GridPane.columnIndex="4" GridPane.rowIndex="5">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="isMarketSegmentedCB" GridPane.columnIndex="3" GridPane.rowIndex="14" >
+            <ComboBox fx:id="isMarketSegmentedCB" GridPane.columnIndex="5" GridPane.rowIndex="5" >
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Yes"/>
@@ -389,10 +410,10 @@
 
             <!-- Row 10  -->
 
-            <Label text="Brand value:" GridPane.columnIndex="2" GridPane.rowIndex="15">
+            <Label text="Brand value:" GridPane.columnIndex="4" GridPane.rowIndex="6">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="brandValueCB" GridPane.columnIndex="3" GridPane.rowIndex="15" onAction="#comboBoxItemChange">
+            <ComboBox fx:id="brandValueCB" GridPane.columnIndex="5" GridPane.rowIndex="6" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Low importance"/>
@@ -404,10 +425,10 @@
 
             <!-- Row 11  -->
 
-            <Label text="Distribution Channel:" GridPane.columnIndex="2" GridPane.rowIndex="16">
+            <Label text="Distribution Channel:" GridPane.columnIndex="4" GridPane.rowIndex="7">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="distributionChannelCB" GridPane.columnIndex="3" GridPane.rowIndex="16" onAction="#comboBoxItemChange">
+            <ComboBox fx:id="distributionChannelCB" GridPane.columnIndex="5" GridPane.rowIndex="7" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Online"/>
@@ -422,10 +443,10 @@
 
             <!-- Row 12  -->
 
-            <Label text="Price elasticity:" GridPane.columnIndex="2" GridPane.rowIndex="17">
+            <Label text="Price elasticity:" GridPane.columnIndex="4" GridPane.rowIndex="8">
                 <padding><Insets left="20"/></padding>
             </Label>
-            <ComboBox fx:id="priceElasticityCB" GridPane.columnIndex="3" GridPane.rowIndex="17" onAction="#comboBoxItemChange">
+            <ComboBox fx:id="priceElasticityCB" GridPane.columnIndex="5" GridPane.rowIndex="8" onAction="#comboBoxItemChange">
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="Absolute elasticity"/>
@@ -437,11 +458,23 @@
                 </items>
             </ComboBox>
 
-            <Label GridPane.columnIndex="4" GridPane.rowIndex="1">Proposed Price per customer:</Label>
-            <Label fx:id="proposedPricePerCustomerLB" GridPane.columnIndex="5" GridPane.rowIndex="1"/>
+            <Label text="Customer interdependencies:" GridPane.columnIndex="4" GridPane.rowIndex="9">
+                <padding><Insets left="20"/></padding>
+            </Label>
+            <ComboBox fx:id="interdependenciesCB" GridPane.columnIndex="5" GridPane.rowIndex="9" onAction="#comboBoxItemChange">
+                <items>
+                    <FXCollections fx:factory="observableArrayList">
+                        <String fx:value="No existing interdependencies"/>
+                        <String fx:value="Interdependencies exist"/>
+                    </FXCollections>
+                </items>
+            </ComboBox>
+
+            <Label GridPane.columnIndex="4" GridPane.rowIndex="11">Proposed Price per customer:</Label>
+            <Label fx:id="proposedPricePerCustomerLB" GridPane.columnIndex="5" GridPane.rowIndex="11"/>
 
             <!-- Row 13  -->
-            <Button GridPane.columnIndex="4" GridPane.rowIndex="3" onAction="#priceSettingSubmitBtnClick">
+            <Button GridPane.columnIndex="4" GridPane.rowIndex="12" onAction="#priceSettingSubmitBtnClick">
                 Submit Price Setting
             </Button>
             <!--

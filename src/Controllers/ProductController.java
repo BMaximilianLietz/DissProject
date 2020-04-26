@@ -97,7 +97,8 @@ public class ProductController {
                 0.0, 0.0, 0.0, 0.0, 0,
                 0.0, 0.0, 0.0, "", 0.0,
                 0.0, 0,0,0.0,0,
-                0,0,0.0, 0.0);
+                0,0,0.0, 0.0,
+                "", "");
 
         addProduct(queryResults, gridPaneLeft);
     }
@@ -110,7 +111,8 @@ public class ProductController {
         Label productPriceLb;
 
         try {
-            productPriceLb = new Label(String.valueOf(((Double)product.get(6))));
+            DecimalFormat df = new DecimalFormat("#.##");
+            productPriceLb = new Label(df.format((Double)product.get(6)));
         } catch (Exception e) {
             productPriceLb = new Label("Product Pricing Required");
             System.out.println(e.getMessage() + " " + e.getStackTrace());
@@ -223,7 +225,9 @@ public class ProductController {
                     (Integer) productPricingCopy.get(30),
                     (Integer) productPricingCopy.get(31),
                     (Double)productPricingCopy.get(32),
-                    (Double)productPricingCopy.get(33));
+                    (Double)productPricingCopy.get(33),
+                    (String) productPricingCopy.get(34),
+                    (String) productPricingCopy.get(35));
 
             addProduct(queryResults, gridPaneLeft);
         });

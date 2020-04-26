@@ -25,10 +25,10 @@ VAR_INPUT				// Define input variables
 	priceIndex : REAL;
 	competitorOrientation : REAL;
 	priceClustering : REAL;
-	target : REAL;
+	networkEffects : REAL;
 	isMarketSegmented : REAL;
 	priceCompetition : REAL;
-
+	interdependencies : REAL;
 END_VAR
 
 // probs gotta add suggested strategy at some point and add it as an output variable
@@ -72,6 +72,13 @@ FUZZIFY itemQualityImportance			// Fuzzify input variable 'service': {'poor', 'g
     TERM significant := (1,0)(2,1)(3,0);
 END_FUZZIFY
 
+FUZZIFY networkEffects			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+    TERM noNetwork := (0,1)(1,0);
+    TERM minorNetwork := (0,0)(1,1)(2,0);
+    TERM mediumNetwork := (1,0)(2,1)(3,0);
+    TERM significantNetwork := (2,0)(3,1)(4,0);
+END_FUZZIFY
+
 FUZZIFY marketSaturation			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM saturated := (0,1)(1,0);
 	TERM mediumSaturation := (0,0)(1,1)(2,0);
@@ -92,11 +99,15 @@ FUZZIFY brandValue			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
 	TERM uniqueSellingProposition := (1,0) (2,1) (3,0);
 END_FUZZIFY
 
-//This is very unscientific and so, probs also doesn't make much sense...
 FUZZIFY distributionChannel			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
 	TERM online := (0, 1) (1,0);
 	//TERM phyisicalDistribution := (1,0) (2,1);
 	TERM other := (0,0) (1,1);
+END_FUZZIFY
+
+FUZZIFY interdependencies			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM none := (0, 1) (1,0);
+	TERM existing := (0,0) (1,1);
 END_FUZZIFY
 
 //how to implement
@@ -134,12 +145,12 @@ END_FUZZIFY
 
 
 DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-TERM priceLow := (430.0, 0) (500.0, 1) (570.0000000000001, 0);
-TERM priceCompetition := (387.0, 0) (500.0, 1) (543.0, 0);
-TERM priceMedium := (473.00000000000006, 0) (550.0, 1) (627.0000000000001, 0);
-TERM priceHigh := (715.0, 0) (750.0, 1) (855.0000000000001, 0);
-TERM priceValueAdded := (473.00000000000006, 0) (550.0, 1) (627.0000000000001, 0);
-TERM priceMax := (550.0, 0) (774.0, 1) (900.0, 0);
+TERM priceLow := (8.5, 0) (10.0, 1) (11.5, 0);
+TERM priceCompetition := (7.65, 0) (10.0, 1) (10.85, 0);
+TERM priceMedium := (9.350000000000001, 0) (11.0, 1) (12.649999999999999, 0);
+TERM priceHigh := (11.274999999999999, 0) (11.5, 1) (13.224999999999998, 0);
+TERM priceValueAdded := (9.350000000000001, 0) (11.0, 1) (12.649999999999999, 0);
+TERM priceMax := (11.0, 0) (12.75, 1) (15.0, 0);
 METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 DEFAULT := 69.420;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -197,17 +208,12 @@ RULEBLOCK No1
     RULE 44 : IF pricingStrategy IS competitionBased THEN price IS priceCompetition;
     RULE 45 : IF commoditization IS high THEN price IS priceLow;
     RULE 46 : IF commoditization IS maximum THEN price IS priceCompetition;
+    RULE 47 : IF networkEffects IS noNetwork THEN price IS priceValueAdded;
+    RULE 48 : IF networkEffects IS minorNetwork THEN price IS priceMedium;
+    RULE 49 : IF networkEffects IS mediumNetwork THEN price IS priceLow;
+    RULE 50 : IF networkEffects IS significantNetwork THEN price IS priceCompetition;
+    RULE 51 : IF interdependencies IS none THEN price IS priceCompetition;
+    RULE 52 : IF interdependencies IS existing THEN price IS priceMax;
 END_RULEBLOCK
-
-//RULE 9 : IF pricingStrategy IS targetDriven THEN price IS priceHigh;
-
-
-
-
-    //RULE 18 : IF priceClustering IS decreaseStrongly THEN price IS priceMax;
-    //RULE 18 : IF priceClustering IS decreaseSlightly THEN price IS priceMax;
-    //RULE 18 : IF priceClustering IS doNothing THEN price IS priceMax;
-    //RULE 18 : IF priceClustering IS increaseSlightly THEN price IS priceMax;
-    //RULE 18 : IF priceClustering IS increaseStrongly THEN price IS priceMax;
 
 END_FUNCTION_BLOCK

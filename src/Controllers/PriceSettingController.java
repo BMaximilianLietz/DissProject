@@ -45,6 +45,8 @@ public class PriceSettingController {
     public ComboBox distributionChannelCB;
     public ComboBox priceElasticityCB;
     public Label commoditizationValueForm;
+    public ComboBox interdependenciesCB;
+    public ComboBox customizabilityCB;
     private Double commValue;
 
     public Label projectName;
@@ -99,7 +101,8 @@ public class PriceSettingController {
         Integer productIdPassed = (Integer) SceneController.activeProduct.get(0);
         activeProduct = ProductConnector.getProductByProductId(productIdPassed);
         proposedPricePerCustomer = (Double) activeProduct.get(6);
-        proposedPricePerCustomerLB.setText(proposedPricePerCustomer.toString());
+        DecimalFormat df = new DecimalFormat("#.##");
+        proposedPricePerCustomerLB.setText(df.format(proposedPricePerCustomer));
 
         System.out.println(activeProduct);
 
@@ -127,7 +130,8 @@ public class PriceSettingController {
                 numberCustomersTF, preProcessingCB, itemImitabilityCB, degreePriceCompetitionCB, desiredMarkupTF,
                 allowedVarianceTF, competitorOrientationCB, /* <-- 17 - new */ numberCustomersMaxPriceTF, customerHighestPriceTF,
                 valueAddedTF, itemQualitySl, pricingGoalCB, timePeriodCB, depreciationTF, customerExpectationsCB,
-                customerExpectationImportanceCB, competitionRelatedPriceReductionCB, minimumPricePDTF};
+                customerExpectationImportanceCB, competitionRelatedPriceReductionCB, minimumPricePDTF, interdependenciesCB,
+                customizabilityCB};
 
         ArrayList<Object> queryResults =
                 ProductPricingConnector.getAllProductPricingByProductId(Integer.parseInt(activeProduct.get(0).toString()));
@@ -159,9 +163,18 @@ public class PriceSettingController {
                             int select = (int) queryResults.get(30);
                             customerExpectationImportanceCB.getSelectionModel().select(select);
                         } else if (i == 26) {
-                            System.out.println("i == 26 so: " + (Integer) queryResults.get(31));
                             int select = (int) queryResults.get(31);
                             competitionRelatedPriceReductionCB.getSelectionModel().select(select);
+                        } else if (i == 28) {
+                            System.out.println("interdependenciesCB");
+                            System.out.println(i + " " + queryResults.get(33));
+                            System.out.println(interdependenciesCB.getSelectionModel());
+                            interdependenciesCB.getSelectionModel().select(queryResults.get(34));
+                        } else if (i == 29) {
+                            System.out.println("customizabilityCB");
+                            System.out.println(i + " " + queryResults.get(34));
+                            System.out.println(customizabilityCB.getSelectionModel());
+                            customizabilityCB.getSelectionModel().select(queryResults.get(35));
                         }
                     } else {
                         if (i < 16) {
@@ -298,6 +311,7 @@ public class PriceSettingController {
         // TODO implement check that every combobox/input field has a value
 //        System.out.println(commoditizationValueForm.getText());
         commValue = commoditizationCalculation();
+        System.out.println("Commoditization value: " + commValue);
         if (commValue == 0) {
             HelperMethods.throwAlert(gridPane.getScene(), "Error");
         }
@@ -420,6 +434,15 @@ public class PriceSettingController {
             Integer priceElasticityCBIndex = priceElasticityCB.getSelectionModel().getSelectedIndex();
             priceSettingFLM.functionBlockSetVariable(priceElasticityTempCB, Double.valueOf(priceElasticityCBIndex));
 
+            // Target, aka network effects
+            Integer targetTempIndex = targetCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable("networkEffects", Double.valueOf(targetTempIndex));
+
+            // interdependencies
+            String interdependenciesTempCB = interdependenciesCB.getId().substring(0, interdependenciesCB.getId().length()-2);
+            Integer interdependenciesCBIndex = interdependenciesCB.getSelectionModel().getSelectedIndex();
+            priceSettingFLM.functionBlockSetVariable(interdependenciesTempCB, Double.valueOf(interdependenciesCBIndex));
+
             // price index - competitor comparison
             // TODO still implement?
             if (priceCompetitionList != null) {
@@ -437,7 +460,7 @@ public class PriceSettingController {
             priceSettingFLM.evaluate();
             for( Rule r : priceSettingFLM.getFunctionBlock().getFuzzyRuleBlock("No1").getRules() )
                 System.out.println(r);
-            priceSettingFLM.getChartFunctionBlock();
+//            priceSettingFLM.getChartFunctionBlock();
 
             proposedPricePerCustomer = priceSettingFLM.getFunctionBlock().getVariable("price").getValue();
             System.out.println("Price: " + priceSettingFLM.getFunctionBlock().getVariable("price").getValue());
@@ -467,7 +490,9 @@ public class PriceSettingController {
 
             System.out.println("clusteringReaction " + clusteringReaction);
             System.out.println("priceRounded v1: " + proposedPricePerCustomer);
-            proposedPricePerCustomer *= clusteringReaction;
+            if (priceClusteringCB.getSelectionModel().getSelectedIndex() == 1) {
+                proposedPricePerCustomer *= clusteringReaction;
+            }
 //            HelperMethods.throwAlert(gridPane.getScene(), "v1 " + String.valueOf(proposedPricePerCustomer));
 
 
@@ -510,7 +535,9 @@ public class PriceSettingController {
                     customerExpectationImportanceCB.getSelectionModel().getSelectedIndex(),
                     competitionRelatedPriceReductionCB.getSelectionModel().getSelectedIndex(),
                     Double.parseDouble(minimumPricePDTF.getText()),
-                    Double.parseDouble(valueAddedTF.getText()));
+                    Double.parseDouble(valueAddedTF.getText()),
+                    java.lang.String.valueOf(interdependenciesCB.getSelectionModel().getSelectedItem()),
+                    java.lang.String.valueOf(customizabilityCB.getSelectionModel().getSelectedItem()));
 
 //                System.out.println(activeProduct);
             System.out.println(activeProduct);
@@ -562,7 +589,12 @@ public class PriceSettingController {
         int degreePriceCompetitionCBIndex = degreePriceCompetitionCB.getSelectionModel().getSelectedIndex();
         commoditizationFLM.functionBlockSetVariable(degreePriceCompetitionCBBuffer, (double) degreePriceCompetitionCBIndex);
 
-        System.out.println("commoditization for comparison " + commoditizationFLM.getFunctionBlock().getVariable("itemImitability").getValue());
+        // customizability
+        String customizabilityTempCB = customizabilityCB.getId().substring(0, customizabilityCB.getId().length()-2);
+        Integer customizabilityCBIndex = customizabilityCB.getSelectionModel().getSelectedIndex();
+        commoditizationFLM.functionBlockSetVariable(customizabilityTempCB, Double.valueOf(customizabilityCBIndex));
+
+//        System.out.println("commoditization for comparison " + commoditizationFLM.getFunctionBlock().getVariable("itemImitability").getValue());
         commoditizationFLM.evaluate();
 
 //        commoditizationFLM.getChartFunctionBlock();

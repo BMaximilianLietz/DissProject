@@ -55,7 +55,8 @@ public class ProductPricingConnector {
                                                Double clusteringImportance, Integer pricingGoal, Integer timePeriod,
                                                Double depreciation, Integer customerPriceExpectation,
                                                Integer customerExpectationImportance, Integer competitionPriceReduction,
-                                               Double minimumPrice, Double valueAdded) {
+                                               Double minimumPrice, Double valueAdded, String interdependencies,
+                                               String customizability) {
         Connection c = null;
         Statement stmt = null;
 
@@ -79,8 +80,8 @@ public class ProductPricingConnector {
                         "\"competitorOrientation\", \"customersMaxPrice\", \"clusteringImportance\", " +
                         "\"pricingGoal\", \"timePeriod\", \"depreciation\", \"customerPriceExpectation\", " +
                         "\"customerExpectationImportance\", \"competitionPriceReduction\", " +
-                        "\"minimumPrice\", \"valueAdded\") " +
-                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
+                        "\"minimumPrice\", \"valueAdded\", \"interdependencies\") " +
+                        "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);
                 sql.setDouble(3, desiredMargin);
@@ -115,6 +116,8 @@ public class ProductPricingConnector {
                 sql.setInt(32, competitionPriceReduction);
                 sql.setDouble(33, minimumPrice);
                 sql.setDouble(34, valueAdded);
+                sql.setString(35, interdependencies);
+                sql.setString(36, customizability);
 
                 sql.execute();
             } catch (Exception e) {
@@ -183,6 +186,8 @@ public class ProductPricingConnector {
                 queryResults.add(rs.getInt(32));
                 queryResults.add(rs.getDouble(33));
                 queryResults.add(rs.getDouble(34));
+                queryResults.add(rs.getString(35));
+                queryResults.add(rs.getString(36));
             }
             ResultSetMetaData rsmd = rs.getMetaData();
             ArrayList<String> columnNames = new ArrayList<>();
@@ -214,7 +219,8 @@ public class ProductPricingConnector {
                                             Double clusteringImportance, Integer pricingGoal, Integer timePeriod,
                                             Double depreciation, Integer customerPriceExpectation,
                                             Integer customerExpectationImportance, Integer competitionPriceReduction,
-                                            Double minimumPrice, Double valueAdded) {
+                                            Double minimumPrice, Double valueAdded, String interdependencies,
+                                            String customizability) {
 
         Connection c = null;
         Statement stmt = null;
@@ -262,6 +268,8 @@ public class ProductPricingConnector {
                         ", \"competitionPriceReduction\" = ?" +
                         ", \"minimumPrice\" = ?" +
                         ", \"valueAdded\" = ?" +
+                        ", \"interdependencies\" = ?" +
+                        ", \"customizability\" = ?" +
                         "WHERE \"productId\" = ?;");
 
                 sql.setString(1, preferredPricingStrategy);
@@ -297,7 +305,9 @@ public class ProductPricingConnector {
                 sql.setInt(31, competitionPriceReduction);
                 sql.setDouble(32, minimumPrice);
                 sql.setDouble(33, valueAdded);
-                sql.setInt(34, productId);
+                sql.setString(34, interdependencies);
+                sql.setString(35, customizability);
+                sql.setInt(36, productId);
 
                 sql.execute();
             } catch (Exception e) {
