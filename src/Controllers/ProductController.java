@@ -2,22 +2,13 @@ package Controllers;
 
 import Data.*;
 import Misc.HelperMethods;
-import Models.FuzzyLogic;
-import com.sun.glass.ui.GlassRobot;
-import javafx.application.Application;
-import javafx.beans.binding.ObjectExpression;
 import javafx.event.ActionEvent;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
-import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-import javafx.scene.input.KeyCombination;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
-import javafx.scene.text.Font;
-import javafx.stage.Stage;
 
 import java.sql.Date;
 import java.text.DecimalFormat;
@@ -45,7 +36,6 @@ public class ProductController {
     public ArrayList<Object> activeProject;
     private Integer numberOfProducts = 0;
     private Boolean productRelationExists = false;
-
 
     public void initialize() {
         activeProject = SceneController.activeProject;
@@ -75,13 +65,16 @@ public class ProductController {
     }
 
     public void addProductBtnClick(ActionEvent actionEvent) {
+        numberOfProducts++;
         int currentProjectSize = ProductConnector.getAllByProjectId((Integer) activeProject.get(0)).size();
 
         if ((activeProject.get(4).equals("Multi-platform"))||((activeProject.get(4).equals("Bait & Hook")))||
                 (activeProject.get(4).equals("Freemium"))) {
-            HelperMethods.throwAlert(gridPaneLeft.getScene(), activeProject.get(4) + " cannot have more than two " +
-                    "products at the moment.");
-            return;
+            if (numberOfProducts > 2) {
+                HelperMethods.throwAlert(gridPaneLeft.getScene(), activeProject.get(4) + " cannot have more than two " +
+                        "products at the moment.");
+                return;
+            }
         }
         if ((productNameTF.getText().equals(""))||(productDescriptionTF.getText().equals(""))) {
             HelperMethods.throwAlert(gridPaneLeft.getScene(), "Please fill out form");
@@ -518,7 +511,6 @@ public class ProductController {
 
                 ComboBox strengthProductRelation = new ComboBox();
                 if (numberOfProducts == 2) {
-                    System.out.println("Hello");
                     strengthProductRelation.setId("strengthProductRelation");
                     strengthProductRelation.getItems().add("Weak");
                     strengthProductRelation.getItems().add("Medium");

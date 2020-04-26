@@ -1,0 +1,79 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<?import javafx.collections.FXCollections?>
+<BorderPane fx:id="borderPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.ProjectController"
+            prefHeight="900.0" prefWidth="1920.0">
+    <top>
+        <MenuBar prefWidth="1920">
+            <Menu text="Navigation bar">
+            </Menu>
+        </MenuBar>
+    </top>
+    <left>
+        <GridPane hgap="10" vgap="10">
+            <padding><Insets left="40" top="40"/></padding>
+
+            <!-- Group 1 -->
+
+            <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft"
+                      GridPane.columnIndex="0" GridPane.rowIndex="0">
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    List of Projects
+                </Label>
+
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    Project Name
+                </Label>
+                <Label GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    Project Description
+                </Label>
+                <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    Project Costs
+                </Label>
+                <Label GridPane.columnIndex="3" GridPane.rowIndex="1">
+                    Business Model
+                </Label>
+                <Label GridPane.columnIndex="4" GridPane.rowIndex="1">
+                    Project Options
+                </Label>
+            </GridPane>
+
+            <!-- Group 2 -->
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="20"
+            fx:id="addProjectForm">
+                <Label>Project Form</Label>
+                <TextField fx:id="projectNameTF" promptText="Project Name"/>
+                <TextField fx:id="projectDescriptionTF" promptText="Project Description"/>
+                <ComboBox fx:id="businessModelCB"
+                          promptText="Business Model">
+                    <items>
+                        <FXCollections fx:factory="observableArrayList">
+                            <String fx:value="None"/>
+                            <!-- <String fx:value="Bait &amp; Hook"/> -->
+                            <String fx:value="Freemium"/>
+                            <String fx:value="Multi-platform"/>
+                            <String fx:value="Subscription"/>
+                            <!--
+                            <String fx:value="Saas/IaaS (?)"/>
+                            -->
+                        </FXCollections>
+                    </items>
+                </ComboBox>
+                <Button  onAction="#addProjectBtnClick">
+                    Add a project
+                </Button>
+            </VBox>
+        </GridPane>
+    </left>
+
+</BorderPane>

@@ -5,6 +5,7 @@ import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.stage.Stage;
 
+import java.net.URL;
 import java.util.ArrayList;
 
 public class SceneController {
@@ -30,7 +31,8 @@ public class SceneController {
 
     private static void setRoot(Scene scene, Class getClass, String fileName) {
         try {
-            scene.setRoot(FXMLLoader.load(getClass.getResource("../Views/" + fileName)));
+            URL location = getClass.getResource("/Views/"+fileName);
+            scene.setRoot(FXMLLoader.load(location));
         } catch (Exception e) {
             e.printStackTrace();
         }

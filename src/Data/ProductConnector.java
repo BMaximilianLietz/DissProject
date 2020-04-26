@@ -6,6 +6,8 @@ import java.util.ArrayList;
 
 public class ProductConnector {
 
+    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+
     public static ArrayList<Object> insertIntoProduct(int projectId, String productName,
                                          String productDescription, Date creationDate, Double productCosts,
                                          Double productPrice, String productVersion, Boolean isSubsidized,
@@ -15,7 +17,7 @@ public class ProductConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully (for insertIntoProduct)");
@@ -78,7 +80,7 @@ public class ProductConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Product Select All by project ID");
@@ -120,7 +122,7 @@ public class ProductConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Product Select by product name and project");
@@ -163,7 +165,7 @@ public class ProductConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Product Update");
@@ -226,7 +228,7 @@ public class ProductConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Product Select by product by product ID");
@@ -269,7 +271,7 @@ public class ProductConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Product Update");

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class CompetitorConnector {
 
+    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+
     public static ArrayList<ArrayList<Object>> getCompetitorsByProjectId(Integer projectId) {
         Connection c = null;
         ArrayList<ArrayList<Object>> queryResults = new ArrayList<>();
@@ -12,7 +14,7 @@ public class CompetitorConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully for Competitor SELECT");
@@ -55,7 +57,7 @@ public class CompetitorConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully for Competitor Insert");

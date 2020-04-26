@@ -1,0 +1,106 @@
+/*
+	Example: A tip calculation FIS (fuzzy inference system)
+	Calculates tip based on 'servie' and 'food'
+
+	If you want to about this example (and fuzzy logic), please
+	read Matlab's tutorial on fuzzy logic toolbox
+	http://www.mathworks.com/access/helpdesk/help/pdf_doc/fuzzy/fuzzy.pdf
+
+									Pablo Cingolani
+									pcingola@users.sourceforge.net
+*/
+
+// -------------------- NEW FUNCTION BLOCK FOR LONG TERM PRICE DEVELOPMENT ------------------ \\
+
+FUNCTION_BLOCK priceDevelopmentFB
+
+VAR_INPUT				// Define input variables
+	pricingGoal : REAL;
+	depreciation : REAL;
+	customerExpectations : REAL;
+	customerExpectationImportance : REAL;
+	competitionRelatedPriceReduction : REAL;
+	priceClustering : REAL;
+END_VAR
+
+// probs gotta add suggested strategy at some point and add it as an output variable
+VAR_OUTPUT				// Define output variable
+	priceDevelopment : REAL;
+END_VAR
+
+FUZZIFY pricingGoal			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM marketShareMaximization := (0, 1) (1, 0);
+	TERM marketSkimming := (0, 0) (1, 1) (2,0);
+	TERM revenueMaximization := (1,0) (2,1) (2,0);
+END_FUZZIFY
+
+//change to sigmoid function?
+FUZZIFY depreciation			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM null := (0, 1) (1, 0);
+	TERM low := (1, 1) (25, 0);
+	TERM medLow := (25, 0) (50,1) (75,0);
+	TERM medHigh := (50, 0) (75, 1) (100,0);
+	TERM high := (75, 0) (100, 1);
+END_FUZZIFY
+
+// try to get some data into why these borders are set, e.g. average numbers of customers for businesses
+FUZZIFY customerExpectations			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM significant := (0, 1) (1, 0);
+    TERM medium := (0, 0) (1, 1) (2,0);
+    TERM low := (1, 0) (2, 1) (3,0);
+    TERM no := (2,0) (3,1);
+END_FUZZIFY
+
+FUZZIFY customerExpectationImportance
+    TERM significant := (0, 1) (1, 0);
+    TERM medium := (0, 1) (1, 1) (2,0);
+    TERM insignificant := (1, 0) (2, 1);
+END_FUZZIFY
+
+FUZZIFY competitionRelatedPriceReduction
+    TERM significant := (0, 1) (1, 0);
+    TERM medium := (0, 1) (1, 1) (2,0);
+    TERM unRelevant := (1, 0) (2, 1);
+END_FUZZIFY
+
+DEFUZZIFY priceDevelopment			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+    TERM special := (0,0) (0.65,1) (0.7, 0);
+    TERM high := (0.6,0) (0.7,1) (0.8,0);
+    TERM medHigh := (0.7,0) (0.8,1) (0.9,0);
+    TERM medLow := (0.75,0) (0.85,1) (0.95,0);
+	TERM low := (0.9,0) (0.95,1) (1,0);
+	TERM none := (1,1);
+
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 1;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF depreciation IS low THEN priceDevelopment IS low;
+	RULE 2 : IF depreciation IS medLow THEN priceDevelopment IS medLow;
+	RULE 3 : IF depreciation IS medHigh THEN priceDevelopment IS medHigh;
+	RULE 4 : IF depreciation IS high THEN priceDevelopment IS high;
+	Rule 6 : IF customerExpectations IS significant AND customerExpectationImportance IS significant THEN priceDevelopment IS high;
+	Rule 7 : IF customerExpectations IS medium AND customerExpectationImportance IS significant THEN priceDevelopment IS medHigh;
+	Rule 8 : IF customerExpectations IS low AND customerExpectationImportance IS significant THEN priceDevelopment IS medLow;
+	Rule 9 : IF customerExpectations IS no AND customerExpectationImportance IS significant THEN priceDevelopment IS none;
+    Rule 10 : IF customerExpectations IS significant AND customerExpectationImportance IS medium THEN priceDevelopment IS medHigh;
+    Rule 11 : IF customerExpectations IS medium AND customerExpectationImportance IS medium THEN priceDevelopment IS medLow;
+    Rule 12 : IF customerExpectations IS low AND customerExpectationImportance IS medium THEN priceDevelopment IS low;
+	Rule 13 : IF customerExpectations IS no AND customerExpectationImportance IS medium THEN priceDevelopment IS none;
+	Rule 14 : IF customerExpectations IS significant AND customerExpectationImportance IS insignificant THEN priceDevelopment IS medLow;
+	Rule 15 : IF customerExpectations IS medium AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
+    Rule 16 : IF customerExpectations IS low AND customerExpectationImportance IS insignificant THEN priceDevelopment IS low;
+    Rule 17 : IF customerExpectations IS no AND customerExpectationImportance IS insignificant THEN priceDevelopment IS none;
+    Rule 18 : IF competitionRelatedPriceReduction IS significant THEN priceDevelopment IS medLow;
+    Rule 19 : IF competitionRelatedPriceReduction IS medium THEN priceDevelopment IS low;
+    Rule 20 : IF competitionRelatedPriceReduction IS unRelevant THEN priceDevelopment IS none;
+    Rule 21 : IF depreciation IS null THEN priceDevelopment IS none;
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class ProjectConnector {
 
+    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+
     public static ArrayList<Object> insertIntoProject(String projectName, String projectDescription,
                                                       Date creationDate, String businessModel){
         Connection c = null;
@@ -14,7 +16,7 @@ public class ProjectConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully for Project Insertion");
@@ -55,7 +57,7 @@ public class ProjectConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Project Select by project name");
@@ -91,7 +93,7 @@ public class ProjectConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Project Select by project name");
@@ -129,7 +131,7 @@ public class ProjectConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Delete by project Id");

@@ -5,7 +5,6 @@ import Data.ProductConnector;
 import Data.ProductPricingConnector;
 import Data.SubsidyConnector;
 import Misc.HelperMethods;
-import Models.FuzzyLogic;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.geometry.Insets;
@@ -19,7 +18,6 @@ import net.sourceforge.jFuzzyLogic.rule.Rule;
 
 import java.sql.Date;
 import java.text.DecimalFormat;
-import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -341,8 +339,13 @@ public class PriceSettingController {
             if (customerHighestPriceTF.getText().equals("")) {
                 priceMaxString = priceHigh;
             } else {
+                System.out.println("Price Max should in theory work");
                 Double priceMax = Double.parseDouble(customerHighestPriceTF.getText());
-                priceMaxString = "(" + (cost * (1+margin)) + ", 0) (" + (priceMax*(1-allowedVariance)) + ", 1) (" +
+                Double priceMaxBottom = (cost * (1+margin));
+                if (priceMax < priceMaxBottom) {
+                    priceMaxBottom = priceMax*(1-allowedVariance)*(1-allowedVariance);
+                }
+                priceMaxString = "(" + priceMaxBottom + ", 0) (" + (priceMax*(1-allowedVariance)) + ", 1) (" +
                         (priceMax) + ", 0)";
             }
             FuzzyLogic.replacePriceTerm(3, priceMaxString);
@@ -357,14 +360,22 @@ public class PriceSettingController {
                 FuzzyLogic.replacePriceTerm(5, priceCompetition);
             }
 
+            String priceValueAdded;
             if (valueAdded == 0) {
-                String priceValueAdded = "(" + (valueAdded*(1-allowedVariance)) + ", 0) (" + (valueAdded) + ", 1) (" +
+                priceValueAdded = "(" + (valueAdded*(1-allowedVariance)) + ", 0) (" + (valueAdded) + ", 1) (" +
                         (valueAdded*(1+allowedVariance)) + ", 0)";
                 FuzzyLogic.replacePriceTerm(8, priceValueAdded);
             } else {
                 // Todo - differentiate between price Med in some circumstances or priceLow in others?
-                FuzzyLogic.replacePriceTerm(8, priceMed);
+                priceValueAdded = priceMed;
+                FuzzyLogic.replacePriceTerm(8, priceValueAdded);
             }
+
+            System.out.println(priceLow);
+            System.out.println(priceMed);
+            System.out.println(priceHigh);
+            System.out.println(priceValueAdded);
+            System.out.println(priceMaxString);
 
             FuzzyLogic priceSettingFLM = new FuzzyLogic();
             priceSettingFLM.init("pricingFB");
@@ -426,7 +437,7 @@ public class PriceSettingController {
             priceSettingFLM.evaluate();
             for( Rule r : priceSettingFLM.getFunctionBlock().getFuzzyRuleBlock("No1").getRules() )
                 System.out.println(r);
-//            priceSettingFLM.getChartFunctionBlock();
+            priceSettingFLM.getChartFunctionBlock();
 
             proposedPricePerCustomer = priceSettingFLM.getFunctionBlock().getVariable("price").getValue();
             System.out.println("Price: " + priceSettingFLM.getFunctionBlock().getVariable("price").getValue());
@@ -515,8 +526,6 @@ public class PriceSettingController {
                     (Boolean) activeProduct.get(9),
                     (Double) activeProduct.get(10));
 //                System.out.println(activeProduct);
-
-
         }
         //priceSettingFLM.evaluate();
     }
@@ -556,7 +565,7 @@ public class PriceSettingController {
         System.out.println("commoditization for comparison " + commoditizationFLM.getFunctionBlock().getVariable("itemImitability").getValue());
         commoditizationFLM.evaluate();
 
-        //commoditizationFLM.getChartFunctionBlock();
+//        commoditizationFLM.getChartFunctionBlock();
 //        commoditizationFLM.getChartVariable("commoditizationOutputValue");
 
         //System.out.println(commoditizationFLM.getFunctionBlock());

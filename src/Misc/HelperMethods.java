@@ -1,10 +1,8 @@
 package Misc;
 
-import Models.FuzzyLogic;
+import Controllers.FuzzyLogic;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
-
-import java.util.ArrayList;
 
 public class HelperMethods {
     public static void throwAlert(Scene scene, String message) {

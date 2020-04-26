@@ -1,0 +1,1 @@
+java --module-path C:\Users\maxim\IdeaProjects\DissertationProject\out\artifacts\DissertationProject_jar\javafx-sdk-11.0.2\lib --add-modules javafx.controls,javafx.fxml -jar DissertationProject.jar

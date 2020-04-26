@@ -5,6 +5,8 @@ import java.util.ArrayList;
 
 public class CostingConnector {
 
+    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+
     public static void insertIntoProductCosting(int id, double fTEEq, double labourEq){
         Connection c = null;
         Statement stmt = null;
@@ -12,7 +14,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully for Product Costing Alteration");
@@ -41,7 +43,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully (for running costs insert)");
@@ -88,7 +90,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully (for Equipment table alteration)");
@@ -130,7 +132,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully for Product Costing Alteration");
@@ -161,7 +163,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Product Costing");
@@ -197,7 +199,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - User Stories");
@@ -235,7 +237,7 @@ public class CostingConnector {
         try {
             Class.forName("org.postgresql.Driver");
             c = DriverManager
-                    .getConnection("jdbc:postgresql://localhost:5432/gdeltBig",
+                    .getConnection("jdbc:postgresql://"+connString,
                             "postgres", "password");
             c.setAutoCommit(false);
             System.out.println("Opened database successfully - Equipment");

@@ -1,0 +1,123 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import java.lang.*?>
+<?import java.util.*?>
+<?import javafx.scene.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+
+<?import javafx.geometry.Insets?>
+<BorderPane fx:id="borderPane"
+            xmlns="http://javafx.com/javafx"
+            xmlns:fx="http://javafx.com/fxml"
+            fx:controller="Controllers.ProductController"
+            prefHeight="900.0" prefWidth="1920.0">
+    <top>
+        <MenuBar prefWidth="1920" fx:id="menuBar">
+            <Menu text="Navigation">
+                <MenuItem text="Open Project View" onAction="#openProjectViewMenuItemClick"></MenuItem>
+            </Menu>
+            <Menu text="Menu 2">
+                <MenuItem text="Menu sub-item 1"></MenuItem>
+                <MenuItem text="Menu sub-item 2"></MenuItem>
+                <MenuItem text="Menu sub-item 3"></MenuItem>
+                <MenuItem text="Menu sub-item 4"></MenuItem>
+            </Menu>
+        </MenuBar>
+    </top>
+    <left>
+        <GridPane hgap="10" vgap="10">
+
+            <GridPane hgap="10" vgap="10" fx:id="gridPaneLeft">
+                <padding><Insets left="20" top="40"/></padding>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">Product Name:</Label>
+                <Label fx:id="projectName" GridPane.columnIndex="1" GridPane.rowIndex="0"/>
+
+                <!-- Group 1 -->
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    Product Details
+                </Label>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="2">
+                    Product Name
+                </Label>
+                <Label GridPane.columnIndex="1" GridPane.rowIndex="2">
+                    Product Description
+                </Label>
+                <Label GridPane.columnIndex="2" GridPane.rowIndex="2">
+                    Product Price
+                </Label>
+                <Label GridPane.columnIndex="3" GridPane.rowIndex="2">
+                    Product Costs
+                </Label>
+                <Label GridPane.columnIndex="4" GridPane.rowIndex="2">
+                    Product Version
+                </Label>
+                <Label GridPane.columnIndex="6" GridPane.rowIndex="2">
+                    Options
+                </Label>
+            </GridPane>
+
+            <!-- Group 2 -->
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="0" spacing="5">
+                <padding><Insets top="40"/></padding>
+                <Label>Add a product</Label>
+                <TextField fx:id="productNameTF" promptText="Product Name"/>
+                <TextField fx:id="productDescriptionTF" promptText="Product Description"/>
+                <TextField fx:id="productVersionTF" promptText="Product Version"/>
+                <Button onAction="#addProductBtnClick">
+                    Add
+                </Button>
+            </VBox>
+
+            <!-- Group 3 -->
+
+            <VBox GridPane.columnIndex="1" GridPane.rowIndex="1" spacing="5">
+                <padding><Insets top="20"/></padding>
+                <Label> Competitors</Label>
+                <TextField fx:id="competitorNameTF" promptText="Competitor name"/>
+                <TextField fx:id="competitorPriceTF" promptText="Competitor Price"/>
+                <TextField fx:id="competitorSales" promptText="Competitor Sales"/>
+                <Label alignment="CENTER" fx:id="sliderTitle"></Label>
+                <Slider orientation="HORIZONTAL"  majorTickUnit="10" showTickMarks="true"
+                        fx:id="competitorQualitySlider" minorTickCount="0"/>
+                <VBox spacing="5">
+                    <Button onAction="#addCompetitorBtnClick">
+                        Add
+                    </Button>
+                    <Button onAction="#competitorComparisonBtnClick" alignment="CENTER_RIGHT">
+                        Market position comparison
+                    </Button>
+                    <Button onAction="#priceIndexComparison" alignment="CENTER_RIGHT">
+                        Price index comparison
+                    </Button>
+                </VBox>
+            </VBox>
+
+            <GridPane fx:id="competitorGridPane" GridPane.columnIndex="0" GridPane.rowIndex="1"
+                      hgap="10" vgap="10">
+                <padding><Insets top="40" left="20"/></padding>
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="0">
+                    List of Competitors
+                </Label>
+
+                <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
+                    Competitor name
+                </Label>
+
+                <Label GridPane.columnIndex="1" GridPane.rowIndex="1">
+                    Price of competitor's product
+                </Label>
+
+                <Label GridPane.columnIndex="2" GridPane.rowIndex="1">
+                    Competitor sales
+                </Label>
+
+                <Label GridPane.columnIndex="3" GridPane.rowIndex="1">
+                    Competitor Quality Points
+                </Label>
+            </GridPane>
+
+        </GridPane>
+    </left>
+
+</BorderPane>
