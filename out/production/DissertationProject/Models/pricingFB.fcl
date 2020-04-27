@@ -137,7 +137,7 @@ FUZZIFY competitorOrientation			// Fuzzify input variable 'food': { 'rancid', 'd
 END_FUZZIFY
 
 FUZZIFY priceClustering			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
-TERM decreaseStrongly := (0.7422673933924288 ,0) (0.8907208720709145,1)  (1.0,0);
+TERM decreaseStrongly := (0.0 ,0) (0.0,1)  (1.0,0);
     TERM decreaseSlightly := (0.925,0) (0.975,1) (1,0);
     TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
     TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);
@@ -146,12 +146,12 @@ END_FUZZIFY
 
 
 DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-TERM priceLow := (3660.3516, 0) (4306.296, 1) (4952.2404, 0);
-TERM priceCompetition := (1000.0,0) (3225.0,1) (5000.0,0);
-TERM priceMedium := (4026.3867600000003, 0) (4736.9256000000005, 1) (5447.46444, 0);
-TERM priceHigh := (6136.4718, 0) (6459.444, 1) (7428.3606, 0);
-TERM priceValueAdded := (4026.3867600000003, 0) (4736.9256000000005, 1) (5447.46444, 0);
-TERM priceMax := (4736.9256000000005, 0) (7905.0, 1) (9300.0, 0);
+TERM priceLow := (1.59, 0) (1.7666666666666666, 1) (1.9433333333333334, 0);
+TERM priceCompetition := (1.5105, 0) (1.7666666666666666, 1) (1.8461666666666665, 0);
+TERM priceMedium := (1.6695, 0) (1.855, 1) (2.0405, 0);
+TERM priceHigh := (2.2913666666666668, 0) (2.349666666666667, 1) (2.5846333333333336, 0);
+TERM priceValueAdded := (0.0, 0) (0.0, 1) (0.0, 0);
+TERM priceMax := (1.35, 0) (1.5, 1) (1.6666666666666667, 0);
 METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 DEFAULT := 69.420;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -215,7 +215,7 @@ RULEBLOCK No1
     RULE 50 : IF networkEffects IS significantNetwork THEN price IS priceCompetition;
     RULE 51 : IF interdependencies IS none THEN price IS priceCompetition;
     RULE 52 : IF interdependencies IS existing THEN price IS priceMax;
-    RULE 52 : IF interdependencies IS medium THEN price IS priceValueAdded;
+    RULE 53 : IF interdependencies IS medium THEN price IS priceValueAdded;
 END_RULEBLOCK
 
 END_FUNCTION_BLOCK

@@ -63,6 +63,7 @@
                             <String fx:value="Freemium"/>
                             <String fx:value="Multi-platform"/>
                             <String fx:value="Subscription"/>
+                            <String fx:value="Sub. + Multi-platform"/>
                             <!--
                             <String fx:value="Saas/IaaS (?)"/>
                             -->

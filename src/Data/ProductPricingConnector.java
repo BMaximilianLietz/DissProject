@@ -81,7 +81,7 @@ public class ProductPricingConnector {
                         "\"competitorOrientation\", \"customersMaxPrice\", \"clusteringImportance\", " +
                         "\"pricingGoal\", \"timePeriod\", \"depreciation\", \"customerPriceExpectation\", " +
                         "\"customerExpectationImportance\", \"competitionPriceReduction\", " +
-                        "\"minimumPrice\", \"valueAdded\", \"interdependencies\") " +
+                        "\"minimumPrice\", \"valueAdded\", \"interdependencies\", \"customizability\") " +
                         "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);

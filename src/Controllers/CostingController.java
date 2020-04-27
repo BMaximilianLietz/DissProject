@@ -2,6 +2,7 @@ package Controllers;
 
 import Data.CostingConnector;
 import Data.ProductConnector;
+import Data.ProjectConnector;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
@@ -9,19 +10,20 @@ import javafx.fxml.FXML;
 import javafx.geometry.Insets;
 import javafx.scene.Node;
 import javafx.scene.Scene;
-import javafx.scene.control.Alert;
+import javafx.scene.control.*;
+import javafx.scene.control.Label;
 import javafx.scene.control.Menu;
 import javafx.scene.control.MenuBar;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.control.TextField;
 import javafx.scene.layout.BorderPane;
 import javafx.scene.layout.GridPane;
-import javafx.scene.control.TextField;
-import javafx.scene.control.Label;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import javax.swing.border.Border;
 import java.awt.*;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
@@ -47,6 +49,7 @@ public class CostingController {
     public Label storyPointsTotalRepeatPoints;
     public TextField userStoryNameRepeatTF;
     public TextField storyPointsRepeatTF;
+    public CheckBox isVariableCH;
     List<List<String>> iterationList;
 
     @FXML
@@ -78,6 +81,7 @@ public class CostingController {
     private Boolean isUpdate = false;
 
     public void initialize() {
+
         FTEEquivalent.focusedProperty().addListener(new ChangeListener<Boolean>()
         {
             @Override
@@ -90,7 +94,10 @@ public class CostingController {
             }
         });
 
-        activeProduct = SceneController.activeProduct;
+//        activeProduct = SceneController.activeProduct;
+        activeProduct = ProductConnector.getProductByProductId((Integer)SceneController.activeProduct.get(0));
+        activeProject = SceneController.activeProject;
+//        activeProject = ProjectConnector.getProjectByProjectName()
 
         ArrayList<ArrayList<Object>> userStoryQueryResults =
                 CostingConnector.getUserStoriesByProduct((Integer)activeProduct.get(0));
@@ -101,7 +108,7 @@ public class CostingController {
 
         //TODO update for each and everyone one of the above required...
 
-        if (getCostingQueryRsults.size() > 0) {
+        if (userStoryQueryResults.size() > 0) {
 
             isUpdate = true;
 
@@ -121,6 +128,8 @@ public class CostingController {
                     System.out.println("total " + runningCostsTotal);
                 }
             }
+        }
+        if (equipmentQueryResults.size() > 0) {
             for (int i = 0; i < equipmentQueryResults.size(); i++) {
 //            addEquipmentBtnClick();
 //            Scene scene, String equipmentName, Double equipmentPrice, Integer equipmentQuantity
@@ -185,8 +194,23 @@ public class CostingController {
         }
         double temp = totalEquipmentCosts + totalEmployeeCosts;
         CostingConnector.insertIntoProductCosting((Integer)activeProduct.get(0), check1, check2);
-        CostingConnector.insertIntoUserStories(storyList);
-        CostingConnector.insertIntoEquipment((Integer)activeProduct.get(0), equipmentList);
+        if (storyList.size() > 0) {
+            CostingConnector.insertIntoUserStories(storyList);
+        }
+        if (equipmentList.size() > 0) {
+            CostingConnector.insertIntoEquipment((Integer)activeProduct.get(0), equipmentList);
+        }
+        ProductConnector.updateProductById((Integer)activeProduct.get(0),
+                (Integer)activeProduct.get(1),
+                (String) activeProduct.get(2),
+                (String)activeProduct.get(3),
+                (Date) activeProduct.get(4),
+                (Double) activeProduct.get(5),
+                (Double) activeProduct.get(6),
+                (String) activeProduct.get(7),
+                (Boolean) activeProduct.get(8),
+                (Boolean) activeProduct.get(9),
+                Double.parseDouble(storyPointsTotalRepeatPoints.getText()));
         //ProductConnector.insertIntoProduct(1, projectName.getText(), temp);
     }
 
@@ -320,6 +344,18 @@ public class CostingController {
 
         runningCostsTotal += storyPoints;
         storyPointsTotalRepeatPoints.setText(String.valueOf(runningCostsTotal));
+
+        ProductConnector.updateProductById((Integer)activeProduct.get(0),
+                (Integer)activeProduct.get(1),
+                (String) activeProduct.get(2),
+                (String)activeProduct.get(3),
+                (Date) activeProduct.get(4),
+                (Double) activeProduct.get(5),
+                (Double) activeProduct.get(6),
+                (String) activeProduct.get(7),
+                (Boolean) activeProduct.get(8),
+                (Boolean) activeProduct.get(9),
+                Double.parseDouble(storyPointsTotalRepeatPoints.getText()));
     }
 
     /*

@@ -44,6 +44,7 @@ public class ProductController {
         ArrayList<ArrayList<Object>> init = ProductConnector.getAllByProjectId(projectId);
 
         if (init.size() != 0) {
+            System.out.println("init size " + init.size());
             for (int i = 0; i < init.size(); i++) {
                 addProduct(init.get(i), gridPaneLeft);
             }
@@ -65,7 +66,8 @@ public class ProductController {
     }
 
     public void addProductBtnClick(ActionEvent actionEvent) {
-        numberOfProducts++;
+        numberOfProducts = ProductConnector.getAllByProjectId((Integer)activeProject.get(0)).size()+1;
+        System.out.println(numberOfProducts);
         int currentProjectSize = ProductConnector.getAllByProjectId((Integer) activeProject.get(0)).size();
 
         if ((activeProject.get(4).equals("Multi-platform"))||((activeProject.get(4).equals("Bait & Hook")))||
@@ -238,16 +240,6 @@ public class ProductController {
 //            gridPaneChosen.getChildren().remove()
         });
 
-        /*
-        Button productSaveButton = new Button("Save");
-        productSaveButton.onActionProperty().setValue(actionEvent1 -> {
-            System.out.println("Save button clicked - see what happens ");
-            System.out.println(product);
-
-        });
-
-         */
-
         int rowIndex = gridPaneChosen.getRowCount()+1;
 
         HBox hbox = new HBox(productPricingButton, productCostingButton);
@@ -265,7 +257,8 @@ public class ProductController {
         gridPaneChosen.add(vBox, 6, rowIndex);
 
         if ((((String)activeProject.get(4)).equals("Bait & Hook"))||
-                (((String)activeProject.get(4)).equals("Multi-platform"))) {
+                (((String)activeProject.get(4)).equals("Multi-platform"))||
+                (((String)activeProject.get(4)).equals("Sub. + Multi-platform"))) {
 
             CheckBox subsidizing = new CheckBox();
             CheckBox subsidized = new CheckBox();

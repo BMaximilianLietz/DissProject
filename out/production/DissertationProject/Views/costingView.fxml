@@ -41,9 +41,6 @@
             </Button>
 
             <!-- row 2 -->
-            <Label GridPane.columnIndex="0" GridPane.rowIndex="1">
-                Add Task:
-            </Label>
             <TextField fx:id="iterationTextField" GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Iteration">
             </TextField>
             <TextField fx:id="userStoryNameTextField" GridPane.columnIndex="2" GridPane.rowIndex="1" promptText="User Story Name">
@@ -71,17 +68,29 @@
 
                 <GridPane hgap="10" vgap="10" fx:id="gridPaneMisc" GridPane.columnIndex="0" GridPane.rowIndex="3" GridPane.columnSpan="5">
                     <Label GridPane.columnIndex="0" GridPane.rowIndex="0">FTE Equivalent&#10;for Story Point:</Label>
-                    <TextField GridPane.columnIndex="0" GridPane.rowIndex="1" promptText    ="Equivalent" fx:id="FTEEquivalent"></TextField>
+                    <TextField GridPane.columnIndex="0" GridPane.rowIndex="1" promptText="Equivalent"
+                               fx:id="FTEEquivalent"/>
 
                     <Label GridPane.columnIndex="1" GridPane.rowIndex="0">Labour costs for&#10;one working hour:</Label>
-                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Labour costs" fx:id="labourCostsWorkingHour"></TextField>
+                    <TextField GridPane.columnIndex="1" GridPane.rowIndex="1" promptText="Labour costs"
+                               fx:id="labourCostsWorkingHour"/>
 
                     <Label GridPane.columnIndex="2" GridPane.rowIndex="0">Projected Employee&#10;cost:</Label>
-                    <Label GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="projectedEmployeeCostLB"></Label>
+                    <Label GridPane.columnIndex="2" GridPane.rowIndex="1" fx:id="projectedEmployeeCostLB"/>
 
-                    <Button GridPane.columnIndex="2" GridPane.rowIndex="1" onAction="#calculateEmployeeCosts">
+                    <Button GridPane.columnIndex="2" GridPane.rowIndex="2" onAction="#calculateEmployeeCosts">
                         Submit
                     </Button>
+
+                    <!--
+                    <HBox GridPane.columnIndex="0" GridPane.rowIndex="1">
+                        <Label>
+                            Submit
+                        </Label>
+                        <CheckBox GridPane.columnIndex="1" GridPane.rowIndex="1"
+                                  fx:id="isVariableCH"/>
+                    </HBox>
+                    -->
 
                 </GridPane>
 
