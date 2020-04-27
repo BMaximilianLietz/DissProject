@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 public class CostingConnector {
 
-    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+//    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+    private static String connString = "localhost:5432/gdeltBig";
 
     public static void insertIntoProductCosting(int id, double fTEEq, double labourEq){
         Connection c = null;

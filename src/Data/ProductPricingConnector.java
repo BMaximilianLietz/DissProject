@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 public class ProductPricingConnector {
 
-    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+//    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+    private static String connString = "localhost:5432/gdeltBig";
 
     public static void insertProductCommoditization(int projectId, String productName, double productCosts) {
         Connection c = null;
@@ -80,7 +81,7 @@ public class ProductPricingConnector {
                         "\"competitorOrientation\", \"customersMaxPrice\", \"clusteringImportance\", " +
                         "\"pricingGoal\", \"timePeriod\", \"depreciation\", \"customerPriceExpectation\", " +
                         "\"customerExpectationImportance\", \"competitionPriceReduction\", " +
-                        "\"minimumPrice\", \"valueAdded\", \"interdependencies\") " +
+                        "\"minimumPrice\", \"valueAdded\", \"interdependencies\", \"customizability\") " +
                         "VALUES (?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?,?);");
                 sql.setInt(1, productId);
                 sql.setString(2, preferredPricingStrategy);

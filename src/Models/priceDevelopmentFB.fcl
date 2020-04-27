@@ -37,10 +37,11 @@ END_FUZZIFY
 //change to sigmoid function?
 FUZZIFY depreciation			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
 	TERM null := (0, 1) (1, 0);
-	TERM low := (1, 1) (25, 0);
-	TERM medLow := (25, 0) (50,1) (75,0);
-	TERM medHigh := (50, 0) (75, 1) (100,0);
-	TERM high := (75, 0) (100, 1);
+	TERM low := (0, 1) (1, 1) (2, 0);
+	TERM medLow := (1, 0) (5,1) (9,0);
+	TERM medHigh := (5, 0) (15, 1) (25,0);
+	TERM high := (15, 0) (30, 1) (45, 0);
+	TERM veryhigh := (30, 0) (45, 1) (100, 1) (1000,0);
 END_FUZZIFY
 
 // try to get some data into why these borders are set, e.g. average numbers of customers for businesses
@@ -100,6 +101,7 @@ RULEBLOCK No1
     Rule 19 : IF competitionRelatedPriceReduction IS medium THEN priceDevelopment IS low;
     Rule 20 : IF competitionRelatedPriceReduction IS unRelevant THEN priceDevelopment IS none;
     Rule 21 : IF depreciation IS null THEN priceDevelopment IS none;
+    Rule 22 : IF depreciation IS veryhigh THEN priceDevelopment IS special;
 
 END_RULEBLOCK
 

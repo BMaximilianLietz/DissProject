@@ -5,7 +5,8 @@ import java.util.ArrayList;
 
 public class ProjectConnector {
 
-    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+//    private static String connString = "database-2.cwkcvdulkq9a.eu-west-2.rds.amazonaws.com/postgres";
+    private static String connString = "localhost:5432/gdeltBig";
 
     public static ArrayList<Object> insertIntoProject(String projectName, String projectDescription,
                                                       Date creationDate, String businessModel){

@@ -52,7 +52,7 @@
             <Label fx:id="productCost" GridPane.columnIndex="5" GridPane.rowIndex="0"/>
 
             <Label text="Running Costs" GridPane.columnIndex="6" GridPane.rowIndex="0"/>
-            <Label fx:id="productRunningCosts" GridPane.columnIndex="7" GridPane.rowIndex="0"/>
+            <Label fx:id="productRunningCostsLB" GridPane.columnIndex="7" GridPane.rowIndex="0"/>
 
             <Label text="Commoditization" GridPane.columnIndex="0" GridPane.rowIndex="1" GridPane.columnSpan="2"
                    alignment="BASELINE_CENTER" style="-fx-font-weight: bold">
@@ -465,7 +465,8 @@
                 <items>
                     <FXCollections fx:factory="observableArrayList">
                         <String fx:value="No existing interdependencies"/>
-                        <String fx:value="Interdependencies exist"/>
+                        <String fx:value="Medium interdependencies"/>
+                        <String fx:value="Significant Interdependencies exist"/>
                     </FXCollections>
                 </items>
             </ComboBox>

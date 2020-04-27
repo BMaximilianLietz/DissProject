@@ -47,6 +47,7 @@ public class PriceSettingController {
     public Label commoditizationValueForm;
     public ComboBox interdependenciesCB;
     public ComboBox customizabilityCB;
+    public Label productRunningCostsLB;
     private Double commValue;
 
     public Label projectName;
@@ -78,9 +79,11 @@ public class PriceSettingController {
     private ArrayList<Object> activeProduct;
     private Double activeProductCost;
     private Double modifiedProductCost;
+    private Double modifiedRunningCost;
     private Double priceClusterFLOutput = -99.0;
     private Boolean isSubscription = false;
     private Boolean isSubsidized = false;
+    private double subscriptionBackup = 0;
 
     // Fuzzy logic variables
 //    public FuzzyLogic priceSettingFLM;
@@ -104,24 +107,19 @@ public class PriceSettingController {
         DecimalFormat df = new DecimalFormat("#.##");
         proposedPricePerCustomerLB.setText(df.format(proposedPricePerCustomer));
 
-        System.out.println(activeProduct);
-
         modifiedProductCost  = (Double) activeProduct.get(5);
+        modifiedRunningCost  = (Double) activeProduct.get(10);
 
 //        priceSettingFLM = new FuzzyLogic();
 //        priceSettingFLM.init("pricingFB");
 
         numberCustomersTF.textProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println(newValue);
         });
         valueAddedTF.textProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println(newValue);
         });
         desiredMarginTF.textProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println(newValue);
         });
         depreciationTF.textProperty().addListener((observable, oldValue, newValue) -> {
-//            System.out.println(newValue);
         });
 
         // TODO do the below for cluster
@@ -143,7 +141,6 @@ public class PriceSettingController {
                 isInsert = false;
 
                 for (int i = 0; i < nodeArray.length; i++) {
-                    //System.out.println(i);
                     String queryItem = String.valueOf(queryResults.get(i+1));
                     if (nodeArray[i].getClass().getName().equals("javafx.scene.control.ComboBox")) {
                         if (i < 16) {
@@ -166,14 +163,8 @@ public class PriceSettingController {
                             int select = (int) queryResults.get(31);
                             competitionRelatedPriceReductionCB.getSelectionModel().select(select);
                         } else if (i == 28) {
-                            System.out.println("interdependenciesCB");
-                            System.out.println(i + " " + queryResults.get(33));
-                            System.out.println(interdependenciesCB.getSelectionModel());
                             interdependenciesCB.getSelectionModel().select(queryResults.get(34));
                         } else if (i == 29) {
-                            System.out.println("customizabilityCB");
-                            System.out.println(i + " " + queryResults.get(34));
-                            System.out.println(customizabilityCB.getSelectionModel());
                             customizabilityCB.getSelectionModel().select(queryResults.get(35));
                         }
                     } else {
@@ -186,7 +177,6 @@ public class PriceSettingController {
                         } else if (i == 19) {
                             valueAddedTF.setText(String.valueOf(queryResults.get(33)));
                         } else if (i == 20) {
-                            System.out.println(itemQualitySl);
                             itemQualitySl.setValue((Double)queryResults.get(20));
                         } else if (i == 23) {
                             depreciationTF.setText(String.valueOf((Double) queryResults.get(28)));
@@ -198,12 +188,12 @@ public class PriceSettingController {
                 priceClusteringCheck(priceClusteringCB);
             }
         }
-        // TODO add combobox for when is subsidized
-        // TODO add something for when it is subsidizing
-        System.out.println(activeProduct);
+
+        System.out.println((Boolean)activeProduct.get(8));
+        System.out.println((Boolean)activeProduct.get(9));
         if ((Boolean)activeProduct.get(8)) {
+            System.out.println("Test test this should print");
             isSubsidized = true;
-            // TODO - make other change value depending on this?
             Label degree_of_subsidizationLbl = new Label("Degree of Subsidization in %");
             degree_of_subsidizationLbl.setPadding(new Insets(0,0,0,20));
 
@@ -228,7 +218,11 @@ public class PriceSettingController {
                     }
                     modifiedProductCost = (Double)activeProduct.get(5);
                     modifiedProductCost -= modifiedProductCost*subsidizationValue/100;
+
+                    modifiedRunningCost = (Double)activeProduct.get(5);
+                    modifiedRunningCost -= modifiedProductCost*subsidizationValue/100;
                     productCost.setText(modifiedProductCost.toString());
+                    productRunningCostsLB.setText(modifiedRunningCost.toString());
                     ProductPricingConnector.updateProductSubsidizationDegree((Integer)activeProduct.get(0),
                             subsidizationValue);
                 } catch (Exception e) {
@@ -237,31 +231,30 @@ public class PriceSettingController {
             });
 
         } else if ((Boolean)activeProduct.get(9)) {
-            System.out.println("Hellllooooooooo");
             // TODO add running costs
             ArrayList<ArrayList<Integer>> subsidiesQueryResult =
                     SubsidyConnector.getSubsidizerByProductId((Integer) activeProduct.get(0));
-            System.out.println(subsidiesQueryResult);
             for (int i = 0; i < subsidiesQueryResult.size(); i++) {
                 ArrayList<Object> subsidizedProduct = ProductConnector.getProductByProductId(
                         (Integer)subsidiesQueryResult.get(i).get(1)
                 );
-                System.out.println(subsidizedProduct);
                 Double subsidizedProductCost = (Double) subsidizedProduct.get(5);
+                Double subsidizedProductRunningCost = (Double) subsidizedProduct.get(10);
                 Integer subsidizationDegreeInt = (Integer) ProductPricingConnector.getAllProductPricingByProductId(
                         (Integer) subsidizedProduct.get(0))
                         .get(19);
                 Double subsidizationDegree = Double.valueOf(subsidizationDegreeInt);
-                System.out.println(subsidizationDegree);
                 if (subsidizationDegree != 0) {
                     subsidizationDegree /= 100;
                     Double addedCost = (subsidizationDegree) * subsidizedProductCost;
                     modifiedProductCost += addedCost;
+                    modifiedRunningCost += (subsidizationDegree) * subsidizedProductRunningCost;
                 }
             }
         }
 
-        if (activeProject.get(4).equals("Subscription")) {
+        if ((activeProject.get(4).equals("Subscription"))||
+                ((activeProject.get(4)).equals("Sub. + Multi-platform"))) {
             isSubscription = true;
 
             Label frequencyOfPayments = new Label("Frequency of payments");
@@ -294,14 +287,13 @@ public class PriceSettingController {
         projectName.setText((String)SceneController.activeProject.get(1));
         productName.setText((String)activeProduct.get(2));
         productCost.setText((modifiedProductCost).toString());
+        productRunningCostsLB.setText(modifiedRunningCost.toString());
     }
 
     public void handleButtonClick(javafx.event.ActionEvent actionEvent) {
-        System.out.println("OMG this actually works");
     }
 
     public void comboBoxItemChange(ActionEvent actionEvent) {
-//        System.out.println(comboBox1.getSelectionModel().getSelectedItem().toString() + " " + actionEvent.getSource());
         //addVariableInit((Control) actionEvent.getSource());
 
         priceClusteringCheck((ComboBox) actionEvent.getSource());
@@ -309,7 +301,6 @@ public class PriceSettingController {
 
     public void priceSettingSubmitBtnClick(ActionEvent actionEvent)  {
         // TODO implement check that every combobox/input field has a value
-//        System.out.println(commoditizationValueForm.getText());
         commValue = commoditizationCalculation();
         System.out.println("Commoditization value: " + commValue);
         if (commValue == 0) {
@@ -318,8 +309,12 @@ public class PriceSettingController {
         if (false) {
             HelperMethods.throwAlert(gridPane.getScene(), "Please get the commoditization value first");
         } else {
+            Double usedModifiedProductCost;
             if (isSubscription) {
-                utiliseSubscription();
+                usedModifiedProductCost = utiliseSubscription();
+            } else {
+                usedModifiedProductCost = modifiedProductCost;
+                usedModifiedProductCost = usedModifiedProductCost/Double.valueOf(numberCustomersTF.getText());
             }
 
             if ((allowedVarianceTF.getText().equals("") || (numberCustomersTF.getText().equals("")) ||
@@ -330,52 +325,59 @@ public class PriceSettingController {
             }
 
             Double allowedVariance = Double.valueOf(allowedVarianceTF.getText())/100;
-            Double cost = modifiedProductCost/Double.valueOf(numberCustomersTF.getText());
+            System.out.println(usedModifiedProductCost);
             Double margin = Double.valueOf(desiredMarginTF.getText())/100;
             Double markup = Double.valueOf(desiredMarkupTF.getText())/100;
             Double valueAdded = Double.parseDouble(valueAddedTF.getText());
 
             ArrayList<Double> priceCompetitionList = calculatePriceIndex();
 
-            String priceLow = "(" + (cost*(1-allowedVariance)) + ", 0) (" + cost + ", 1) (" +
-                    cost*(1+allowedVariance) + ", 0)";
+            String priceLow = "(" + (usedModifiedProductCost*(1-allowedVariance)) + ", 0) (" + usedModifiedProductCost + ", 1) (" +
+                    usedModifiedProductCost*(1+allowedVariance) + ", 0)";
             FuzzyLogic.replacePriceTerm(1, priceLow);
 
-            String priceMed = "(" + (cost * ((1 + margin)*(1-allowedVariance))) + ", 0) (" + cost * (1+margin) + ", 1) (" +
-                    cost * ((1+margin)*(allowedVariance+1)) + ", 0)";
+            String priceMed = "(" + (usedModifiedProductCost * ((1 + margin)*(1-allowedVariance))) + ", 0) (" + usedModifiedProductCost * (1+margin) + ", 1) (" +
+                    usedModifiedProductCost * ((1+margin)*(allowedVariance+1)) + ", 0)";
             FuzzyLogic.replacePriceTerm(2, priceMed);
 
-            String priceHigh = "(" + (cost * (1+markup*(1-allowedVariance))) + ", 0) (" + (cost * (1+markup)) + ", 1) (" +
-                    (cost * ((1+markup)*(1+allowedVariance))) + ", 0)";
+            String priceHigh = "(" + (usedModifiedProductCost * (1+markup*(1-allowedVariance))) + ", 0) (" + (usedModifiedProductCost * (1+markup)) + ", 1) (" +
+                    (usedModifiedProductCost * ((1+markup)*(1+allowedVariance))) + ", 0)";
             FuzzyLogic.replacePriceTerm(4, priceHigh);
 
             String priceMaxString;
             if (customerHighestPriceTF.getText().equals("")) {
                 priceMaxString = priceHigh;
             } else {
-                System.out.println("Price Max should in theory work");
                 Double priceMax = Double.parseDouble(customerHighestPriceTF.getText());
-                Double priceMaxBottom = (cost * (1+margin));
-                if (priceMax < priceMaxBottom) {
-                    priceMaxBottom = priceMax*(1-allowedVariance)*(1-allowedVariance);
+
+                if (isSubscription) {
+                    ComboBox paymentFrequencyCB = (ComboBox) gridPane.getScene().lookup("#paymentFrequencyCBId");
+                    String paymentFrequencyText = paymentFrequencyCB.getSelectionModel().getSelectedItem().toString();
+                    int time = timeReturner(paymentFrequencyText);
+                    priceMax /= time;
                 }
+                Double priceMaxBottom = priceMax*(1-allowedVariance)*(1-allowedVariance);
                 priceMaxString = "(" + priceMaxBottom + ", 0) (" + (priceMax*(1-allowedVariance)) + ", 1) (" +
                         (priceMax) + ", 0)";
+
             }
             FuzzyLogic.replacePriceTerm(3, priceMaxString);
 
+            String priceCompetition;
             if (priceCompetitionList != null) {
-                String priceCompetition = "(" + priceCompetitionList.get(0) + ",0) (" + priceCompetitionList.get(1) + ",1)" +
+                priceCompetition = "(" + priceCompetitionList.get(0) + ",0) (" + priceCompetitionList.get(1) + ",1)" +
                         " (" + priceCompetitionList.get(2) + ",0)";
                 FuzzyLogic.replacePriceTerm(5, priceCompetition);
             } else {
-                String priceCompetition = "(" + (cost*((1-margin)*(1-allowedVariance))) + ", 0) (" + (cost) + ", 1) (" +
-                        (cost*(1+margin*(1-allowedVariance))) + ", 0)";
+                priceCompetition = "(" + (usedModifiedProductCost*((1-margin)*(1-allowedVariance))) + ", 0) (" + (usedModifiedProductCost) + ", 1) (" +
+                        (usedModifiedProductCost*(1+margin*(1-allowedVariance))) + ", 0)";
                 FuzzyLogic.replacePriceTerm(5, priceCompetition);
             }
 
             String priceValueAdded;
+            System.out.println("valueAdded " + valueAdded);
             if (valueAdded == 0) {
+                System.out.println("should be the same?");
                 priceValueAdded = "(" + (valueAdded*(1-allowedVariance)) + ", 0) (" + (valueAdded) + ", 1) (" +
                         (valueAdded*(1+allowedVariance)) + ", 0)";
                 FuzzyLogic.replacePriceTerm(8, priceValueAdded);
@@ -384,8 +386,8 @@ public class PriceSettingController {
                 priceValueAdded = priceMed;
                 FuzzyLogic.replacePriceTerm(8, priceValueAdded);
             }
-
             System.out.println(priceLow);
+            System.out.println(priceCompetition);
             System.out.println(priceMed);
             System.out.println(priceHigh);
             System.out.println(priceValueAdded);
@@ -395,13 +397,11 @@ public class PriceSettingController {
             priceSettingFLM.init("pricingFB");
 
             priceSettingFLM.functionBlockSetVariable("commoditization", (double) commValue);
-//            System.out.println(commValue+": " + priceSettingFLM.getFunctionBlock().getVariable("commoditization").getValue());
 
             // preferred pricing strategy
             String preferredPricingStrategyCB = pricingStrategyCB.getId().substring(0, pricingStrategyCB.getId().length()-2);
             int pricingStrategyCBIndex = pricingStrategyCB.getSelectionModel().getSelectedIndex();
             priceSettingFLM.functionBlockSetVariable(preferredPricingStrategyCB, Double.valueOf(pricingStrategyCBIndex));
-            System.out.println(preferredPricingStrategyCB +": " + priceSettingFLM.getFunctionBlock().getVariable(preferredPricingStrategyCB).getValue());
 
             // item quality CB
             String itemQualityTempCB = itemQualityCB.getId().substring(0, itemQualityCB.getId().length()-2);
@@ -417,7 +417,6 @@ public class PriceSettingController {
             String marketSaturationTempCB = marketSaturationCB.getId().substring(0, marketSaturationCB.getId().length()-2);
             Integer marketSaturationIndex = marketSaturationCB.getSelectionModel().getSelectedIndex();
             priceSettingFLM.functionBlockSetVariable(marketSaturationTempCB, Double.valueOf(marketSaturationIndex));
-//            System.out.println(marketSaturationTempCB +" " + priceSettingFLM.getFunctionBlock().getVariable(marketSaturationTempCB).getValue());
 
             // brand value
             String brandValueTempCB = brandValueCB.getId().substring(0, brandValueCB.getId().length()-2);
@@ -480,8 +479,6 @@ public class PriceSettingController {
                 TextField subsidizationDegreesTF = (TextField) gridPane.getScene().lookup("#subsidizationDegreesTF");
                 subsidizationDegrees = Integer.parseInt(subsidizationDegreesTF.getText());
             } catch (Exception e) {
-                System.out.println(e.getMessage());
-                System.out.println(Arrays.toString(e.getStackTrace()));
                 System.out.println("Failed to set subsidization degrees");
             }
 
@@ -539,8 +536,6 @@ public class PriceSettingController {
                     java.lang.String.valueOf(interdependenciesCB.getSelectionModel().getSelectedItem()),
                     java.lang.String.valueOf(customizabilityCB.getSelectionModel().getSelectedItem()));
 
-//                System.out.println(activeProduct);
-            System.out.println(activeProduct);
             activeProduct = ProductConnector.updateProductById((Integer) activeProduct.get(0),
                     (Integer) activeProduct.get(1),
                     (String) activeProduct.get(2),
@@ -552,9 +547,7 @@ public class PriceSettingController {
                     (Boolean) activeProduct.get(8),
                     (Boolean) activeProduct.get(9),
                     (Double) activeProduct.get(10));
-//                System.out.println(activeProduct);
         }
-        //priceSettingFLM.evaluate();
     }
 
     public void addVariableInit(Control source) {
@@ -600,7 +593,6 @@ public class PriceSettingController {
 //        commoditizationFLM.getChartFunctionBlock();
 //        commoditizationFLM.getChartVariable("commoditizationOutputValue");
 
-        //System.out.println(commoditizationFLM.getFunctionBlock());
 //        commoditizationValueForm.setText(String.valueOf());
         Double commResult = commoditizationFLM.getFunctionBlock().getVariable("commoditizationOutputValue").getValue();
         return commResult;
@@ -623,38 +615,30 @@ public class PriceSettingController {
         }
     }
 
-    public void test() {
-        System.out.println("hello");
-    }
+    public void test() {}
 
-    public void utiliseSubscription() {
+    public Double utiliseSubscription() {
         Scene scene = gridPane.getScene();
         ComboBox paymentFrequencyCB = (ComboBox) scene.lookup("#paymentFrequencyCBId");
         String paymentFrequencyText = paymentFrequencyCB.getSelectionModel().getSelectedItem().toString();
         TextField subscriptionLengthTF = (TextField) scene.lookup("#subscriptionLengthTF");
-        Double subscriptionParse = Double.parseDouble(subscriptionLengthTF.getText());
+//        Double subscriptionParse = Double.parseDouble(subscriptionLengthTF.getText());
+        Double subscriptionParse = 1.0;
         int numberCustomers = Integer.parseInt(numberCustomersTF.getText());
         int time = 1;
 
-        // TODO add other options such as biweekly perhaps
-        // TODO replace with switch/case?
-        if (paymentFrequencyText.equals("Daily")) {
-            time = 365;
-        } else if (paymentFrequencyText.equals("Weekly")) {
-            time = 53;
-        } else if (paymentFrequencyText.equals("Biweekly")) {
-            time = 26;
-        } else if (paymentFrequencyText.equals("Monthly")) {
-            time = 12;
-        } else if (paymentFrequencyText.equals("Yearly")) {
-            time = 1;
-        } else if (paymentFrequencyText.equals("Other")){
-            System.out.println("To do");
-        }
-        Double cost = (Double)modifiedProductCost;
-        // TODO - probably change so that user can choose to earn money faster and not by the time subscription expires
-        modifiedProductCost = (cost/numberCustomers) / (time / subscriptionParse);
-//        System.out.println(newCost);
+        time = timeReturner(paymentFrequencyText);
+
+        System.out.println(modifiedProductCost);
+        System.out.println(modifiedRunningCost);
+        Double newCost = Double.valueOf(modifiedProductCost);
+        System.out.println("new Cost variables prints");
+        System.out.println(newCost);
+        newCost = (newCost/numberCustomers) / (time);
+        System.out.println("newCost covering fixed costs: " + newCost);
+        newCost += Double.valueOf(modifiedRunningCost)/numberCustomers;
+        System.out.println("utilise subscription method: " + newCost);
+        return newCost;
         //timePeriodCB
     }
 
@@ -720,7 +704,7 @@ public class PriceSettingController {
 
         String depreciationBuffer = depreciationTF.getId().substring(0, depreciationTF.getId().length()-2);
         Double depreciationTFIndex = Double.parseDouble(depreciationTF.getText());
-        priceDevelopmentFLM.functionBlockSetVariable(depreciationBuffer, (double) depreciationTFIndex);
+//        priceDevelopmentFLM.functionBlockSetVariable(depreciationBuffer, (double) depreciationTFIndex);
 
         String pricingGoalCBBuffer = pricingGoalCB.getId().substring(0, pricingGoalCB.getId().length()-2);
         int pricingGoalCBIndex = pricingGoalCB.getSelectionModel().getSelectedIndex();
@@ -747,7 +731,6 @@ public class PriceSettingController {
 
         graphData.clear();
 
-        System.out.println(String.valueOf(priceDevelopmentFLM.getFunctionBlock().getVariable("priceDevelopment").getValue()));
         if ((proposedPricePerCustomer == 0.0)||(proposedPricePerCustomer == 0)) {
             HelperMethods.throwAlert(gridPane.getScene(), "Price needs to be calculated first");
             return;
@@ -783,6 +766,7 @@ public class PriceSettingController {
             returnRangesHigh = proposedPricePerCustomer * (1+allowedVariance);
         }
 
+        depreciationTFIndex /= 100*12;
         if (timePeriodIndex == 0) {
 
         } else if (timePeriodIndex == 1) {
@@ -809,7 +793,10 @@ public class PriceSettingController {
                     clusteringOutput = 1 - ((1-clusteringOutput)/10);
                 }
 
-                priceDevelopment *= clusteringOutput;
+                if ((priceDevelopment * clusteringOutput)< proposedPricePerCustomer) {
+                    priceDevelopment *= clusteringOutput;
+                }
+                priceDevelopment *= (1-depreciationTFIndex);
                 System.out.println("clusteringOutput " + clusteringOutput);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
@@ -839,7 +826,10 @@ public class PriceSettingController {
                     clusteringOutput = 1 - ((1-clusteringOutput)/10);
                 }
 
-                priceDevelopment *= clusteringOutput;
+                if ((priceDevelopment * clusteringOutput)< proposedPricePerCustomer) {
+                    priceDevelopment *= clusteringOutput;
+                }
+                priceDevelopment *= (1-depreciationTFIndex);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -866,7 +856,10 @@ public class PriceSettingController {
                     clusteringOutput = 1 - ((1-clusteringOutput)/10);
                 }
 
-                priceDevelopment *= clusteringOutput;
+                if ((priceDevelopment * clusteringOutput)< proposedPricePerCustomer) {
+                    priceDevelopment *= clusteringOutput;
+                }
+                priceDevelopment *= (1-depreciationTFIndex);
 
                 if (priceDevelopment < Double.parseDouble(minimumPricePDTF.getText())) {
                     priceDevelopment = Double.parseDouble(minimumPricePDTF.getText());
@@ -1036,10 +1029,26 @@ public class PriceSettingController {
             clusterImportance = ((Slider) gridPane.getScene().lookup("#clusterImportanceSL")).getValue();
         } catch (Exception e) {
             System.out.println("Failed to set cluster importance");
-            System.out.println(e.getMessage());
-            System.out.println(Arrays.toString(e.getStackTrace()));
         }
         return clusterImportance;
+    }
+
+    public int timeReturner(String paymentFrequencyText) {
+        int time = 1;
+        if (paymentFrequencyText.equals("Daily")) {
+            time = 365;
+        } else if (paymentFrequencyText.equals("Weekly")) {
+            time = 53;
+        } else if (paymentFrequencyText.equals("Biweekly")) {
+            time = 26;
+        } else if (paymentFrequencyText.equals("Monthly")) {
+            time = 12;
+        } else if (paymentFrequencyText.equals("Yearly")) {
+            time = 1;
+        } else if (paymentFrequencyText.equals("Other")){
+            System.out.println("To do");
+        }
+        return  time;
     }
 
 
