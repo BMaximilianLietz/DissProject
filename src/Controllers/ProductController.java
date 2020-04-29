@@ -10,6 +10,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 
+import java.net.MalformedURLException;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.time.LocalDate;
@@ -604,8 +605,8 @@ public class ProductController {
         }
 
         GraphController competitorGraph = new GraphController();
-        competitorGraph.setBubbleChartAxes("Product Quality Points",
-                "Product Prices",
+        competitorGraph.setBubbleChartAxes("Product Prices",
+                "Product Quality Points",
                 unit);
 
         ArrayList<ArrayList<Object>> init = ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
@@ -700,10 +701,11 @@ public class ProductController {
         } else {
             index = ((ComboBox) gridPaneLeft.getScene().lookup("#productRelationCBId")).getSelectionModel().getSelectedIndex();
         }
+        System.out.println("index " + index);
         if (index == 1) {
-            sign = 1;
-        } else if (index == 2){
             sign = -1;
+        } else if (index == 2){
+            sign = 1;
         } else if (index == 3) {
             HelperMethods.throwAlert(gridPaneLeft.getScene(), "Nothing to update");
             return;
@@ -713,11 +715,11 @@ public class ProductController {
         ArrayList<ArrayList<Object>> productList = ProductConnector.getAllByProjectId((Integer) activeProject.get(0));
         Double crossPriceElasticity = 1.0;
         if (indexStrength == 0) {
-            crossPriceElasticity = 0.15;
+            crossPriceElasticity = 0.33;
         } else if (indexStrength == 1) {
-            crossPriceElasticity = 0.45;
+            crossPriceElasticity = 1.0;
         } else if (indexStrength == 2) {
-            crossPriceElasticity = 0.9;
+            crossPriceElasticity = 3.0;
         }
 
         ArrayList<Object> respectiveProductPricingB = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(1).get(0));
@@ -726,7 +728,7 @@ public class ProductController {
         Double mc = 1.0;
         // get substitutes or complement combobox
 
-        System.out.println(productList);
+//        System.out.println(productList);
         for (int i = 0; i < productList.size(); i++) {
 //            System.out.println("i " + i);
             ArrayList<Object> respectiveProductPricing = ProductPricingConnector.getAllProductPricingByProductId((Integer) productList.get(i).get(0));
@@ -762,11 +764,32 @@ public class ProductController {
 //            System.out.println("selfPriceElasticity: " + selfPriceElasticity);
             FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
             FuzzyLogic clusteringRangeFLMCopy = new FuzzyLogic();
-            clusteringRangeFLM.init("clusteringRangeFB");
+            try {
+                clusteringRangeFLM.init("clusteringRangeFB");
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+            }
 
 //            System.out.println("priceClusterFLOutput " + priceClusterFLOutput);
-            System.out.println("Suggested new price: " + (currentPrice + newPrice));
-            Double productBundlingPrice = currentPrice + newPrice;
+            System.out.println("Old price: " + currentPrice);
+//            System.out.println("Suggested new price: " + (currentPrice + newPrice));
+            Double productBundlingPrice;
+            if (index == 2){
+                if (numberOfProducts > 2) {
+                    productBundlingPrice = currentPrice + newPrice;
+                } else {
+                    productBundlingPrice = currentPrice + newPrice;
+                }
+            } else if (index == 1){
+                if (numberOfProducts > 2) {
+                    productBundlingPrice = currentPrice - newPrice;
+                } else {
+                    productBundlingPrice = currentPrice - newPrice;
+                }
+            } else {
+                return;
+            }
+            System.out.println("New price: " + productBundlingPrice);
 
             Double priceClusterFLOutput = HelperMethods.returnClusteringReaction(
                     (Double) respectiveProductPricing.get(16),

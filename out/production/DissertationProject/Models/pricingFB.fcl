@@ -146,12 +146,12 @@ END_FUZZIFY
 
 
 DEFUZZIFY price			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
-TERM priceLow := (1.59, 0) (1.7666666666666666, 1) (1.9433333333333334, 0);
-TERM priceCompetition := (1.5105, 0) (1.7666666666666666, 1) (1.8461666666666665, 0);
-TERM priceMedium := (1.6695, 0) (1.855, 1) (2.0405, 0);
-TERM priceHigh := (2.2913666666666668, 0) (2.349666666666667, 1) (2.5846333333333336, 0);
-TERM priceValueAdded := (0.0, 0) (0.0, 1) (0.0, 0);
-TERM priceMax := (1.35, 0) (1.5, 1) (1.6666666666666667, 0);
+TERM priceLow := (5.055000000000001, 0) (5.616666666666667, 1) (6.178333333333335, 0);
+TERM priceCompetition := (4.99,0) (7.952779893373954,1) (9.99,0);
+TERM priceMedium := (6.3187500000000005, 0) (7.020833333333334, 1) (7.722916666666667, 0);
+TERM priceHigh := (8.144166666666667, 0) (8.425, 1) (9.267500000000002, 0);
+TERM priceValueAdded := (6.3187500000000005, 0) (7.020833333333334, 1) (7.722916666666667, 0);
+TERM priceMax := (16.2, 0) (18.0, 1) (20.0, 0);
 METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
 DEFAULT := 69.420;		// Default value is 0 (if no rule activates defuzzifier)
 END_DEFUZZIFY
@@ -163,18 +163,18 @@ RULEBLOCK No1
 
 	// pricing strategy rules ignored for now
 
-	RULE 1 : IF commoditization IS low THEN price IS priceValueAdded;
-	RULE 2 : IF commoditization IS medLow THEN price IS priceMedium;
+	RULE 1 : IF commoditization IS low THEN price IS priceHigh;
+	RULE 2 : IF commoditization IS medLow THEN price IS priceValueAdded;
 	RULE 3 : IF commoditization IS medHigh THEN price IS priceMedium;
 	RULE 4 : IF marketSaturation IS saturated THEN price IS priceCompetition;
     RULE 5 : IF marketSaturation IS mediumSaturation THEN price IS priceMedium;
     RULE 6 : IF marketSaturation IS growing THEN price IS priceHigh;
-    RULE 7 : IF brandValue IS lowImportance THEN price IS priceLow;
-    RULE 8 : IF brandValue IS renownedBrand THEN price IS priceMedium;
+    RULE 7 : IF brandValue IS lowImportance THEN price IS priceMedium;
+    RULE 8 : IF brandValue IS renownedBrand THEN price IS priceValueAdded;
     RULE 9 : IF brandValue IS uniqueSellingProposition THEN price IS priceHigh;
     RULE 10 : IF priceElasticity IS absoluteElastic THEN price IS priceLow;
     RULE 11 : IF priceElasticity IS elastic THEN price IS priceMedium;
-    RULE 12 : IF priceElasticity IS neither THEN price IS priceMedium;
+    RULE 12 : IF priceElasticity IS neither THEN price IS priceValueAdded;
     RULE 13 : IF priceElasticity IS inelastic THEN price IS priceMedium;
     RULE 14 : IF priceElasticity IS absoluteInelastic THEN price IS priceHigh;
     RULE 15 : IF distributionChannel IS online THEN price IS priceLow;
@@ -186,7 +186,7 @@ RULEBLOCK No1
     RULE 21 : IF priceIndex IS high THEN price IS priceCompetition;
     RULE 22 : IF priceIndex IS medHigh THEN price IS priceCompetition;
     RULE 23 : IF priceIndex IS average THEN price IS priceMedium;
-    RULE 24 : IF priceIndex IS medLow THEN price IS priceMedium;
+    RULE 24 : IF priceIndex IS medLow THEN price IS priceValueAdded;
     RULE 25 : IF priceIndex IS low THEN price IS priceHigh;
     RULE 26 : IF priceIndex IS veryLow THEN price IS priceMax;
     RULE 27 : IF itemQualityImportance IS insignificant AND itemQuality IS null THEN price IS priceLow;
@@ -209,9 +209,9 @@ RULEBLOCK No1
     RULE 44 : IF pricingStrategy IS competitionBased THEN price IS priceCompetition;
     RULE 45 : IF commoditization IS high THEN price IS priceLow;
     RULE 46 : IF commoditization IS maximum THEN price IS priceCompetition;
-    RULE 47 : IF networkEffects IS noNetwork THEN price IS priceValueAdded;
-    RULE 48 : IF networkEffects IS minorNetwork THEN price IS priceMedium;
-    RULE 49 : IF networkEffects IS mediumNetwork THEN price IS priceLow;
+    RULE 47 : IF networkEffects IS noNetwork THEN price IS priceHigh;
+    RULE 48 : IF networkEffects IS minorNetwork THEN price IS priceValueAdded;
+    RULE 49 : IF networkEffects IS mediumNetwork THEN price IS priceMedium;
     RULE 50 : IF networkEffects IS significantNetwork THEN price IS priceCompetition;
     RULE 51 : IF interdependencies IS none THEN price IS priceCompetition;
     RULE 52 : IF interdependencies IS existing THEN price IS priceMax;

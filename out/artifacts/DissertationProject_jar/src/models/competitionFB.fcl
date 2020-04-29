@@ -1,0 +1,89 @@
+FUNCTION_BLOCK competitionFB
+
+VAR_INPUT				// Define input variables
+	competitorOrientation : REAL;
+	pricingStrategy : REAL;
+	competitionPressure : REAL;
+	commoditization : REAL;
+	pricingGoal : REAL;
+	currentPrice : REAL;
+END_VAR
+
+VAR_OUTPUT				// Define output variable
+	priceIndex : REAL;
+END_VAR
+
+FUZZIFY competitorOrientation			// Fuzzify input variable 'food': { 'rancid', 'delicious' }
+	TERM differentiation := 0;
+	TERM competition := 1;
+	TERM both := 2;
+END_FUZZIFY
+
+FUZZIFY pricingStrategy			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM costBased := 0;
+    TERM valueDriven := 1;
+    TERM targetDriven := 2;
+    TERM competitionBased := 3;
+END_FUZZIFY
+
+FUZZIFY pricingGoal			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM marketShare := 0;
+    TERM marketSkimming := 1;
+    TERM revenueMax := 2;
+    TERM none := 3;
+END_FUZZIFY
+
+FUZZIFY commoditization
+    TERM low := (0.25, 0) (0.375,1) (0.5,0);
+    TERM medLow := (0.375, 0) (0.5, 1) (0.625,0);
+    TERM high := (0.5, 0) (0.625, 1) (0.75,0);
+    TERM veryHigh := (0.625, 0) (0.75, 1) (0.875, 0);
+    TERM maximum := (0.75, 0) (1, 1);
+END_FUZZIFY
+
+FUZZIFY currentPrice			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+TERM tooLow := (0, 1) (2975.0, 1) (3500.0, 0);
+TERM lowerBorder := sigm -525.0 3500.0;
+TERM acceptablePriceRange := (3500.0, 0) (4000.0, 1) (4500.0, 0);
+TERM upperBorder := sigm 675.0 4500.0;
+TERM tooHigh := (4500.0, 0) (5175.0, 1);
+END_FUZZIFY
+
+DEFUZZIFY priceIndex			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+    // TODO add price index for when you want to be the cheapest force on the market
+    TERM veryLowPriceIndex := (0.75 ,0) (0.85,1)  (0.95,0);
+    TERM lowPriceIndex := (0.85,0) (0.925,1) (1,0);
+    TERM averagePriceIndex := (0.95, 0) (1, 1) (1.05 ,0);
+    TERM highPriceIndex := (1,0) (1.075,1) (1.15,0);
+    TERM veryHighPriceIndex := (1.05,0) (1.15,1) (1.25, 0);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 1;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF competitorOrientation IS differentiation THEN priceIndex IS lowPriceIndex;
+	RULE 2 : IF competitorOrientation IS competition THEN priceIndex IS highPriceIndex;
+	RULE 3 : IF competitorOrientation IS both THEN priceIndex IS averagePriceIndex;
+	RULE 4 : IF pricingStrategy IS costBased THEN priceIndex IS averagePriceIndex;
+	RULE 5 : IF pricingStrategy IS valueDriven THEN priceIndex IS averagePriceIndex;
+	RULE 6 : IF pricingStrategy IS targetDriven THEN priceIndex IS averagePriceIndex;
+	RULE 7 : IF pricingStrategy IS competitionBased THEN priceIndex IS highPriceIndex;
+	RULE 8 : IF commoditization IS low THEN priceIndex IS highPriceIndex;
+	RULE 9 : IF commoditization IS medLow THEN priceIndex IS averagePriceIndex;
+	RULE 10 : IF commoditization IS high THEN priceIndex IS averagePriceIndex;
+	RULE 11 : IF commoditization IS veryHigh THEN priceIndex IS lowPriceIndex;
+	RULE 12 : IF commoditization IS maximum THEN priceIndex IS lowPriceIndex;
+	RULE 13 : IF competitorOrientation IS competition AND pricingStrategy IS competitionBased AND commoditization IS veryHigh OR commoditization IS maximum THEN priceIndex IS veryHighPriceIndex;
+    RULE 14 : IF pricingGoal IS marketShare THEN priceIndex IS highPriceIndex;
+    RULE 14 : IF pricingGoal IS marketSkimming THEN priceIndex IS lowPriceIndex;
+    RULE 14 : IF pricingGoal IS revenueMax THEN priceIndex IS averagePriceIndex;
+    RULE 14 : IF pricingGoal IS none THEN priceIndex IS averagePriceIndex;
+
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

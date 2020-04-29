@@ -4,6 +4,8 @@ import Controllers.FuzzyLogic;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 
+import java.net.MalformedURLException;
+
 public class HelperMethods {
     public static void throwAlert(Scene scene, String message) {
         Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -66,7 +68,11 @@ public class HelperMethods {
         priceClusteringChange(currentPrice, allowedVariance, rangeLow, rangeHigh);
 
         FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
-        clusteringRangeFLM.init("clusteringRangeFB");
+        try {
+            clusteringRangeFLM.init("clusteringRangeFB");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         clusteringRangeFLM.functionBlockSetVariable("currentPrice", currentPrice);
         clusteringRangeFLM.functionBlockSetVariable("rangeImportance", clusterImportance);

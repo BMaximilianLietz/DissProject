@@ -1,21 +1,30 @@
 package Controllers;
 
+import javafx.fxml.FXMLLoader;
 import net.sourceforge.jFuzzyLogic.FIS;
 import net.sourceforge.jFuzzyLogic.FunctionBlock;
 import net.sourceforge.jFuzzyLogic.plot.JFuzzyChart;
 import net.sourceforge.jFuzzyLogic.rule.Variable;
 
 import java.io.*;
+import java.net.MalformedURLException;
+import java.net.URL;
 
 
 public class FuzzyLogic {
 
     public FunctionBlock functionBlock;
 
-    public void init(String selectedFunctionBlock) {
+    public void init(String selectedFunctionBlock) throws MalformedURLException {
+//        URL location = getClass().getResource("/src/Models/"+selectedFunctionBlock+".fcl");
         File fileRelative2 = new File("src/Models/" + selectedFunctionBlock + ".fcl");
         String fileName = "src/Models/" + selectedFunctionBlock + ".fcl";
-        FIS fis = FIS.load(fileRelative2.getAbsolutePath(), true);
+        URL location = fileRelative2.toURI().toURL();
+        System.out.println(fileRelative2.getAbsolutePath());
+        System.out.println(fileRelative2.toURI());
+        System.out.println(fileRelative2.toURI().toURL().getPath());
+        System.out.println(location);
+        FIS fis = FIS.load(location.getPath(), true);
         if (fis == null) {
             System.err.println("Can't load file: '" + fileName + "'");
             return;

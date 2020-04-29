@@ -1,0 +1,73 @@
+FUNCTION_BLOCK clusteringRangeFB
+
+VAR_INPUT				// Define input variables
+	rangeImportance : REAL;
+	currentPrice : REAL;
+END_VAR
+
+// probs gotta add suggested strategy at some point and add it as an output variable
+VAR_OUTPUT				// Define output variable
+	clusteringReaction : REAL;
+END_VAR
+
+FUZZIFY rangeImportance			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+	TERM null := (0, 1) (25, 0);
+	TERM low := (0, 0) (25, 1) (50, 0);
+    TERM med := (25, 0) (50, 1) (75, 0);
+    TERM high := (50, 0) (75, 1) (100, 0);
+    TERM full := (75, 0) (100, 1);
+END_FUZZIFY
+
+FUZZIFY currentPrice			// Fuzzify input variable 'service': {'poor', 'good' , 'excellent'}
+TERM tooLow := (0, 1) (0.0, 1) (0.0, 0);
+TERM lowerBorder := (0.0,0) (0.0,1) (0.0,0);
+TERM acceptablePriceRange := (0.0, 0) (1.495, 1) (2.99, 0);
+TERM upperBorder := (2.9855150000000004,0) (2.99,1) (2.9944850000000005,0);
+TERM tooHigh := (2.99, 0) (2.9944850000000005, 1);
+END_FUZZIFY
+
+DEFUZZIFY clusteringReaction			// Defuzzify output variable 'tip' : {'cheap', 'average', 'generous' }
+TERM decreaseStrongly := (1,0) (1.05, 1) (1.1,0);
+    TERM decreaseSlightly := (0.95,0) (0.975,1) (1,0);
+    TERM doNothing := (0.99, 0) (1, 1) (1.01 ,0);
+    TERM increaseSlightly := (1,0) (1.025,1) (1.05,1);
+TERM increaseStrongly := (0.9,0) (0.95,1) (1,0);
+	METHOD : COG;		// Use 'Center Of Gravity' defuzzification method
+	DEFAULT := 1;		// Default value is 0 (if no rule activates defuzzifier)
+END_DEFUZZIFY
+
+RULEBLOCK No1
+	AND : MIN;			// Use 'min' for 'and' (also implicit use 'max' for 'or' to fulfill DeMorgan's Law)
+	ACT : MIN;			// Use 'min' activation method
+	ACCU : MAX;			// Use 'max' accumulation method
+
+	RULE 1 : IF rangeImportance IS null AND currentPrice IS tooLow THEN clusteringReaction IS increaseStrongly;
+	RULE 2 : IF rangeImportance IS null AND currentPrice IS lowerBorder THEN clusteringReaction IS increaseStrongly;
+	RULE 3 : IF rangeImportance IS null AND currentPrice IS upperBorder THEN clusteringReaction IS doNothing;
+	RULE 4 : IF rangeImportance IS null AND currentPrice IS tooHigh THEN clusteringReaction IS doNothing;
+	RULE 5 : IF rangeImportance IS low AND currentPrice IS tooLow THEN clusteringReaction IS increaseStrongly;
+	RULE 6 : IF rangeImportance IS low AND currentPrice IS lowerBorder THEN clusteringReaction IS increaseSlightly;
+	RULE 7 : IF rangeImportance IS low AND currentPrice IS upperBorder THEN clusteringReaction IS doNothing;
+	RULE 8 : IF rangeImportance IS low AND currentPrice IS tooHigh THEN clusteringReaction IS decreaseSlightly;
+	RULE 9 : IF rangeImportance IS med AND currentPrice IS tooLow THEN clusteringReaction IS increaseStrongly;
+	RULE 10 : IF rangeImportance IS med AND currentPrice IS lowerBorder THEN clusteringReaction IS increaseSlightly;
+	RULE 11 : IF rangeImportance IS med AND currentPrice IS upperBorder THEN clusteringReaction IS decreaseSlightly;
+	RULE 12 : IF rangeImportance IS med AND currentPrice IS tooHigh THEN clusteringReaction IS decreaseStrongly;
+	RULE 13 : IF rangeImportance IS high AND currentPrice IS tooLow THEN clusteringReaction IS increaseStrongly;
+	RULE 14 : IF rangeImportance IS high AND currentPrice IS lowerBorder THEN clusteringReaction IS increaseSlightly;
+	RULE 15 : IF rangeImportance IS high AND currentPrice IS upperBorder THEN clusteringReaction IS decreaseSlightly;
+	RULE 16 : IF rangeImportance IS high AND currentPrice IS tooHigh THEN clusteringReaction IS decreaseStrongly;
+	RULE 17 : IF rangeImportance IS full AND currentPrice IS tooLow THEN clusteringReaction IS increaseStrongly;
+	RULE 18 : IF rangeImportance IS full AND currentPrice IS lowerBorder THEN clusteringReaction IS increaseSlightly;
+	RULE 19 : IF rangeImportance IS full AND currentPrice IS upperBorder THEN clusteringReaction IS decreaseSlightly;
+	RULE 20 : IF rangeImportance IS full AND currentPrice IS tooHigh THEN clusteringReaction IS decreaseStrongly;
+	RULE 21 : IF rangeImportance IS null AND currentPrice IS acceptablePriceRange THEN clusteringReaction IS increaseSlightly;
+	RULE 22 : IF rangeImportance IS low AND currentPrice IS acceptablePriceRange THEN clusteringReaction IS increaseSlightly;
+	RULE 23 : IF rangeImportance IS med AND currentPrice IS acceptablePriceRange THEN clusteringReaction IS doNothing;
+	RULE 24 : IF rangeImportance IS high AND currentPrice IS acceptablePriceRange THEN clusteringReaction IS doNothing;
+	RULE 25 : IF rangeImportance IS full AND currentPrice IS acceptablePriceRange THEN clusteringReaction IS doNothing;
+
+
+END_RULEBLOCK
+
+END_FUNCTION_BLOCK

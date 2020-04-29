@@ -139,7 +139,7 @@
                     How to calculate revenue maximization and what to do with it?
             -->
 
-            <Label text="Commoditization" GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"
+            <Label text="Price Development" GridPane.columnIndex="0" GridPane.rowIndex="8" GridPane.columnSpan="2"
                    alignment="BASELINE_CENTER" style="-fx-font-weight: bold">
                 <padding><Insets left="20"/></padding>
             </Label>
@@ -484,8 +484,8 @@
             </Button>
             -->
 
-            <Label GridPane.columnIndex="6" GridPane.rowIndex="1">Proposed Strategy:</Label>
-            <Text fx:id="proposedStrategyTX" GridPane.columnIndex="7" GridPane.rowIndex="1"/>
+            <Label GridPane.columnIndex="6" GridPane.rowIndex="1" visible="false">Proposed Strategy:</Label>
+            <Text fx:id="proposedStrategyTX" GridPane.columnIndex="7" GridPane.rowIndex="1" visible="false"/>
 
             <!--
                 TODO

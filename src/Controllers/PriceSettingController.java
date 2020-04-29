@@ -16,6 +16,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.text.Text;
 import net.sourceforge.jFuzzyLogic.rule.Rule;
 
+import java.net.MalformedURLException;
 import java.sql.Date;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
@@ -271,7 +272,7 @@ public class PriceSettingController {
             paymentFrequencyCB.setOnAction(e -> test());
 //            subsidizationDegreesCB.setItems();
             moveGridpPaneChildrenDown(gridPane, 1, 2);
-            moveGridpPaneChildrenDown(gridPane, 2, 2);
+//            moveGridpPaneChildrenDown(gridPane, 2, 2);
 
             Label subscriptionLengthLbl = new Label("Average estimated subscription\nlength in months");
             subscriptionLengthLbl.setPadding(new Insets(0,0,0,20));
@@ -280,8 +281,8 @@ public class PriceSettingController {
 
             gridPane.add(frequencyOfPayments, 2, 2);
             gridPane.add(paymentFrequencyCB, 3,2);
-            gridPane.add(subscriptionLengthLbl, 2, 3);
-            gridPane.add(subscriptionLengthTF, 3,3);
+//            gridPane.add(subscriptionLengthLbl, 2, 3);
+//            gridPane.add(subscriptionLengthTF, 3,3);
         }
 
         projectName.setText((String)SceneController.activeProject.get(1));
@@ -299,7 +300,7 @@ public class PriceSettingController {
         priceClusteringCheck((ComboBox) actionEvent.getSource());
     }
 
-    public void priceSettingSubmitBtnClick(ActionEvent actionEvent)  {
+    public void priceSettingSubmitBtnClick(ActionEvent actionEvent) throws MalformedURLException {
         // TODO implement check that every combobox/input field has a value
         commValue = commoditizationCalculation();
         System.out.println("Commoditization value: " + commValue);
@@ -354,7 +355,7 @@ public class PriceSettingController {
                     ComboBox paymentFrequencyCB = (ComboBox) gridPane.getScene().lookup("#paymentFrequencyCBId");
                     String paymentFrequencyText = paymentFrequencyCB.getSelectionModel().getSelectedItem().toString();
                     int time = timeReturner(paymentFrequencyText);
-                    priceMax /= time;
+//                    priceMax /= time;
                 }
                 Double priceMaxBottom = priceMax*(1-allowedVariance)*(1-allowedVariance);
                 priceMaxString = "(" + priceMaxBottom + ", 0) (" + (priceMax*(1-allowedVariance)) + ", 1) (" +
@@ -376,7 +377,7 @@ public class PriceSettingController {
 
             String priceValueAdded;
             System.out.println("valueAdded " + valueAdded);
-            if (valueAdded == 0) {
+            if (valueAdded != 0) {
                 System.out.println("should be the same?");
                 priceValueAdded = "(" + (valueAdded*(1-allowedVariance)) + ", 0) (" + (valueAdded) + ", 1) (" +
                         (valueAdded*(1+allowedVariance)) + ", 0)";
@@ -564,7 +565,11 @@ public class PriceSettingController {
 
     public Double commoditizationCalculation() {
         FuzzyLogic commoditizationFLM = new FuzzyLogic();
-        commoditizationFLM.init("commoditizationFB");
+        try {
+            commoditizationFLM.init("commoditizationFB");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         String numberCustomersTFBuffer = numberCustomersTF.getId().substring(0, numberCustomersTF.getId().length()-2);
         int numberCustomersTFIndex = Integer.parseInt(numberCustomersTF.getText());
@@ -700,7 +705,11 @@ public class PriceSettingController {
 
     public void priceDevelopmentBtnClick(ActionEvent actionEvent) {
         FuzzyLogic priceDevelopmentFLM = new FuzzyLogic();
-        priceDevelopmentFLM.init("priceDevelopmentFB");
+        try {
+            priceDevelopmentFLM.init("priceDevelopmentFB");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
         String depreciationBuffer = depreciationTF.getId().substring(0, depreciationTF.getId().length()-2);
         Double depreciationTFIndex = Double.parseDouble(depreciationTF.getText());
@@ -783,7 +792,11 @@ public class PriceSettingController {
                 System.out.println(priceDevelopment);
 
                 FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
-                clusteringRangeFLM.init("clusteringRangeFB");
+                try {
+                    clusteringRangeFLM.init("clusteringRangeFB");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
 
                 Double clusteringOutput = HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
                         priceDevelopment,returnRangesLow, returnRangesHigh);
@@ -816,7 +829,11 @@ public class PriceSettingController {
                 priceDevelopment = priceDevelopment - (priceDevelopment*currentReductionPercentage);
 
                 FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
-                clusteringRangeFLM.init("clusteringRangeFB");
+                try {
+                    clusteringRangeFLM.init("clusteringRangeFB");
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
 
                 Double clusteringOutput = HelperMethods.returnClusteringReaction(allowedVariance, returnClusterImportance(),
                         priceDevelopment,returnRangesLow, returnRangesHigh);
@@ -906,7 +923,11 @@ public class PriceSettingController {
         Slider clusterImportanceSL = (Slider) scene.lookup("#clusterImportanceSL");
 
         FuzzyLogic clusteringRangeFLM = new FuzzyLogic();
-        clusteringRangeFLM.init("clusteringRangeFB");
+        try {
+            clusteringRangeFLM.init("clusteringRangeFB");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
     }
 
@@ -924,7 +945,11 @@ public class PriceSettingController {
         ArrayList<Double> priceIndexCurrentProduct = new ArrayList<>();
 
         FuzzyLogic competitionFLM = new FuzzyLogic();
-        competitionFLM.init("competitionFB");
+        try {
+            competitionFLM.init("competitionFB");
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        }
 
 //        System.out.println(commoditizationValueForm.getText());
 
