@@ -1,25 +1,6 @@
 # Dissertation Project Description
-Lorem ipsum dolor sit amet, consectetuer adipiscing elit. Maecenas porttitor congue massa. Fusce posuere, magna sed pulvinar ultricies, purus lectus malesuada libero, sit amet commodo magna eros quis urna.
-Nunc viverra imperdiet enim. Fusce est. Vivamus a tellus.
+A project that attempts to find a suitable price for a given software project depending on different variables.
 
-Pellentesque habitant morbi tristique senectus et netus et malesuada fames ac turpis egestas. Proin pharetra nonummy pede. Mauris et orci.
-Aenean nec lorem. In porttitor. 
+The underlying basis for receiving a price is a combination of theoretical implementations as well as a simple AI model.
 
-Donec laoreet nonummy augue.
-
-Suspendisse dui purus, scelerisque at, vulputate vitae, pretium mattis, nunc. Mauris eget neque at sem venenatis eleifend. Ut nonummy.
-
-#To-Do:
-- Implementation of Multiple products
-    - Multiproduct implementation in the front-end
-    - Multiproduct costing implementation 
-    (separate from project pricing? Where's the difference between 
-    product and project from this project's POV?)
-    - Multiproduct pricing making use of literature
-- Finish costing page
-- Add description to items in priceSetting.fxml file
-- Add time periods for price setting
-- For commoditization rulebase add degree in customizability 
-so it isn't a binary value but a fuzzy one
-- Add defuzzification to commoditization     
-
+Goals for the future would be to add pricing history so that machine learning could be implemented to complement the current AI model.
